@@ -15,7 +15,7 @@
     "@mui/material": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "tari-connector": "file:.."
+    "tari.js": "file:.."
   },
   "devDependencies": {
     "@types/react": "latest",

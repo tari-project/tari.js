@@ -1,5 +1,5 @@
 {
-  "name": "tari-connector",
+  "name": "tari.js",
   "version": "0.1.14",
   "description": "",
   "main": "./dist/index.js",

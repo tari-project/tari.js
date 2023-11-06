@@ -1,20 +1,11 @@
 import * as React from 'react';
 import { Box, Typography, Container } from '@mui/material';
-import { TariConnection, TariConnectorButton } from 'tari-connector/src/index';
+import { TariConnection, TariConnectorButton } from 'tari.js/src/providers/wallet_daemon/index';
 import {
-	ResourceAddress,
-	Hash,
 	TariPermissions,
-	TariPermissionAccountBalance,
 	TariPermissionAccountList,
-	SubstateAddress,
-	NonFungibleAddress,
-	NonFungibleAddressContents,
-	NonFungibleId,
-	U256,
-	ComponentAddress,
 	TariPermissionTransactionSend
-} from "tari-connector/src/tari_permissions";
+} from "tari.js/src/providers/wallet_daemon/tari_permissions";
 
 export default function App() {
 	return (
@@ -28,7 +19,6 @@ export default function App() {
 		</Container>
 	);
 }
-
 
 function Connector() {
 	const [tari, setTari] = React.useState<TariConnection | undefined>();
