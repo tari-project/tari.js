@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Box, Typography, Container } from '@mui/material';
-import { TariConnection, TariConnectorButton } from 'tari.js/src/providers/wallet_daemon/index';
+import { Box, Typography, Container, Button } from '@mui/material';
+import { TariConnection, TariConnectorButton, WalletDaemonParameters, WalletDaemonProvider } from 'tari.js/src/providers/wallet_daemon/index';
 import {
 	TariPermissions,
 	TariPermissionAccountList,
@@ -14,13 +14,14 @@ export default function App() {
 				<Typography variant="h4" component="h1" gutterBottom>
 					Tari-Connector Example
 				</Typography>
-				<Connector />
+				<WalletDaemonDefaultButton />
+				<WalletDaemonCustomButton />
 			</Box>
 		</Container>
 	);
 }
 
-function Connector() {
+function WalletDaemonDefaultButton() {
 	const [tari, setTari] = React.useState<TariConnection | undefined>();
 	const onOpen = (tari: TariConnection) => {
 		console.log("OnOpen");
@@ -50,4 +51,29 @@ function Connector() {
 			/>
 		</>
 	);
+}
+
+function WalletDaemonCustomButton() {
+	const signalingServerUrl = import.meta.env.VITE_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
+	const permissions = new TariPermissions();
+	permissions.addPermission(new TariPermissionAccountList())
+	permissions.addPermission(
+		new TariPermissionTransactionSend()
+	);
+	const optionalPermissions = new TariPermissions();
+
+	async function handleClick() {
+		const params: WalletDaemonParameters = {
+			signalingServerUrl,
+			permissions,
+			optionalPermissions,
+			onConnection: function (): void {
+				console.log("Connected to the wallet daemon via custom button");
+			}
+		};
+		const provider = await WalletDaemonProvider.build(params);
+		console.log("Token URL: " + provider.tokenUrl);
+	}
+
+	return <Button variant='contained' onClick={async () => {await handleClick()}}>Wallet Daemon Custom Buttom</Button>
 }

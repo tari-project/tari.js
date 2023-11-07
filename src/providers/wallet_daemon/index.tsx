@@ -6,3 +6,4 @@ export default function test() {
 }
 
 export * from './tari_permissions'
+export * from './provider'
