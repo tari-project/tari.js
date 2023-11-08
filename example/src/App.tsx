@@ -22,11 +22,11 @@ export default function App() {
 }
 
 function WalletDaemonDefaultButton() {
-	const [tari, setTari] = React.useState<TariConnection | undefined>();
-	const onOpen = (tari: TariConnection) => {
+	const [_provider, setProvider] = React.useState<WalletDaemonProvider | undefined>();
+	const onOpen = (provider: WalletDaemonProvider) => {
 		console.log("OnOpen");
-		setTari(tari);
-		window.tari = tari;
+		setProvider(provider);
+		window.provider = provider;
 	};
 	const onConnection = () => {
 		console.log("Connected to the wallet daemon");
@@ -38,14 +38,14 @@ function WalletDaemonDefaultButton() {
 		new TariPermissionTransactionSend()
 	);
 
-	let optional_permissions = new TariPermissions();
+	let optionalPermissions = new TariPermissions();
 
 	return (
 		<>
 			<TariConnectorButton
-				signalingServer={address}
+				signalingServerUrl={address}
 				permissions={permissions}
-				optional_permissions={optional_permissions}
+				optionalPermissions={optionalPermissions}
 				onOpen={onOpen}
 				onConnection={onConnection}
 			/>

@@ -7,7 +7,7 @@ export type WalletDaemonParameters = {
     optionalPermissions: TariPermissions,
     webRtcConfig?: RTCConfiguration,
     name?: string,
-    onConnection: () => void
+    onConnection?: () => void
 };
 
 export class WalletDaemonProvider {

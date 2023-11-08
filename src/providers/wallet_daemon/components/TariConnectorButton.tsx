@@ -2,20 +2,20 @@ import * as React from 'react'
 import { useState } from 'react';
 import tariLogo from './assets/images/tari-logo.png';
 import styles from './TariConnectorButton.module.css';
-import initTariConnection, { TariConnection } from '../webrtc';
 import { QRCodeSVG } from 'qrcode.react';
 import { TariPermissions } from '../tari_permissions';
+import { WalletDaemonParameters, WalletDaemonProvider } from '../provider';
 
 export interface TariConnectorButtonProps {
   fullWidth?: boolean;
   background?: string;
   textColor?: string;
-  onOpen?: (tari: TariConnection) => void;
+  onOpen?: (provider: WalletDaemonProvider) => void;
   onConnection?: () => void;
   permissions?: TariPermissions,
-  optional_permissions?: TariPermissions,
-  signalingServer?: string,
-  rtcConfig?: RTCConfiguration
+  optionalPermissions?: TariPermissions,
+  signalingServerUrl?: string,
+  webRtcConfig?: RTCConfiguration
   name?: string,
 }
 
@@ -26,32 +26,40 @@ function TariConnectorButton({
   onOpen,
   onConnection,
   permissions = new TariPermissions(),
-  optional_permissions = new TariPermissions(),
-  signalingServer,
-  rtcConfig,
+  optionalPermissions = new TariPermissions(),
+  signalingServerUrl,
+  webRtcConfig,
   name,
 }: TariConnectorButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [fadeClass, setFadeClass] = useState('tariFadeIn');
   const [tokenUrl, setTokenUrl] = useState("");
-  const [_tari, setTari] = useState<any>();
-  // console.log('onOpen', onOpen);
-  const all_permissions = new TariPermissions();
-  all_permissions.addPermissions(permissions);
-  all_permissions.addPermissions(optional_permissions);
+  const [_provider, setProvider] = useState<any>();
+
+  const allPermissions = new TariPermissions();
+  allPermissions.addPermissions(permissions);
+  allPermissions.addPermissions(optionalPermissions);
 
   const openPopup = () => {
     setIsOpen(true);
     setFadeClass('tariFadeIn');
-    initTariConnection(all_permissions, signalingServer, rtcConfig, onConnection).then((tari) => {
-      setTari(tari);
-      onOpen?.(tari);
-      if (tari.token) {
-        console.log("settoken", permissions, JSON.stringify(permissions))
-        setTokenUrl(`tari://${name && encodeURIComponent(name) || ''}/${tari.token}/${JSON.stringify(permissions)}/${JSON.stringify(optional_permissions)}`);
-      }
-    });
+    const params: WalletDaemonParameters = {
+      signalingServerUrl,
+      permissions,
+      optionalPermissions,
+      webRtcConfig,
+      onConnection,
+      name,
+    };
+    WalletDaemonProvider.build(params)
+      .then((provider) => {
+        setProvider(provider);
+        onOpen?.(provider);
+        if (provider.tokenUrl) {
+          setTokenUrl(provider.tokenUrl);
+        }
+      });
   };
 
   const closePopup = () => {

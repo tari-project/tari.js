@@ -243,11 +243,3 @@ export class TariConnection {
     return { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
   }
 }
-
-async function initTariConnection(permissions: TariPermissions, signalig_server_url?: string, config?: RTCConfiguration, onConnection?: (() => void) | undefined) {
-  let tari = new TariConnection(signalig_server_url, config);
-  await tari.init(permissions, onConnection);
-  return tari;
-}
-
-export default initTariConnection;
