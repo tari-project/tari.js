@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Typography, Container, Button } from '@mui/material';
-import { TariConnectorButton, TransactionRequest, WalletDaemonParameters, WalletDaemonProvider } from 'tari.js/src/providers/wallet_daemon/index';
+import { TariConnectorButton, WalletDaemonParameters, WalletDaemonTariProvider } from 'tari.js/src/providers/wallet_daemon/index';
 import {
 	TariPermissions,
 	TariPermissionAccountList,
@@ -8,6 +8,7 @@ import {
 	TariPermissionAccountInfo,
 	TariPermissionKeyList
 } from "tari.js/src/providers/wallet_daemon/tari_permissions";
+import { TransactionRequest } from '../../src/providers';
 
 export default function App() {
 	async function getBalancesClick() {
@@ -58,7 +59,7 @@ export default function App() {
 }
 
 function WalletDaemonDefaultButton() {
-	const onOpen = (provider: WalletDaemonProvider) => {
+	const onOpen = (provider: WalletDaemonTariProvider) => {
 		window.provider = provider;
 	};
 	const onConnection = () => {
@@ -107,7 +108,7 @@ function WalletDaemonCustomButton() {
 				console.log("Connected to the wallet daemon via custom button");
 			}
 		};
-		const provider = await WalletDaemonProvider.build(params);
+		const provider = await WalletDaemonTariProvider.build(params);
 		console.log("Token URL: " + provider.tokenUrl);
 	}
 

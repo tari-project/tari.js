@@ -4,13 +4,13 @@ import tariLogo from './assets/images/tari-logo.png';
 import styles from './TariConnectorButton.module.css';
 import { QRCodeSVG } from 'qrcode.react';
 import { TariPermissions } from '../tari_permissions';
-import { WalletDaemonParameters, WalletDaemonProvider } from '../provider';
+import { WalletDaemonParameters, WalletDaemonTariProvider } from '../provider';
 
 export interface TariConnectorButtonProps {
   fullWidth?: boolean;
   background?: string;
   textColor?: string;
-  onOpen?: (provider: WalletDaemonProvider) => void;
+  onOpen?: (provider: WalletDaemonTariProvider) => void;
   onConnection?: () => void;
   permissions?: TariPermissions,
   optionalPermissions?: TariPermissions,
@@ -52,7 +52,7 @@ function TariConnectorButton({
       onConnection,
       name,
     };
-    WalletDaemonProvider.build(params)
+    WalletDaemonTariProvider.build(params)
       .then((provider) => {
         setProvider(provider);
         onOpen?.(provider);

@@ -14,7 +14,7 @@ export type WalletDaemonParameters = {
     onConnection?: () => void
 };
 
-export class WalletDaemonProvider implements TariProvider {
+export class WalletDaemonTariProvider implements TariProvider {
     params: WalletDaemonParameters;
     connection: TariConnection;
 
@@ -23,10 +23,10 @@ export class WalletDaemonProvider implements TariProvider {
         this.connection = connection;
     }
 
-    static async build(params: WalletDaemonParameters): Promise<WalletDaemonProvider> {
+    static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariProvider> {
         let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
         await connection.init(params.permissions, params.onConnection);
-        return new WalletDaemonProvider(params, connection);
+        return new WalletDaemonTariProvider(params, connection);
     }
 
     public get token(): string | undefined {

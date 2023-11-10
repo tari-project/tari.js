@@ -1,4 +1,5 @@
 export * as walletDaemon from './wallet_daemon'
+export * as metamask from './metamask'
 
 export type SubstateRequirement = {
     address: string,
