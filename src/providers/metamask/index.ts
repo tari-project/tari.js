@@ -40,6 +40,7 @@ export class MetamaskTariProvider implements TariProvider {
             throw TariSnapNotInstalled;
         }
         this.snap = snap;
+        this.isConnected = true;
     }
 
     getAccounts(): Promise<unknown> {
