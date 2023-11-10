@@ -1,5 +1,6 @@
 import { TariPermissions } from "./tari_permissions";
 import { TariConnection } from "./webrtc";
+import { TariProvider, TransactionRequest } from '../index';
 
 export const WalletDaemonNotConnected = 'WALLET_DAEMON_NOT_CONNECTED';
 export const Unsupported = 'UNSUPPORTED';
@@ -13,22 +14,7 @@ export type WalletDaemonParameters = {
     onConnection?: () => void
 };
 
-export type SubstateRequirement = {
-    address: string,
-    version?: number | null,
-};
-
-export type TransactionRequest = {
-    account_index: number,
-    // TODO: define class
-    instructions: Object[],
-    // TODO: define class
-    input_refs: Object[],
-    required_substates: SubstateRequirement[],
-    is_dry_run: boolean,
-};
-
-export class WalletDaemonProvider {
+export class WalletDaemonProvider implements TariProvider {
     params: WalletDaemonParameters;
     connection: TariConnection;
 
