@@ -14,12 +14,12 @@ import { useState } from 'react';
 
 export default function App() {
 	async function getBalancesClick() {
-		const res = await window.provider?.getAccountBalances("component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810");
+		const res = await window.tari?.getAccountBalances("component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810");
 		console.log({ res });
 	}
 
 	async function getAccountsClick() {
-		const res = await window.provider?.getAccount();
+		const res = await window.tari?.getAccount();
 		console.log({ res });
 	}
 
@@ -40,13 +40,13 @@ export default function App() {
 			required_substates: [{ address: account, version: null }],
 			is_dry_run: true,
 		};
-		const res = await window.provider?.submitTransaction(req);
+		const res = await window.tari?.submitTransaction(req);
 		console.log({ res });
 	}
 
 	async function getSubstateClick() {
 		const substate_address = "component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810";
-		const res = await window.provider?.getSubstate(substate_address);
+		const res = await window.tari?.getSubstate(substate_address);
 		console.log({res});
 	}
 
@@ -70,7 +70,7 @@ export default function App() {
 
 function WalletDaemonDefaultButton() {
 	const onOpen = (provider: WalletDaemonTariProvider) => {
-		window.provider = provider;
+		window.tari = provider;
 	};
 	const onConnection = () => {
 		console.log("Connected to the wallet daemon");
@@ -138,7 +138,7 @@ function MetamaskButton() {
 		console.log({provider});
 		
 		setProvider(provider);
-		window.provider = provider;
+		window.tari = provider;
 	}
 
 	return (

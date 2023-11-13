@@ -4,7 +4,7 @@ export { };
 
 declare global {
     interface Window {
-        provider: TariProvider;
+        tari: TariProvider;
         ethereum: MetaMaskInpageProvider;
     }
 }
