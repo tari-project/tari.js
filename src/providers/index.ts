@@ -18,8 +18,7 @@ export type TransactionRequest = {
 
 
 export interface TariProvider {
-    getAccounts(): Promise<unknown>;
-    getAccountBalances(componentAddress: string): Promise<unknown>,
+    getAccount(): Promise<unknown>;
     getSubstate(substate_address: string): Promise<unknown>,
     submitTransaction(req: TransactionRequest): Promise<unknown>
 }

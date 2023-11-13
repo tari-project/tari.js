@@ -9,7 +9,7 @@ export const TariSnapNotInstalled = 'TARI_SNAP_NOT_INSTALLED';
 export class MetamaskTariProvider implements TariProvider {
     snapId: string;
     metamask: MetaMaskInpageProvider;
-    snap: Snap;
+    snap?: Snap;
     isConnected: boolean;
 
     constructor(snapId: string, metamask: MetaMaskInpageProvider) {
@@ -43,16 +43,35 @@ export class MetamaskTariProvider implements TariProvider {
         this.isConnected = true;
     }
 
-    getAccounts(): Promise<unknown> {
-        throw new Error("Method not implemented.");
+    async getAccount(): Promise<unknown> {
+        return await this.metamaskRequest('getAccountData', {});
     }
-    getAccountBalances(_componentAddress: string): Promise<unknown> {
-        throw new Error("Method not implemented.");
+
+    async getSubstate(substate_address: string): Promise<unknown> {
+        return await this.metamaskRequest('getSubstate', { substate_address });
     }
-    getSubstate(_substate_address: string): Promise<unknown> {
-        throw new Error("Method not implemented.");
+
+    async submitTransaction(req: TransactionRequest): Promise<unknown> {
+        const params = {
+            instructions: req.instructions,
+            input_refs: req.input_refs,
+            required_substates: req.required_substates,
+            is_dry_run: req.is_dry_run,
+        };
+
+        return await this.metamaskRequest('sendTransaction', params);
     }
-    submitTransaction(_req: TransactionRequest): Promise<unknown> {
-        throw new Error("Method not implemented.");
+
+    private async metamaskRequest(method: string, params: Object) {
+        return await this.metamask.request({
+            method: 'wallet_invokeSnap',
+            params: {
+                snapId: this.snapId,
+                request: {
+                    method,
+                    params
+                }
+            },
+        });
     }
 }

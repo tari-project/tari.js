@@ -4,6 +4,7 @@ export { };
 
 declare global {
     interface Window {
-        provider: WalletDaemonProvider;
+        provider: TariProvider;
+        ethereum: MetaMaskInpageProvider;
     }
 }

@@ -9,6 +9,8 @@ import {
 	TariPermissionKeyList
 } from "tari.js/src/providers/wallet_daemon/tari_permissions";
 import { TransactionRequest } from '../../src/providers';
+import { MetamaskTariProvider } from '../../src/providers/metamask';
+import { useState } from 'react';
 
 export default function App() {
 	async function getBalancesClick() {
@@ -17,7 +19,7 @@ export default function App() {
 	}
 
 	async function getAccountsClick() {
-		const res = await window.provider?.getAccounts();
+		const res = await window.provider?.getAccount();
 		console.log({ res });
 	}
 
@@ -42,6 +44,12 @@ export default function App() {
 		console.log({ res });
 	}
 
+	async function getSubstateClick() {
+		const substate_address = "component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810";
+		const res = await window.provider?.getSubstate(substate_address);
+		console.log({res});
+	}
+
 	return (
 		<Container maxWidth="sm">
 			<Box sx={{ my: 4 }}>
@@ -50,9 +58,11 @@ export default function App() {
 				</Typography>
 				<WalletDaemonDefaultButton />
 				<WalletDaemonCustomButton />
+				<MetamaskButton />
 				<Button variant='contained' onClick={async () => { await getAccountsClick() }}>Get Account keys</Button>
 				<Button variant='contained' onClick={async () => { await getBalancesClick() }}>Get Balances</Button>
 				<Button variant='contained' onClick={async () => { await submitTransactionClick() }}>Submit Transaction</Button>
+				<Button variant='contained' onClick={async () => { await getSubstateClick() }}>Get Substate</Button>
 			</Box>
 		</Container>
 	);
@@ -113,4 +123,28 @@ function WalletDaemonCustomButton() {
 	}
 
 	return <Button variant='contained' onClick={async () => { await handleClick() }}>Wallet Daemon Custom Buttom</Button>
+}
+
+function MetamaskButton() {
+	const snapId = import.meta.env.VITE_SNAP_ORIGIN || "local:http://localhost:8080";
+	const metamask = window.ethereum;
+	
+	const initialProvider = new MetamaskTariProvider(snapId, metamask);
+	const [provider, setProvider] = useState(initialProvider);
+
+	async function handleClick() {
+		console.log({provider});
+		await provider.connect();
+		console.log({provider});
+		
+		setProvider(provider);
+		window.provider = provider;
+	}
+
+	return (
+		<div>
+			<Typography>Connected: {provider.isConnected}</Typography>
+			<Button variant='contained' onClick={async () => { await handleClick() }}>Connect to Metamask</Button>
+		</div>
+	)		
 }

@@ -45,12 +45,12 @@ export class WalletDaemonTariProvider implements TariProvider {
         return undefined;
     }
 
-    public async getAccounts(): Promise<unknown> {
+    public async getAccount(): Promise<unknown> {
         if (!this.connection.isConnected) {
             throw WalletDaemonNotConnected;
         }
 
-        const method = "keys.list";
+        const method = "accounts.get_default";
         const res = await this.connection.sendMessage(method, this.connection.token);
 
         return res;
