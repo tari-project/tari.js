@@ -3,7 +3,6 @@ import { Box, Typography, Container, Button } from '@mui/material';
 import { TariConnectorButton, WalletDaemonParameters, WalletDaemonTariProvider } from 'tari.js/src/providers/wallet_daemon/index';
 import {
 	TariPermissions,
-	TariPermissionAccountList,
 	TariPermissionTransactionSend,
 	TariPermissionAccountInfo,
 	TariPermissionKeyList
@@ -13,12 +12,7 @@ import { MetamaskTariProvider } from '../../src/providers/metamask';
 import { useState } from 'react';
 
 export default function App() {
-	async function getBalancesClick() {
-		const res = await window.tari?.getAccountBalances("component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810");
-		console.log({ res });
-	}
-
-	async function getAccountsClick() {
+	async function getAccountClick() {
 		const res = await window.tari?.getAccount();
 		console.log({ res });
 	}
@@ -59,13 +53,25 @@ export default function App() {
 				<WalletDaemonDefaultButton />
 				<WalletDaemonCustomButton />
 				<MetamaskButton />
-				<Button variant='contained' onClick={async () => { await getAccountsClick() }}>Get Account keys</Button>
-				<Button variant='contained' onClick={async () => { await getBalancesClick() }}>Get Balances</Button>
+				<Button variant='contained' onClick={async () => { await getAccountClick() }}>Get Account Data</Button>
 				<Button variant='contained' onClick={async () => { await submitTransactionClick() }}>Submit Transaction</Button>
 				<Button variant='contained' onClick={async () => { await getSubstateClick() }}>Get Substate</Button>
 			</Box>
 		</Container>
 	);
+}
+
+function buildWalletDaemonPermissions() {
+	let permissions = new TariPermissions();
+	permissions.addPermission(new TariPermissionKeyList());
+	permissions.addPermission(new TariPermissionAccountInfo());
+	permissions.addPermission(
+		new TariPermissionTransactionSend()
+	);
+
+	let optionalPermissions = new TariPermissions();
+
+	return { permissions, optionalPermissions }
 }
 
 function WalletDaemonDefaultButton() {
@@ -76,16 +82,7 @@ function WalletDaemonDefaultButton() {
 		console.log("Connected to the wallet daemon");
 	};
 	let address = import.meta.env.VITE_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
-	let permissions = new TariPermissions();
-	permissions.addPermission(new TariPermissionAccountList());
-	permissions.addPermission(new TariPermissionAccountInfo());
-	permissions.addPermission(new TariPermissionKeyList());
-	permissions.addPermission(
-		new TariPermissionTransactionSend()
-	);
-
-	let optionalPermissions = new TariPermissions();
-	console.log({ permissions });
+	let { permissions, optionalPermissions} = buildWalletDaemonPermissions(); 
 
 	return (
 		<>
@@ -102,12 +99,7 @@ function WalletDaemonDefaultButton() {
 
 function WalletDaemonCustomButton() {
 	const signalingServerUrl = import.meta.env.VITE_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
-	const permissions = new TariPermissions();
-	permissions.addPermission(new TariPermissionAccountList())
-	permissions.addPermission(
-		new TariPermissionTransactionSend()
-	);
-	const optionalPermissions = new TariPermissions();
+	let { permissions, optionalPermissions} = buildWalletDaemonPermissions(); 
 
 	async function handleClick() {
 		const params: WalletDaemonParameters = {

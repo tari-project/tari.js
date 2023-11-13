@@ -24,8 +24,12 @@ export class WalletDaemonTariProvider implements TariProvider {
     }
 
     static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariProvider> {
+        const allPermissions = new TariPermissions();
+        allPermissions.addPermissions(params.permissions);
+        allPermissions.addPermissions(params.optionalPermissions);
+        console.log({allPermissions});
         let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
-        await connection.init(params.permissions, params.onConnection);
+        await connection.init(allPermissions, params.onConnection);
         return new WalletDaemonTariProvider(params, connection);
     }
 
