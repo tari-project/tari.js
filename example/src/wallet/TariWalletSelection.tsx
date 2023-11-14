@@ -28,12 +28,14 @@ export function TariWalletSelection(props: WalletSelectionProps) {
 
     const onWalletDaemonClick = () => {
         console.log('Wallet daemon click!');
+        handleClose();
     };
 
     const onMetamaskClick = async () => {
 	    const metamaskProvider = new MetamaskTariProvider(SNAP_ID, window.ethereum);
         await metamaskProvider.connect();
         window.tari = metamaskProvider;
+        handleClose();
     };
 
     return (
