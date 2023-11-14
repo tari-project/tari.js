@@ -10,6 +10,9 @@ import MetamaskLogo from './content/metamask-logo.svg';
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { MetamaskTariProvider } from "../../../src/providers/metamask";
+
+const SNAP_ID = import.meta.env.VITE_SNAP_ORIGIN || "local:http://localhost:8080";
 
 export interface WalletSelectionProps {
     open: boolean;
@@ -27,8 +30,10 @@ export function TariWalletSelection(props: WalletSelectionProps) {
         console.log('Wallet daemon click!');
     };
 
-    const onMetamaskClick = () => {
-        console.log('Metamask click!');
+    const onMetamaskClick = async () => {
+	    const metamaskProvider = new MetamaskTariProvider(SNAP_ID, window.ethereum);
+        await metamaskProvider.connect();
+        window.tari = metamaskProvider;
     };
 
     return (

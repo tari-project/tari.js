@@ -42,13 +42,14 @@ export default function App() {
 		};
 		const res = await window.tari?.submitTransaction(req);
 		console.log({ res });
+		setTransactionSubmitResult(res);
 	}
 
 	async function getSubstateClick() {
 		const substate_address = "component_841ac151e9d4fa71715663a7ac94c20ceae5fc4b0fb399c3937ba1f09068f810";
 		const res = await window.tari?.getSubstate(substate_address);
 		console.log({ res });
-		setTransactionSubmitResult(res);
+		setSubstate(res);
 	}
 
 	return (
