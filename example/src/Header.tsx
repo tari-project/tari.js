@@ -1,12 +1,10 @@
 import * as React from 'react';
 
 import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import TariLogoWhite from './content/tari-logo-white.svg';
-import { WalletSelection } from './WalletSelection';
+import { TariConnectButton } from './wallet/TariConnectButton';
 
 export default function Header() {
     return (
@@ -26,31 +24,4 @@ export default function Header() {
             </Toolbar>
 
         </AppBar>);
-}
-
-
-function TariConnectButton() {
-    const [walletSelectionOpen, setWalletSelectionOpen] = React.useState(false);
-
-    const handleConnectClick = () => {
-        console.log("Header connection button");
-        setWalletSelectionOpen(true);
-    };
-
-    const onWalletSelectionClose = () => {
-        setWalletSelectionOpen(false);
-    };
-
-    return (
-        <div>
-            <Button variant='contained' onClick={async () => { await handleConnectClick() }}>
-                <img width="30px" height="30px" src={TariLogoWhite} />
-                <div style={{ paddingLeft: '10px' }}>Connect</div>
-            </Button>
-            <WalletSelection
-                open={walletSelectionOpen}
-                onClose={onWalletSelectionClose}
-            />
-        </div>
-    );
 }

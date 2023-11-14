@@ -16,7 +16,7 @@ export interface WalletSelectionProps {
     onClose: () => void;
 }
 
-export function WalletSelection(props: WalletSelectionProps) {
+export function TariWalletSelection(props: WalletSelectionProps) {
     const { onClose, open } = props;
 
     const handleClose = () => {
