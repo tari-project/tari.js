@@ -8,7 +8,6 @@ export function TariConnectButton() {
     const [walletSelectionOpen, setWalletSelectionOpen] = React.useState(false);
 
     const handleConnectClick = () => {
-        console.log("Header connection button");
         setWalletSelectionOpen(true);
     };
 
