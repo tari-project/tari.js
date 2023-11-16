@@ -49,6 +49,10 @@ export class WalletDaemonTariProvider implements TariProvider {
         return undefined;
     }
 
+    public isConnected(): boolean {
+        return this.connection.isConnected();
+    }
+
     public async getAccount(): Promise<unknown> {
         if (!this.connection.isConnected) {
             throw WalletDaemonNotConnected;

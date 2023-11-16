@@ -16,8 +16,8 @@ export type TransactionRequest = {
     is_dry_run: boolean,
 };
 
-
 export interface TariProvider {
+    isConnected(): boolean;
     getAccount(): Promise<unknown>;
     getSubstate(substate_address: string): Promise<unknown>,
     submitTransaction(req: TransactionRequest): Promise<unknown>

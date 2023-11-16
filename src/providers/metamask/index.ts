@@ -10,12 +10,12 @@ export class MetamaskTariProvider implements TariProvider {
     snapId: string;
     metamask: MetaMaskInpageProvider;
     snap?: Snap;
-    isConnected: boolean;
+    metamaskConnected: boolean;
 
     constructor(snapId: string, metamask: MetaMaskInpageProvider) {
         this.snapId = snapId;
         this.metamask = metamask;
-        this.isConnected = false;
+        this.metamaskConnected = false;
     }
 
     async connect(): Promise<void> {
@@ -40,7 +40,11 @@ export class MetamaskTariProvider implements TariProvider {
             throw TariSnapNotInstalled;
         }
         this.snap = snap;
-        this.isConnected = true;
+        this.metamaskConnected = true;
+    }
+
+    public isConnected(): boolean {
+        return this.metamaskConnected;
     }
 
     async getAccount(): Promise<unknown> {
