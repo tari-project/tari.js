@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import Button from "@mui/material/Button";
 import TariLogoWhite from './content/tari-logo-white.svg';
-import { TariWalletSelection } from './TariWalletSelection';
+import { TariWalletSelectionDialog } from './TariWalletSelectionDialog';
 
 export function TariConnectButton() {
     const [walletSelectionOpen, setWalletSelectionOpen] = React.useState(false);
@@ -22,7 +22,7 @@ export function TariConnectButton() {
                 <img width="30px" height="30px" src={TariLogoWhite} />
                 <div style={{ paddingLeft: '10px' }}>Connect</div>
             </Button>
-            <TariWalletSelection
+            <TariWalletSelectionDialog
                 open={walletSelectionOpen}
                 onClose={onWalletSelectionClose}
             />

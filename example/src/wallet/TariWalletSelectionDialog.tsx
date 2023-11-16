@@ -1,3 +1,4 @@
+import * as React from 'react';
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import Divider from "@mui/material/Divider";
@@ -11,28 +12,43 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { MetamaskTariProvider } from "../../../src/providers/metamask";
+import { TariWalletDaemonConnectDialog } from './TariWalletDaemonConnectDialog';
+import { TariPermissionAccountInfo, TariPermissionKeyList, TariPermissionTransactionSend, TariPermissions } from '../../../src/providers/wallet_daemon/tari_permissions';
 
+const SIGNALING_SERVER_URL = import.meta.env.VITE_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
 const SNAP_ID = import.meta.env.VITE_SNAP_ORIGIN || "local:http://localhost:8080";
+
+// Minimal permissions for the example site
+// But each application will have different permission needs
+let walletDaemonPermissions = new TariPermissions();
+walletDaemonPermissions.addPermission(new TariPermissionKeyList());
+walletDaemonPermissions.addPermission(new TariPermissionAccountInfo());
+walletDaemonPermissions.addPermission(
+    new TariPermissionTransactionSend()
+);
+let walletDaemonOptionalPermissions = new TariPermissions();
 
 export interface WalletSelectionProps {
     open: boolean;
     onClose: () => void;
 }
 
-export function TariWalletSelection(props: WalletSelectionProps) {
+export function TariWalletSelectionDialog(props: WalletSelectionProps) {
     const { onClose, open } = props;
 
+    const [walletDaemonOpen, setWalletDaemonOpen] = React.useState(false);
+
     const handleClose = () => {
+        setWalletDaemonOpen(false);
         onClose();
     };
 
     const onWalletDaemonClick = () => {
-        console.log('Wallet daemon click!');
-        handleClose();
+        setWalletDaemonOpen(true);
     };
 
     const onMetamaskClick = async () => {
-	    const metamaskProvider = new MetamaskTariProvider(SNAP_ID, window.ethereum);
+        const metamaskProvider = new MetamaskTariProvider(SNAP_ID, window.ethereum);
         await metamaskProvider.connect();
         window.tari = metamaskProvider;
         handleClose();
@@ -51,6 +67,7 @@ export function TariWalletSelection(props: WalletSelectionProps) {
                 <Grid container spacing={2} justifyContent='center'>
                     <Grid item xs={4}>
                         <WalletConnectionMethodCard img={TariLogo} text='Tari Wallet Daemon' callback={onWalletDaemonClick}></WalletConnectionMethodCard>
+                        <TariWalletDaemonConnectDialog open={walletDaemonOpen} onClose={handleClose} signalingServerUrl={SIGNALING_SERVER_URL} permissions={walletDaemonPermissions} optionalPermissions={walletDaemonOptionalPermissions}></TariWalletDaemonConnectDialog>
                     </Grid>
                     <Grid item xs={4}>
                         <WalletConnectionMethodCard img={MetamaskLogo} text='MetaMask' callback={onMetamaskClick}></WalletConnectionMethodCard>
