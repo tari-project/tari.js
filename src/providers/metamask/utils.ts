@@ -32,14 +32,11 @@ export const getSnaps = async (
  */
 export const connectSnap = async (
     provider: MetaMaskInpageProvider,
-    snapId: string,
-    params: Record<'version' | string, unknown> = {},
+    snaps: Record<string, {version?: string}>,
 ) => {
     await provider.request({
         method: 'wallet_requestSnaps',
-        params: {
-            [snapId]: params,
-        },
+        params: snaps,
     });
 };
 

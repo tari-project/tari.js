@@ -1,6 +1,8 @@
-import { TariPermissions } from "./tari_permissions";
-import { TariConnection } from "./webrtc";
-import { TariProvider, TransactionRequest } from '../index';
+import {TariPermissions} from "./tari_permissions";
+import {TariConnection} from "./webrtc";
+import {TariProvider} from '../index';
+import {TransactionSubmitRequest, TransactionResult, TransactionStatus, TransactionSubmitResponse} from '../types';
+import {Account} from "../types";
 
 export const WalletDaemonNotConnected = 'WALLET_DAEMON_NOT_CONNECTED';
 export const Unsupported = 'UNSUPPORTED';
@@ -15,6 +17,7 @@ export type WalletDaemonParameters = {
 };
 
 export class WalletDaemonTariProvider implements TariProvider {
+    public providerName = "WalletDaemon";
     params: WalletDaemonParameters;
     connection: TariConnection;
 
@@ -53,24 +56,38 @@ export class WalletDaemonTariProvider implements TariProvider {
         return this.connection.isConnected();
     }
 
-    public async getAccount(): Promise<unknown> {
-        if (!this.connection.isConnected) {
-            throw WalletDaemonNotConnected;
-        }
+    public async createFreeTestCoins(): Promise<Account> {
+        const method = "accounts.create_free_test_coins";
+        const res = await this.connection.sendMessage(method, this.connection.token, {
+            account: null,
+            amount: 1000000,
+            max_fee: null,
+            key_id: 0
+        }) as any;
+        return {
+            account_id: res.account.key_index,
+            address: res.account.address.Component,
+            public_key: res.public_key,
+            resources: []
+        };
+    }
 
+    public async getAccount(): Promise<Account> {
         const method = "accounts.get_default";
-        const res = await this.connection.sendMessage(method, this.connection.token);
+        const {account, public_key} = await this.connection.sendMessage(method, this.connection.token, {}) as any;
 
-        return res;
+        return {
+            account_id: account.key_index,
+            address: account.address.Component,
+            public_key,
+            // TODO
+            resources: []
+        };
     }
 
     public async getAccountBalances(componentAddress: string): Promise<unknown> {
-        if (!this.connection.isConnected) {
-            throw WalletDaemonNotConnected;
-        }
-
         const method = "accounts.get_balances";
-        const args = { ComponentAddress: componentAddress };
+        const args = {ComponentAddress: componentAddress};
         const res = await this.connection.sendMessage(method, this.connection.token, args);
 
         return res;
@@ -81,27 +98,57 @@ export class WalletDaemonTariProvider implements TariProvider {
         throw Unsupported;
     }
 
-    public async submitTransaction(req: TransactionRequest): Promise<unknown> {
-        if (!this.connection.isConnected) {
-            throw WalletDaemonNotConnected;
-        }
+    public async submitTransaction(req: TransactionSubmitRequest): Promise<TransactionSubmitResponse> {
+        const params = {
+            signing_key_index: req.account_id,
+            fee_instructions: req.fee_instructions,
+            instructions: req.instructions,
+            inputs: req.required_substates,
+            override_inputs: false,
+            is_dry_run: req.is_dry_run,
+            proof_ids: [],
+            min_epoch: null,
+            max_epoch: null,
+        };
+        const res = await this.connection.sendMessage<any>("transactions.submit", this.connection.token, params, 10);
 
-        const method = "transactions.submit";
-        const args = [
-            /*signing_key_index: */ req.account_index,
-            /*fee_instructions":*/[],
-            /*instructions":*/ req.instructions,
-            /*inputs":*/ req.required_substates,
-            /*override_inputs":*/ false,
-            /*is_dry_run*/ req.is_dry_run,
-            /*proof_ids*/[],
-            /*min_epoch*/ null,
-            /*max_epoch*/ null,
-        ];
-        const res = await this.connection.sendMessage(method, this.connection.token, ...args);
-
-        return res;
+        return {transaction_id: res.transaction_id};
     }
 
-    // TODO: getTransactionResult
+    public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+        const params = {transaction_id: transactionId};
+        const res = await this.connection.sendMessage("transactions.get_result", this.connection.token, params) as any;
+
+        return {
+            transaction_id: transactionId,
+            status: convertStringToTransactionStatus(res.status),
+            result: res.result,
+        };
+    }
+
+    public async getTemplateDefinition(template_address: string): Promise<unknown> {
+        const params = {template_address};
+        return await this.connection.sendMessage("templates.get", this.connection.token, params);
+    }
+}
+
+function convertStringToTransactionStatus(status: string): TransactionStatus {
+    switch (status) {
+        case "New":
+            return TransactionStatus.New;
+        case "DryRun":
+            return TransactionStatus.DryRun;
+        case "Pending":
+            return TransactionStatus.Pending;
+        case "Accepted":
+            return TransactionStatus.Accepted;
+        case "Rejected":
+            return TransactionStatus.Rejected;
+        case "InvalidTransaction":
+            return TransactionStatus.InvalidTransaction;
+        case "OnlyFeeAccepted":
+            return TransactionStatus.OnlyFeeAccepted;
+        default:
+            throw new Error(`Unknown status: ${status}`);
+    }
 }

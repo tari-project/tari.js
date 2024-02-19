@@ -1,22 +1,30 @@
-import { TariProvider, TransactionRequest } from "..";
-import { MetaMaskInpageProvider } from '@metamask/providers';
-import { Snap, connectSnap, getSnap, isFlask } from "./utils";
+import {TariProvider} from "../index";
+import {TransactionSubmitRequest, TransactionResult, TransactionStatus, TransactionSubmitResponse} from "../types";
+import {MetaMaskInpageProvider} from '@metamask/providers';
+import {connectSnap, getSnap, isFlask, Snap} from "./utils";
+import {Maybe} from "@metamask/providers/dist/utils";
+import {Account} from "../types";
 
 export const MetamaskNotInstalled = 'METAMASK_NOT_INSTALLED';
 export const MetamaskIsNotFlask = 'METAMASK_IS_NOT_FLASK';
 export const TariSnapNotInstalled = 'TARI_SNAP_NOT_INSTALLED';
 
 export class MetamaskTariProvider implements TariProvider {
+    public providerName = "Metamask";
     snapId: string;
+    snapVersion: string | undefined;
     metamask: MetaMaskInpageProvider;
     snap?: Snap;
     metamaskConnected: boolean;
 
     constructor(snapId: string, metamask: MetaMaskInpageProvider) {
         this.snapId = snapId;
+        this.snapVersion = undefined;
         this.metamask = metamask;
         this.metamaskConnected = false;
     }
+
+
 
     async connect(): Promise<void> {
         // check that the metamask provider is valid
@@ -31,7 +39,7 @@ export class MetamaskTariProvider implements TariProvider {
 
         // connect to the tari snap
         // this will request MetaMask the installation of the tari snap if it's not already installed
-        await connectSnap(this.metamask, this.snapId);
+        await connectSnap(this.metamask, {[this.snapId]:{version: this.snapVersion}});
 
         // store the tari snap reference
         const snap = await getSnap(this.metamask, this.snapId);
@@ -47,26 +55,83 @@ export class MetamaskTariProvider implements TariProvider {
         return this.metamaskConnected;
     }
 
-    async getAccount(): Promise<unknown> {
-        return await this.metamaskRequest('getAccountData', {});
+    public async createFreeTestCoins(account_id: number): Promise<Account> {
+        const res = await this.metamaskRequest('getFreeTestCoins', {
+            amount: 1000000,
+            account_id,
+            fee: 2000
+        }) as any;
+        return {
+            account_id,
+            address: res.address,
+            public_key: res.public_key,
+            resources: []
+        };
+    }
+
+    async getAccount(): Promise<Account> {
+        return await this.metamaskRequest('getAccountData', {account_id: 0}) as any;
     }
 
     async getSubstate(substate_address: string): Promise<unknown> {
         return await this.metamaskRequest('getSubstate', { substate_address });
     }
 
-    async submitTransaction(req: TransactionRequest): Promise<unknown> {
+    async submitTransaction(req: TransactionSubmitRequest): Promise<TransactionSubmitResponse> {
         const params = {
             instructions: req.instructions,
+            fee_instructions: req.fee_instructions,
             input_refs: req.input_refs,
-            required_substates: req.required_substates,
+            required_substates: req.required_substates || [],
             is_dry_run: req.is_dry_run,
         };
 
-        return await this.metamaskRequest('sendTransaction', params);
+        const resp = await this.metamaskRequest<any>('sendTransaction', params);
+        if (!resp) {
+            throw new Error("Failed to submit transaction to metamask snap: empty response");
+        }
+        if (resp.error) {
+            throw new Error(`Failed to submit transaction to metamask snap: ${resp.error}`);
+        }
+        return { transaction_id: resp.transaction_id };
     }
 
-    private async metamaskRequest(method: string, params: Object) {
+    public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+        // This request returns the response from the indexer get_transaction_result request
+        const resp: Maybe<any> = await this.metamaskRequest('getTransactionResult', { transaction_id: transactionId });
+
+        if (!resp) {
+            throw new Error("Failed to get transaction result from metamask snap: empty response");
+        }
+
+        if (resp.result === "Pending") {
+            return {
+                transaction_id: transactionId,
+                status: TransactionStatus.Pending,
+                result: null
+            } as TransactionResult;
+        }
+
+        if (!resp?.result?.Finalized) {
+            throw new Error("Transaction result was not pending nor finalized");
+        }
+
+        const newStatus = convertToStatus(resp.result.Finalized);
+
+        return {
+            transaction_id: transactionId,
+            status: newStatus,
+            result: resp.result.Finalized.execution_result.finalize
+        } as TransactionResult;
+    }
+
+    getTemplateDefinition(template_address: string): Promise<unknown> {
+        return this.metamaskRequest('getTemplateDefinition', { template_address });
+    }
+
+
+    private async metamaskRequest<T>(method: string, params: Object): Promise<Maybe<T>> {
+        console.log("Metamask request:", method, params);
         return await this.metamask.request({
             method: 'wallet_invokeSnap',
             params: {
@@ -78,4 +143,21 @@ export class MetamaskTariProvider implements TariProvider {
             },
         });
     }
+}
+
+function convertToStatus(result: any): TransactionStatus {
+    // Ref: https://github.com/tari-project/tari-dan/blob/bb0b31139b770aacd7bb49af865543aa4a9e2de4/dan_layer/wallet/sdk/src/apis/transaction.rs
+    if (result.final_decision !== "Commit") {
+        return TransactionStatus.Rejected;
+    }
+
+    // if (!result?.result?.Finalized) {
+    //     throw new Error("Transaction result was finalized but no result was returned");
+    // }
+    //
+    // if (result.finalize.AcceptFeeRejectRest) {
+    //     return TransactionStatus.OnlyFeeAccepted;
+    // }
+
+    return TransactionStatus.Accepted;
 }

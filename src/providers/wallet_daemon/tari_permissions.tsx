@@ -247,7 +247,28 @@ export class TariPermissionNftGetOwnershipProof {
   }
 }
 
-export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft;
+export class TariPermissionTransactionsGet {
+  constructor() {}
+  toJSON() {
+    return "TransactionGet"
+  }
+}
+
+export class TariPermissionSubstatesRead {
+  constructor() {}
+  toJSON() {
+    return "SubstatesRead"
+  }
+}
+
+export class TariPermissionTemplatesRead {
+  constructor() {}
+  toJSON() {
+    return "TemplatesRead"
+  }
+}
+
+export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft | TariPermissionTransactionsGet | TariPermissionSubstatesRead | TariPermissionTemplatesRead;
 
 export class TariPermissions {
   private permissions: TariPermission[];
@@ -256,12 +277,14 @@ export class TariPermissions {
     this.permissions = []
   }
 
-  addPermission(permission: TariPermission) {
+  addPermission(permission: TariPermission): this {
     this.permissions.push(permission);
+    return this;
   }
 
-  addPermissions(other: TariPermissions) {
+  addPermissions(other: TariPermissions): this {
     this.permissions.push(...other.permissions);
+    return this;
   }
 
   toJSON() {

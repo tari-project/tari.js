@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Typography, Container, Button, Paper, Stack, Divider, TextField } from '@mui/material';
-import { TransactionRequest } from '../../src/providers';
+import { TransactionSubmitRequest } from '../../src/providers';
 import Header from './Header';
 
 export default function App() {
