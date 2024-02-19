@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
+    "build-tsc": "tsc",
     "start": "rollup -c -w"
   },
   "keywords": [],

@@ -1,4 +1,5 @@
 import { TariPermissions } from "./tari_permissions";
+import {WalletDaemonNotConnected} from "./provider";
 
 class SignaligServer {
   private _token?: string;
@@ -21,6 +22,7 @@ class SignaligServer {
   }
 
   private async jsonRpc(method: string, token?: string, params?: any) {
+    console.log('jsonRpc', method, token, params);
     let id = 0;
     id += 1;
     let address = this._server_url;
@@ -28,16 +30,13 @@ class SignaligServer {
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-    if (!params) {
-      params = ""
-    }
     let response = await fetch(address, {
       method: 'POST',
       body: JSON.stringify({
         method: method,
         jsonrpc: '2.0',
         id: id,
-        params: params,
+        params: params || {},
       }),
       headers: headers
     });
@@ -105,21 +104,25 @@ export class TariConnection {
     this._dataChannel.onmessage = (message) => {
       let response = JSON.parse(message.data)
       console.log('response', response)
+
+      if (!this._callbacks[response.id]) {
+        console.error("No callback found for id", response.id);
+        return;
+      }
       // The response should contain id, to identify the Promise.resolve, that is waiting for this result
       let [resolve, reject] = this._callbacks[response.id];
       delete this._callbacks[response.id];
-      try {
-        resolve(JSON.parse(response.payload));
-      }
-      catch {
-        reject(response.payload);
+      if (response.payload?.error) {
+        reject(response.payload.error);
+      } else {
+        resolve(response.payload);
       }
     };
     this._dataChannel.onopen = () => {
       // This should be removed before the release, but it's good for debugging.
       console.log("Data channel is open!");
 
-      this.sendMessage("get.token", this._signalingServer.token)
+      this.sendMessage("get.token", this._signalingServer.token, {})
         .then((walletToken: unknown) => {
           if (typeof walletToken !== 'string') {
             throw Error('Received invalid JWT from wallet daemon');
@@ -130,10 +133,7 @@ export class TariConnection {
 
           if (this.onConnection) {
             this.onConnection();
-          }})
-        .catch(err => {
-          console.log({err});
-        });
+          }});
     };
     this._peerConnection.onicecandidate = (event) => {
       console.log('event', event);
@@ -162,7 +162,7 @@ export class TariConnection {
   private async setAnswer() {
     // This is called once the other end got the offer and ices and created and store an answer and its ice candidates
     // We get its answer sdp
-    let sdp = JSON.parse((await this._signalingServer.getAnswer()));
+    let sdp = await this._signalingServer.getAnswer();
 
     // And its ice candidates
     let iceCandidates = await this._signalingServer.getIceCandidates();
@@ -172,7 +172,6 @@ export class TariConnection {
     this._peerConnection.setRemoteDescription(answer);
 
     // We add all the ice candidates to connect, the other end is doing the same with our ice candidates
-    iceCandidates = JSON.parse(iceCandidates);
     for (const iceCandidate of iceCandidates) {
       this._peerConnection.addIceCandidate(iceCandidate);
     }
@@ -210,31 +209,28 @@ export class TariConnection {
   }
 
   // If the last parameter has timeout property e.g. {timeout:1000}, it set the timeout for this call.
-  async sendMessage(method: string, token: string | undefined, ...args: any[]) {
-    var timeout = 0;
-    if (args.length > 0) {
-      console.log(args.length)
-      if (args[args.length - 1]?.timeout) {
-        timeout = args.pop().timeout;
-      }
+  async sendMessage<T>(method: string, token: string | undefined, params: object, timeout_secs: number | null = null): Promise<T> {
+    if (!this.isConnected) {
+      throw new Error(WalletDaemonNotConnected);
     }
+
     // This should be removed before the release, but it's good for debugging.
-    console.log(args, 'timeout', timeout);
+    console.log(params, 'timeout', timeout_secs);
     // Generate a unique id
     let messageId = await this.getNextMessageId();
     return new Promise((resolve, reject) => {
       // We store the resolve callback for this request, 
       // so once the data channel receives a response we know where to return the data
       this._callbacks[messageId] = [resolve, reject];
-      if (timeout > 0) {
+      if (timeout_secs) {
         // If the user set a timeout which set it here so the promise will be rejected if not fulfilled in time.
         setTimeout(() => {
           delete this._callbacks[messageId];
           reject(new Error("Timeout"));
-        }, timeout)
+        }, timeout_secs * 1000)
       }
       // Make the actual call to the wallet daemon
-      this._dataChannel.send(JSON.stringify({ id: messageId, method, token, params: JSON.stringify(args) }));
+      this._dataChannel.send(JSON.stringify({ id: messageId, method, token, params}));
     });
   }
 
