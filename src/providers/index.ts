@@ -1,4 +1,4 @@
-import {Account, TransactionSubmitRequest, TransactionResult, TransactionSubmitResponse} from './types'
+import {Account, SubmitTransactionRequest, TransactionResult, SubmitTransactionResponse} from './types'
 
 export * as walletDaemon from './wallet_daemon'
 export * as metamask from './metamask'
@@ -9,7 +9,7 @@ export interface TariProvider {
     isConnected(): boolean;
     getAccount(): Promise<Account>;
     getSubstate(substate_address: string): Promise<unknown>,
-    submitTransaction(req: TransactionSubmitRequest): Promise<TransactionSubmitResponse>
+    submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse>
     getTransactionResult(transactionId: string): Promise<TransactionResult>
     getTemplateDefinition(template_address: string): Promise<unknown>
 }

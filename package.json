@@ -1,5 +1,5 @@
 {
-  "name": "tari.js",
+  "name": "@tariproject/tarijs",
   "version": "0.1.14",
   "description": "",
   "main": "./dist/index.js",
@@ -16,6 +16,7 @@
     "@rollup/plugin-image": "^3.0.2",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
+    "@tariproject/wallet_jrpc_client": "file:../../tari/dan/clients/javascript/wallet_daemon_client",
     "babel-core": "^4.7.16",
     "babel-runtime": "^6.26.0",
     "qrcode.react": "^3.1.0",
