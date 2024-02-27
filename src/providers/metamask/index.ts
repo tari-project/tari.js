@@ -1,5 +1,5 @@
 import {TariProvider} from "../index";
-import {TransactionSubmitRequest, TransactionResult, TransactionStatus, TransactionSubmitResponse} from "../types";
+import {SubmitTransactionRequest, TransactionResult, TransactionStatus, SubmitTransactionResponse} from "../types";
 import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
 import {Maybe} from "@metamask/providers/dist/utils";
@@ -77,7 +77,7 @@ export class MetamaskTariProvider implements TariProvider {
         return await this.metamaskRequest('getSubstate', { substate_address });
     }
 
-    async submitTransaction(req: TransactionSubmitRequest): Promise<TransactionSubmitResponse> {
+    async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
         const params = {
             instructions: req.instructions,
             fee_instructions: req.fee_instructions,

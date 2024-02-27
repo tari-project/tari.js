@@ -268,7 +268,7 @@ export class TariPermissionTemplatesRead {
   }
 }
 
-export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft | TariPermissionTransactionsGet | TariPermissionSubstatesRead | TariPermissionTemplatesRead;
+export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft | TariPermissionTransactionsGet | TariPermissionSubstatesRead | TariPermissionTemplatesRead | string;
 
 export class TariPermissions {
   private permissions: TariPermission[];

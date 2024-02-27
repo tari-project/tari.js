@@ -1,10 +1,10 @@
 
 export type SubstateRequirement = {
-    address: string,
+    substate_id: string,
     version?: number | null,
 };
 
-export type TransactionSubmitRequest = {
+export type SubmitTransactionRequest = {
     account_id: number,
     instructions: object[],
     fee_instructions: object[],
@@ -16,7 +16,7 @@ export type TransactionSubmitRequest = {
     max_epoch: number | null,
 };
 
-export type TransactionSubmitResponse = {
+export type SubmitTransactionResponse = {
     transaction_id: string;
 };
 
