@@ -140,7 +140,7 @@ export class WalletDaemonTariProvider implements TariProvider {
     }
 
     public async getPublicKey(branch: string, index: number): Promise<string> {
-        const res = await this.client.createKeys({branch, index});
+        const res = await this.client.createKey({branch, specific_index: index});
         return res.public_key;
     }
 
