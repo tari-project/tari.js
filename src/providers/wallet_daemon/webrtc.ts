@@ -111,7 +111,7 @@ export class TariConnection {
             let [resolve, reject] = this._callbacks[response.id];
             delete this._callbacks[response.id];
             if (response.payload?.error) {
-                reject(response.payload.error);
+                reject(new Error(response.payload.error));
             } else {
                 resolve(response.payload);
             }
