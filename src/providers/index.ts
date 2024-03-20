@@ -12,4 +12,5 @@ export interface TariProvider {
     submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse>
     getTransactionResult(transactionId: string): Promise<TransactionResult>
     getTemplateDefinition(template_address: string): Promise<unknown>
+    getPublicKey(branch: string, index: number): Promise<string>;
 }

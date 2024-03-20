@@ -108,6 +108,7 @@ export class WalletDaemonTariProvider implements TariProvider {
 
     public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
         const params = {
+            transaction: null,
             signing_key_index: req.account_id,
             fee_instructions: req.fee_instructions as Instruction[],
             instructions: req.instructions as Instruction[],
@@ -116,6 +117,7 @@ export class WalletDaemonTariProvider implements TariProvider {
                 substate_id: s.substate_id as any,
                 version: s.version
             })),
+            input_refs: [],
             override_inputs: false,
             is_dry_run: req.is_dry_run,
             proof_ids: [],
@@ -135,6 +137,11 @@ export class WalletDaemonTariProvider implements TariProvider {
             status: convertStringToTransactionStatus(res.status),
             result: res.result,
         };
+    }
+
+    public async getPublicKey(branch: string, index: number): Promise<string> {
+        const res = await this.client.createKeys({branch, index});
+        return res.public_key;
     }
 
     public async getTemplateDefinition(template_address: string): Promise<unknown> {

@@ -24,8 +24,6 @@ export class MetamaskTariProvider implements TariProvider {
         this.metamaskConnected = false;
     }
 
-
-
     async connect(): Promise<void> {
         // check that the metamask provider is valid
         if (!this.metamask || !this.metamask.isMetaMask) {
@@ -123,6 +121,16 @@ export class MetamaskTariProvider implements TariProvider {
             status: newStatus,
             result: resp.result.Finalized.execution_result.finalize
         } as TransactionResult;
+    }
+
+    public async getPublicKey(_branch: string, index: number): Promise<string> {
+        const resp: Maybe<any> = await this.metamaskRequest('getPublicKey', { index });
+
+        if (!resp) {
+            throw new Error("Failed to get public key from metamask snap: empty response");
+        }
+
+        return resp.public_key;
     }
 
     getTemplateDefinition(template_address: string): Promise<unknown> {
