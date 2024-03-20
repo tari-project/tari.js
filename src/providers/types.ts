@@ -43,3 +43,7 @@ export interface Account {
     public_key: string,
     resources: string[],
 }
+
+export interface VaultBalances {
+    balances: Map<string, number | null>
+}

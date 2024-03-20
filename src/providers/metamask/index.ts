@@ -1,5 +1,11 @@
 import {TariProvider} from "../index";
-import {SubmitTransactionRequest, TransactionResult, TransactionStatus, SubmitTransactionResponse} from "../types";
+import {
+    SubmitTransactionRequest,
+    TransactionResult,
+    TransactionStatus,
+    SubmitTransactionResponse,
+    VaultBalances
+} from "../types";
 import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
 import {Maybe} from "@metamask/providers/dist/utils";
@@ -131,6 +137,11 @@ export class MetamaskTariProvider implements TariProvider {
         }
 
         return resp.public_key;
+    }
+
+    public async getConfidentialVaultBalances(_viewKeyId: number, _vaultId: string, _min: number | null = null, _max: number | null = null): Promise<VaultBalances> {
+        // TODO: create an FFI in the snap that reveals the vault balance using the view key
+        throw new Error("getVaultBalances not implemented for Metamask");
     }
 
     getTemplateDefinition(template_address: string): Promise<unknown> {
