@@ -96,13 +96,20 @@ export class WalletDaemonTariProvider implements TariProvider {
 
     public async getAccount(): Promise<Account> {
         const {account, public_key} = await this.client.accountsGetDefault({}) as any;
+        const {balances} = await this.client.accountsGetBalances({account: {ComponentAddress: account.address.Component }, refresh: false});
 
         return {
             account_id: account.key_index,
             address: account.address.Component,
             public_key,
-            // TODO
-            resources: []
+            // TODO: should be vaults not resources
+            resources: balances.map((b) => ({
+                type: b.resource_type,
+                resource_address: b.resource_address,
+                balance: b.balance + b.confidential_balance,
+                vault_id: ('Vault' in b.vault_address) ? b.vault_address.Vault : b.vault_address,
+                token_symbol: b.token_symbol,
+            }))
         };
     }
 
