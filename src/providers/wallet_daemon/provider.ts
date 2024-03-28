@@ -1,13 +1,22 @@
-import {TariPermissions} from "./tari_permissions";
+import {TariPermissions,} from "./tari_permissions";
 import {TariConnection} from "./webrtc";
 import {TariProvider} from '../index';
-import {SubmitTransactionRequest, TransactionResult, TransactionStatus, SubmitTransactionResponse} from '../types';
+import {
+    SubmitTransactionRequest,
+    TransactionResult,
+    TransactionStatus,
+    SubmitTransactionResponse,
+    VaultBalances
+} from '../types';
 import {Account} from "../types";
 import {
     WalletDaemonClient,
     stringToSubstateId,
     Instruction,
-    TransactionSubmitRequest, SubstateType, SubstatesListRequest
+    TransactionSubmitRequest,
+    SubstateType,
+    SubstatesListRequest,
+    KeyBranch,
 } from "@tariproject/wallet_jrpc_client";
 import {WebRtcRpcTransport} from "./webrtc_transport";
 
@@ -140,12 +149,22 @@ export class WalletDaemonTariProvider implements TariProvider {
     }
 
     public async getPublicKey(branch: string, index: number): Promise<string> {
-        const res = await this.client.createKey({branch, specific_index: index});
+        const res = await this.client.createKey({branch: branch as KeyBranch, specific_index: index});
         return res.public_key;
     }
 
     public async getTemplateDefinition(template_address: string): Promise<unknown> {
         return await this.client.templatesGet({template_address});
+    }
+
+    public async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null = null, max: number | null = null): Promise<VaultBalances> {
+        const res = await this.client.viewVaultBalance({
+            view_key_id: viewKeyId,
+            vault_id: vaultId,
+            minimum_expected_value: min,
+            maximum_expected_value: max,
+        });
+        return {balances: res.balances as unknown as Map<string, number | null>};
     }
 
     public async listSubstates(
