@@ -41,7 +41,13 @@ export interface Account {
     account_id: number;
     address: string,
     public_key: string,
-    resources: string[],
+    resources: VaultData[],
+}
+
+export interface VaultData {
+    type: string,
+    balance: number,
+    resource_address: string,
 }
 
 export interface VaultBalances {
