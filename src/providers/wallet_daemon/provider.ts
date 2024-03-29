@@ -6,8 +6,8 @@ import {
     TransactionResult,
     TransactionStatus,
     SubmitTransactionResponse,
-    VaultBalances
-} from '../types';
+    VaultBalances, TemplateDefinition,
+} from "../types";
 import {Account} from "../types";
 import {
     WalletDaemonClient,
@@ -160,8 +160,9 @@ export class WalletDaemonTariProvider implements TariProvider {
         return res.public_key;
     }
 
-    public async getTemplateDefinition(template_address: string): Promise<unknown> {
-        return await this.client.templatesGet({template_address});
+    public async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
+        let resp = await this.client.templatesGet({template_address});
+        return resp.template_definition as TemplateDefinition;
     }
 
     public async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null = null, max: number | null = null): Promise<VaultBalances> {

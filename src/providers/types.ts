@@ -53,3 +53,8 @@ export interface VaultData {
 export interface VaultBalances {
     balances: Map<string, number | null>
 }
+
+export interface TemplateDefinition {
+    // TODO: Define this type
+    [key: string]: any
+}
