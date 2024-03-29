@@ -4,7 +4,7 @@ import {
     TransactionResult,
     TransactionStatus,
     SubmitTransactionResponse,
-    VaultBalances
+    VaultBalances, TemplateDefinition,
 } from "../types";
 import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
@@ -144,8 +144,15 @@ export class MetamaskTariProvider implements TariProvider {
         throw new Error("getVaultBalances not implemented for Metamask");
     }
 
-    getTemplateDefinition(template_address: string): Promise<unknown> {
-        return this.metamaskRequest('getTemplateDefinition', { template_address });
+    getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
+        return this.metamaskRequest('getTemplateDefinition', { template_address })
+          .then(resp => {
+              if (!resp) {
+                  throw new Error("Template not found");
+              }
+
+              return (resp as {definition: TemplateDefinition}).definition;
+          });
     }
 
 

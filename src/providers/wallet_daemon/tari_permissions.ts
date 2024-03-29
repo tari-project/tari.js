@@ -9,12 +9,13 @@ export class Hash {
 }
 
 export enum TAG {
-  ComponentAddress = 0,
-  Metadata = 1,
-  NonFungibleAddress = 2,
-  ResourceAddress = 3,
-  VaultId = 4,
-  BucketId = 5
+  ComponentAddress = 128,
+  Metadata = 129,
+  NonFungibleAddress = 130,
+  ResourceAddress = 131,
+  VaultId = 132,
+  TransactionReceipt = 134,
+  FeeClaim = 135,
 }
 
 export class Tagged {
@@ -269,6 +270,20 @@ export class TariPermissionTemplatesRead {
 }
 
 export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft | TariPermissionTransactionsGet | TariPermissionSubstatesRead | TariPermissionTemplatesRead | string;
+
+// export enum TariPermission {
+//   AccountBalance = "AccountBalance",
+//   AccountInfo = "AccountInfo",
+//   AccountList = "AccountList",
+//   KeyList = "KeyList",
+//   TransactionGet = "TransactionGet",
+//   TransactionSend = "TransactionSend",
+//   GetNft = "GetNft",
+//   NftGetOwnershipProof = "NftGetOwnershipProof",
+//   TransactionsGet = "TransactionsGet",
+//   SubstatesRead = "SubstatesRead",
+//   TemplatesRead = "TemplatesRead",
+// }
 
 export class TariPermissions {
   private permissions: TariPermission[];

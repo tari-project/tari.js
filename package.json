@@ -3,8 +3,9 @@
   "version": "0.1.14",
   "description": "",
   "main": "./dist/index.js",
+  "type": "module",
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build": "rollup -c",
     "build-tsc": "tsc",
     "start": "rollup -c -w"
   },
