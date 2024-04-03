@@ -1,5 +1,4 @@
 import {TariPermissions} from "./tari_permissions";
-import {WalletDaemonNotConnected} from "./provider";
 import {transports} from "@tariproject/wallet_jrpc_client";
 
 class SignaligServer {
@@ -202,7 +201,7 @@ export class TariConnection {
     // If the last parameter has timeout property e.g. {timeout:1000}, it set the timeout for this call.
     async sendMessage<T>(request: transports.RpcRequest, token: string | undefined, timeout_secs: number | null = null): Promise<T> {
         if (!this.isConnected) {
-            throw new Error(WalletDaemonNotConnected);
+            throw new Error("WALLET_DAEMON_NOT_CONNECTED");
         }
 
         // This should be removed before the release, but it's good for debugging.

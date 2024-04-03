@@ -58,3 +58,13 @@ export interface TemplateDefinition {
     // TODO: Define this type
     [key: string]: any
 }
+
+export interface Substate {
+    value: {
+        substate: any
+    }
+    address: {
+        substate_id: string,
+        version: number
+    }
+}

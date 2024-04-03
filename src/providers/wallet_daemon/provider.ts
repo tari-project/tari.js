@@ -6,12 +6,13 @@ import {
     TransactionResult,
     TransactionStatus,
     SubmitTransactionResponse,
-    VaultBalances, TemplateDefinition,
+    VaultBalances, TemplateDefinition, Substate,
 } from "../types";
 import {Account} from "../types";
 import {
     WalletDaemonClient,
     stringToSubstateId,
+    substateIdToString,
     Instruction,
     TransactionSubmitRequest,
     SubstateType,
@@ -117,9 +118,16 @@ export class WalletDaemonTariProvider implements TariProvider {
         return await this.client.accountsGetBalances({account: {ComponentAddress: componentAddress}, refresh: true});
     }
 
-    public async getSubstate(substate_id: string): Promise<unknown> {
+    public async getSubstate(substate_id: string): Promise<Substate> {
         const substateId = stringToSubstateId(substate_id);
-        return await this.client.substatesGet({substate_id: substateId});
+        const { value, record } = await this.client.substatesGet({ substate_id: substateId });
+        return {
+            value,
+            address: {
+                substate_id: substateIdToString(record.substate_id),
+                version: record.version
+            }
+        };
     }
 
     public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
