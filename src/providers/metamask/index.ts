@@ -4,7 +4,7 @@ import {
     TransactionResult,
     TransactionStatus,
     SubmitTransactionResponse,
-    VaultBalances, TemplateDefinition,
+    VaultBalances, TemplateDefinition, Substate,
 } from "../types";
 import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
@@ -77,8 +77,9 @@ export class MetamaskTariProvider implements TariProvider {
         return await this.metamaskRequest('getAccountData', {account_id: 0}) as any;
     }
 
-    async getSubstate(substate_address: string): Promise<unknown> {
-        return await this.metamaskRequest('getSubstate', { substate_address });
+    async getSubstate(substate_address: string): Promise<Substate> {
+        const {substate, address: substate_id, version} = await this.metamaskRequest<any>('getSubstate', { substate_address });
+        return {value: substate, address: {substate_id, version}}
     }
 
     async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
@@ -156,9 +157,9 @@ export class MetamaskTariProvider implements TariProvider {
     }
 
 
-    private async metamaskRequest<T>(method: string, params: Object): Promise<Maybe<T>> {
+    private async metamaskRequest<T>(method: string, params: Object): Promise<T> {
         console.log("Metamask request:", method, params);
-        return await this.metamask.request({
+        const resp = await this.metamask.request({
             method: 'wallet_invokeSnap',
             params: {
                 snapId: this.snapId,
@@ -168,6 +169,14 @@ export class MetamaskTariProvider implements TariProvider {
                 }
             },
         });
+
+        console.log("Metamask response:", resp);
+
+        if (!resp) {
+            throw new Error("Metamask request failed: empty response");
+        }
+
+        return resp as T;
     }
 }
 

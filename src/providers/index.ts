@@ -4,14 +4,14 @@ import {
     TransactionResult,
     SubmitTransactionResponse,
     VaultBalances,
-    TemplateDefinition,
+    TemplateDefinition, Substate,
 } from "./types";
 
 export interface TariProvider {
     providerName: string;
     isConnected(): boolean;
     getAccount(): Promise<Account>;
-    getSubstate(substate_address: string): Promise<unknown>,
+    getSubstate(substate_address: string): Promise<Substate>,
     submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse>
     getTransactionResult(transactionId: string): Promise<TransactionResult>
     getTemplateDefinition(template_address: string): Promise<TemplateDefinition>
