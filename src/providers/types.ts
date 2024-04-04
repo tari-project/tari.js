@@ -60,9 +60,7 @@ export interface TemplateDefinition {
 }
 
 export interface Substate {
-    value: {
-        substate: any
-    }
+    value: any,
     address: {
         substate_id: string,
         version: number
