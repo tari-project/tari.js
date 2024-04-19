@@ -12,6 +12,8 @@ Please read the [TODO](TODO.md) file for upcoming features.
 
 ## Library building
 
+You must have the [tari-dan](https://github.com/tari-project/tari-dan) repo cloned at the same folder level as this repo.
+
 To build the library:
 ```shell
 npm install
