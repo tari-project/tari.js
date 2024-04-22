@@ -140,9 +140,15 @@ export class MetamaskTariProvider implements TariProvider {
         return resp.public_key;
     }
 
-    public async getConfidentialVaultBalances(_viewKeyId: number, _vaultId: string, _min: number | null = null, _max: number | null = null): Promise<VaultBalances> {
-        // TODO: create an FFI in the snap that reveals the vault balance using the view key
-        throw new Error("getVaultBalances not implemented for Metamask");
+    public async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null = null, max: number | null = null): Promise<VaultBalances> {
+        const res = await this.metamaskRequest('getConfidentialVaultBalances', {
+            view_key_id: viewKeyId,
+            vault_id: vaultId,
+            minimum_expected_value: min,
+            maximum_expected_value: max,
+        }) as any;
+
+        return {balances: res as unknown as Map<string, number | null>};
     }
 
     getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
