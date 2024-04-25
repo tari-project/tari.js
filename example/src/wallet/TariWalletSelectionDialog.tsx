@@ -15,8 +15,8 @@ import { MetamaskTariProvider } from "../../../src/providers/metamask";
 import { TariWalletDaemonConnectDialog } from './TariWalletDaemonConnectDialog';
 import { TariPermissionAccountInfo, TariPermissionKeyList, TariPermissionTransactionSend, TariPermissions } from '../../../src/providers/wallet_daemon/tari_permissions';
 
-const SIGNALING_SERVER_URL = import.meta.env.VITE_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
-const SNAP_ID = import.meta.env.VITE_SNAP_ORIGIN || "local:http://localhost:8000";
+const SIGNALING_SERVER_URL = import.meta.env.TARIJS_SIGNALING_SERVER_ADDRESS || "http://localhost:9100";
+const SNAP_ID = import.meta.env.TARIJS_SNAP_ORIGIN || "local:http://localhost:8000";
 
 // Minimal permissions for the example site
 // But each application will have different permission needs
