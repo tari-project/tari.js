@@ -1,5 +1,5 @@
-import { TariProvider  } from './providers'
-import * as utils from './utils'
+import { TariProvider } from "./providers";
+import * as utils from "./utils";
 import {
   Account,
   TransactionStatus,
@@ -11,11 +11,11 @@ import {
   TemplateDefinition,
   SubstateRequirement,
   Substate,
-} from './providers/types'
-import {MetamaskTariProvider}  from "./providers/metamask";
-import { MetaMaskInpageProvider } from '@metamask/providers';
-import {WalletDaemonTariProvider, WalletDaemonParameters} from "./providers/wallet_daemon";
-import {TariPermissions} from "./providers/wallet_daemon";
+} from "./providers/types";
+import { MetamaskTariProvider } from "./providers/metamask";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } from "./providers/wallet_daemon";
+import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
 import * as permissions from "./providers/wallet_daemon";
 
 export {
@@ -33,6 +33,8 @@ export {
   MetamaskTariProvider,
   WalletDaemonTariProvider,
   WalletDaemonParameters,
+  TariUniverseProvider,
+  TariUniverseProviderParameters,
   TariPermissions,
   MetaMaskInpageProvider,
   Substate,
