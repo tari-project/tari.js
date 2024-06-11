@@ -22,7 +22,6 @@ import {
 import {WebRtcRpcTransport} from "./webrtc_transport";
 
 export const WalletDaemonNotConnected = 'WALLET_DAEMON_NOT_CONNECTED';
-export const Unsupported = 'UNSUPPORTED';
 
 export type WalletDaemonParameters = {
     signalingServerUrl?: string,

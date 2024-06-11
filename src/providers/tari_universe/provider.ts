@@ -15,8 +15,6 @@ import {
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
 
-export const Unsupported = "UNSUPPORTED";
-
 export type TariUniverseProviderParameters = {
   permissions: TariPermissions;
   optionalPermissions: TariPermissions;
