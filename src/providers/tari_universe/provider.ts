@@ -2,16 +2,18 @@ import { TariPermissions } from "../wallet_daemon/tari_permissions";
 import {
   SubmitTransactionRequest,
   TransactionResult,
-  TransactionStatus,
   SubmitTransactionResponse,
   Account,
-  TariUniverseProviderRequest,
   Substate,
   TemplateDefinition,
   VaultBalances,
+  ProviderRequest,
+  ProviderMethodNames,
+  ProviderReturnType,
+  ProviderResponse,
 } from "../types";
 import { TariProvider } from "../index";
-import { Instruction, TransactionSubmitRequest, AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
+import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
 
 export const Unsupported = "UNSUPPORTED";
 
@@ -23,22 +25,20 @@ export type TariUniverseProviderParameters = {
 };
 
 export class TariUniverseProvider implements TariProvider {
-  public providerName = "WalletDaemon";
-  params: TariUniverseProviderParameters;
+  public providerName = "TariUniverse";
   private __id = 0;
 
-  public constructor(params: TariUniverseProviderParameters) {
-    this.params = params;
-  }
+  public constructor(public params: TariUniverseProviderParameters) {}
 
-  private async sendRequest(req: Omit<TariUniverseProviderRequest, "id">): Promise<any> {
+  private async sendRequest<MethodName extends ProviderMethodNames>(
+    req: Omit<ProviderRequest<MethodName>, "id">,
+  ): Promise<Awaited<ProviderReturnType<MethodName>>> {
     const id = ++this.__id;
-    return new Promise(function (resolve, _reject) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const event_ref = function (resp: any) {
+    return await new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
+      const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
         if (resp && resp.data && resp.data.id && resp.data.id == id) {
           window.removeEventListener("message", event_ref);
-          resolve(resp.data);
+          resolve(resp.data.result);
         }
       };
       window.addEventListener("message", event_ref, false);
@@ -52,7 +52,7 @@ export class TariUniverseProvider implements TariProvider {
   }
 
   public getPublicKey(): Promise<string> {
-    return this.sendRequest({ methodName: "getPublicKey", args: [] });
+    return this.sendRequest<"getPublicKey">({ methodName: "getPublicKey", args: [] });
   }
 
   public getConfidentialVaultBalances(
@@ -63,7 +63,7 @@ export class TariUniverseProvider implements TariProvider {
   ): Promise<VaultBalances> {
     return this.sendRequest({
       methodName: "getConfidentialVaultBalances",
-      args: [{ view_key_id: viewKeyId, vault_id: vaultId, minimum_expected_value: min, maximum_expected_value: max }],
+      args: [viewKeyId, vaultId, min, max],
     });
   }
 
@@ -72,15 +72,7 @@ export class TariUniverseProvider implements TariProvider {
   }
 
   public async getAccount(): Promise<Account> {
-    const { account, public_key } = (await this.sendRequest({ methodName: "getAccount", args: [] })) as any;
-
-    return {
-      account_id: account.key_index,
-      address: account.address.Component,
-      public_key,
-      // TODO
-      resources: [],
-    };
+    return this.sendRequest({ methodName: "getAccount", args: [] });
   }
 
   public async getAccountBalances(): Promise<AccountsGetBalancesResponse> {
@@ -98,65 +90,20 @@ export class TariUniverseProvider implements TariProvider {
   }
 
   public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-    const params = {
-      transaction: null, // TODO figure out what this is
-      signing_key_index: req.account_id,
-      fee_instructions: req.fee_instructions as Instruction[],
-      instructions: req.instructions as Instruction[],
-      inputs: req.required_substates.map((s) => ({
-        // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-        substate_id: s.substate_id as any,
-        version: s.version || null,
-      })),
-      override_inputs: false,
-      is_dry_run: req.is_dry_run,
-      proof_ids: [],
-      min_epoch: null,
-      max_epoch: null,
-    } satisfies TransactionSubmitRequest;
-    const res = await this.sendRequest({
-      methodName: "getSubstate",
-      args: [params],
+    return this.sendRequest({
+      methodName: "submitTransaction",
+      args: [req],
     });
-
-    return { transaction_id: res.transaction_id };
   }
 
   public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
-    const res = await this.sendRequest({
+    return this.sendRequest({
       methodName: "getTransactionResult",
       args: [transactionId],
     });
-
-    return {
-      transaction_id: transactionId,
-      status: convertStringToTransactionStatus(res.status),
-      result: res.result,
-    };
   }
 
   public async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
-    return await this.sendRequest({ methodName: "getTemplateDefinition", args: [template_address] });
-  }
-}
-
-function convertStringToTransactionStatus(status: string): TransactionStatus {
-  switch (status) {
-    case "New":
-      return TransactionStatus.New;
-    case "DryRun":
-      return TransactionStatus.DryRun;
-    case "Pending":
-      return TransactionStatus.Pending;
-    case "Accepted":
-      return TransactionStatus.Accepted;
-    case "Rejected":
-      return TransactionStatus.Rejected;
-    case "InvalidTransaction":
-      return TransactionStatus.InvalidTransaction;
-    case "OnlyFeeAccepted":
-      return TransactionStatus.OnlyFeeAccepted;
-    default:
-      throw new Error(`Unknown status: ${status}`);
+    return this.sendRequest({ methodName: "getTemplateDefinition", args: [template_address] });
   }
 }
