@@ -71,7 +71,7 @@ export type PickMatching<T, V> = { [K in keyof T as T[K] extends V ? K : never]:
 export type ExtractMethods<T> = PickMatching<T, Function>;
 export type ProviderMethods = ExtractMethods<TariUniverseProvider>;
 export type ProviderMethodNames = keyof ProviderMethods;
-export type ProviderReturnType<T extends ProviderMethodNames> = ReturnType<ProviderMethods[T]>;
+export type ProviderReturnType<T extends ProviderMethodNames> = Awaited<ReturnType<ProviderMethods[T]>>;
 
 export type ProviderRequest<T extends ProviderMethodNames> = {
   id: number;

@@ -32,9 +32,9 @@ export class TariUniverseProvider implements TariProvider {
 
   private async sendRequest<MethodName extends ProviderMethodNames>(
     req: Omit<ProviderRequest<MethodName>, "id">,
-  ): Promise<Awaited<ProviderReturnType<MethodName>>> {
+  ): Promise<ProviderReturnType<MethodName>> {
     const id = ++this.__id;
-    return await new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
+    return new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
       const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
         if (resp && resp.data && resp.data.id && resp.data.id == id) {
           window.removeEventListener("message", event_ref);
