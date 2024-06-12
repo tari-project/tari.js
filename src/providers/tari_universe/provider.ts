@@ -7,11 +7,8 @@ import {
   Substate,
   TemplateDefinition,
   VaultBalances,
-  ProviderRequest,
-  ProviderMethodNames,
-  ProviderReturnType,
-  ProviderResponse,
 } from "../types";
+import { ProviderRequest, ProviderMethodNames, ProviderReturnType, ProviderResponse } from "./types";
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
 
