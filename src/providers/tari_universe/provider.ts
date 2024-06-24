@@ -7,10 +7,11 @@ import {
   Substate,
   TemplateDefinition,
   VaultBalances,
+  ListSubstatesResponse,
 } from "../types";
 import { ProviderRequest, ProviderMethodNames, ProviderReturnType, ProviderResponse } from "./types";
 import { TariProvider } from "../index";
-import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
+import { AccountsGetBalancesResponse, SubstateType } from "@tariproject/wallet_jrpc_client";
 
 export type TariUniverseProviderParameters = {
   permissions: TariPermissions;
@@ -82,6 +83,10 @@ export class TariUniverseProvider implements TariProvider {
       methodName: "getSubstate",
       args: [substate_id],
     });
+  }
+
+  public async listSubstates(_filter_by_template: string | null, _filter_by_type: SubstateType | null, _limit: number | null, _offset: number | null): Promise<ListSubstatesResponse> {
+    throw new Error("Method not implemented.");
   }
 
   public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
