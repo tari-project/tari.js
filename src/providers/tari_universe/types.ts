@@ -30,14 +30,3 @@ export type ProviderResponse<T extends ProviderMethodNames> = {
   type: "provider-call";
   result: ProviderReturnType<T>;
 };
-
-export type ProviderSizeRequest = {
-  id: number;
-  type: "request-parent-size";
-};
-
-export type ProviderSizeResponse = {
-  id: number;
-  type: "request-parent-size";
-  result: WindowSize;
-};

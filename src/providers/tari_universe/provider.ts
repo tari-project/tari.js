@@ -14,7 +14,6 @@ import {
   ProviderResponse,
   TariUniverseProviderParameters,
   WindowSize,
-  ProviderSizeResponse,
 } from "./types";
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
@@ -22,7 +21,6 @@ import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
   private __id = 0;
-  private __size_request_id = 0;
 
   public constructor(public params: TariUniverseProviderParameters) {}
 
@@ -32,29 +30,16 @@ export class TariUniverseProvider implements TariProvider {
     const id = ++this.__id;
     return new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
       const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
+        console.log("Received message", resp);
         if (resp && resp.data && resp.data.id && resp.data.id == id && resp.data.type === "provider-call") {
           window.removeEventListener("message", event_ref);
+          console.log("Received response", resp.data.result);
           resolve(resp.data.result);
         }
       };
       window.addEventListener("message", event_ref, false);
 
       window.parent.postMessage({ ...req, id, type: "provider-call" }, "*");
-    });
-  }
-
-  private async sendSizeRequest(): Promise<WindowSize> {
-    const id = ++this.__size_request_id;
-    return new Promise<WindowSize>(function (resolve, _reject) {
-      const event_ref = function (resp: MessageEvent<ProviderSizeResponse>) {
-        if (resp && resp.data && resp.data.id && resp.data.id == id && resp.data.type === "request-parent-size") {
-          window.removeEventListener("message", event_ref);
-          resolve(resp.data.result);
-        }
-      };
-      window.addEventListener("message", event_ref, false);
-
-      window.parent.postMessage({ id, type: "request-parent-size" }, "*");
     });
   }
 
@@ -83,7 +68,7 @@ export class TariUniverseProvider implements TariProvider {
   }
 
   public requestParentSize(): Promise<WindowSize> {
-    return this.sendSizeRequest();
+    return this.sendRequest({ methodName: "requestParentSize", args: [] });
   }
 
   public async getAccount(): Promise<Account> {
