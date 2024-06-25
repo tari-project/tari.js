@@ -1,3 +1,10 @@
+export type SubstateMetadata = {
+  substate_id: string;
+  module_name: string | null;
+  version: number;
+  template_address: string | null;
+}
+
 export type SubstateRequirement = {
   substate_id: string;
   version?: number | null;
@@ -64,3 +71,7 @@ export interface Substate {
     version: number;
   };
 }
+
+export type ListSubstatesResponse = {
+  substates: Array<SubstateMetadata>;
+};
