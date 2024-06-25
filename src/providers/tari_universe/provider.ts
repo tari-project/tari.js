@@ -22,7 +22,17 @@ export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
   private __id = 0;
 
-  public constructor(public params: TariUniverseProviderParameters) {}
+  public constructor(public params: TariUniverseProviderParameters) {
+    const filterResizeEvent = function (event: MessageEvent) {
+      if (event.data && event.data.type === "resize") {
+        const resizeEvent = new CustomEvent("resize", {
+          detail: { width: event.data.width, height: event.data.height },
+        });
+        window.dispatchEvent(resizeEvent);
+      }
+    };
+    window.addEventListener("message", (event) => filterResizeEvent(event), false);
+  }
 
   private async sendRequest<MethodName extends ProviderMethodNames>(
     req: Omit<ProviderRequest<MethodName>, "id">,
@@ -30,10 +40,8 @@ export class TariUniverseProvider implements TariProvider {
     const id = ++this.__id;
     return new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
       const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
-        console.log("Received message", resp);
         if (resp && resp.data && resp.data.id && resp.data.id == id && resp.data.type === "provider-call") {
           window.removeEventListener("message", event_ref);
-          console.log("Received response", resp.data.result);
           resolve(resp.data.result);
         }
       };
