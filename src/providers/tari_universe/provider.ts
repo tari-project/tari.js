@@ -60,10 +60,15 @@ export class TariUniverseProvider implements TariProvider {
     return this.sendRequest<"getPublicKey">({ methodName: "getPublicKey", args: [] });
   }
 
-  public listSubstates(template: string | null, substateType: SubstateType | null): Promise<Substate[]> {
+  public async listSubstates(
+    filter_by_template: string | null,
+    filter_by_type: SubstateType | null,
+    limit: number | null,
+    offset: number | null,
+  ): Promise<ListSubstatesResponse> {
     return this.sendRequest<"listSubstates">({
       methodName: "listSubstates",
-      args: [template, substateType],
+      args: [filter_by_template, filter_by_type, limit, offset],
     });
   }
 
@@ -103,10 +108,6 @@ export class TariUniverseProvider implements TariProvider {
       methodName: "getSubstate",
       args: [substate_id],
     });
-  }
-
-  public async listSubstates(_filter_by_template: string | null, _filter_by_type: SubstateType | null, _limit: number | null, _offset: number | null): Promise<ListSubstatesResponse> {
-    throw new Error("Method not implemented.");
   }
 
   public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
