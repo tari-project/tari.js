@@ -16,7 +16,7 @@ import {
   WindowSize,
 } from "./types";
 import { TariProvider } from "../index";
-import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
+import { AccountsGetBalancesResponse, SubstateType } from "@tariproject/wallet_jrpc_client";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
@@ -59,6 +59,13 @@ export class TariUniverseProvider implements TariProvider {
     return this.sendRequest<"getPublicKey">({ methodName: "getPublicKey", args: [] });
   }
 
+  public listSubstates(template: string | null, substateType: SubstateType | null): Promise<Substate[]> {
+    return this.sendRequest<"listSubstates">({
+      methodName: "listSubstates",
+      args: [template, substateType],
+    });
+  }
+
   public getConfidentialVaultBalances(
     viewKeyId: number,
     vaultId: string,
@@ -83,10 +90,10 @@ export class TariUniverseProvider implements TariProvider {
     return this.sendRequest({ methodName: "getAccount", args: [] });
   }
 
-  public async getAccountBalances(): Promise<AccountsGetBalancesResponse> {
+  public async getAccountBalances(componentAddress: string): Promise<AccountsGetBalancesResponse> {
     return this.sendRequest({
       methodName: "getAccountBalances",
-      args: [],
+      args: [componentAddress],
     });
   }
 
