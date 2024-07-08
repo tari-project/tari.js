@@ -5,7 +5,6 @@ export type ExtractMethods<T> = PickMatching<T, Function>;
 export type BuilderMethods = ExtractMethods<TransactionBuilder>;
 export type BuilderMethodNames = keyof BuilderMethods;
 export type BuilderReturnType<T extends BuilderMethodNames> = Awaited<ReturnType<BuilderMethods[T]>>;
-export type ResponseType = "Builder-call";
 
 export type BuilderRequest<T extends BuilderMethodNames> = {
   id: number;
@@ -15,6 +14,6 @@ export type BuilderRequest<T extends BuilderMethodNames> = {
 
 export type BuilderResponse<T extends BuilderMethodNames> = {
   id: number;
-  type: "Builder-call";
+  type: "call-method";
   result: BuilderReturnType<T>;
 };

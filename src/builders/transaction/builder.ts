@@ -4,6 +4,7 @@
 import { SubstateRequirement } from "../../providers/types";
 import { Amount } from "./amount";
 import { Instruction } from "./instruction";
+import { BuilderMethodNames, BuilderRequest, BuilderResponse, BuilderReturnType } from "./types";
 
 interface TransactionSignature {
   publicKey: string;
@@ -39,7 +40,7 @@ interface TransactionConstructor {
 
 declare var Transaction: TransactionConstructor;
 
-interface Builder {
+export interface Builder {
   withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): TransactionBuilder;
   feeTransactionPayFromComponent(componentAddress: string, maxFee: Amount): TransactionBuilder;
   feeTransactionPayFromComponentConfidential(componentAddress: string, proof: any): TransactionBuilder;
@@ -79,7 +80,20 @@ export class TransactionBuilder implements Builder {
     this.signatures = [];
   }
 
-  withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): TransactionBuilder {
+  private async callBuilderMethod<MethodName extends BuilderMethodNames>(
+    req: Omit<BuilderRequest<MethodName>, "id">,
+  ): Promise<BuilderReturnType<MethodName>> {
+    return new Promise<BuilderReturnType<MethodName>>(function (resolve, _reject) {
+      const resp = function (msg: MessageEvent<BuilderResponse<MethodName>>) {
+        if (msg && msg.data && msg.data.type === "call-method") {
+          console.log(req.args);
+          resolve(msg.data.result);
+        }
+      };
+    });
+  }
+
+  public withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): TransactionBuilder {
     this.unsignedTransaction = unsignedTransaction;
     this.signatures = [];
     return this;
@@ -94,7 +108,7 @@ export class TransactionBuilder implements Builder {
    * @param maxFee
    * @returns
    */
-  feeTransactionPayFromComponent(componentAddress: string, maxFee: Amount): TransactionBuilder {
+  public feeTransactionPayFromComponent(componentAddress: string, maxFee: Amount): TransactionBuilder {
     // const fee_instructions: Instruction = {
     //   component_address: account.address,
     //   method: "pay_fee",
@@ -106,6 +120,10 @@ export class TransactionBuilder implements Builder {
     //   method: "pay_fee",
     //   args: [maxFee],
     // });
+    this.callBuilderMethod<"feeTransactionPayFromComponent">({
+      methodName: "feeTransactionPayFromComponent",
+      args: [componentAddress, maxFee],
+    });
     return this;
   }
 
@@ -117,7 +135,7 @@ export class TransactionBuilder implements Builder {
    * @param proof
    * @returns
    */
-  feeTransactionPayFromComponentConfidential(componentAddress: string, proof: any): TransactionBuilder {
+  public feeTransactionPayFromComponentConfidential(componentAddress: string, proof: any): TransactionBuilder {
     // return this.addFeeInstruction({
     //   type: "CallMethod",
     //   componentAddress,
@@ -127,7 +145,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  createAccount(ownerPublicKey: string): TransactionBuilder {
+  public createAccount(ownerPublicKey: string): TransactionBuilder {
     // return this.addInstruction({
     //   type: "CreateAccount",
     //   ownerPublicKey,
@@ -136,7 +154,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  createAccountWithBucket(ownerPublicKey: string, workspaceBucket: string): TransactionBuilder {
+  public createAccountWithBucket(ownerPublicKey: string, workspaceBucket: string): TransactionBuilder {
     // return this.addInstruction({
     //   type: "CreateAccount",
     //   ownerPublicKey,
@@ -145,7 +163,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  callFunction(templateAddress: string, fct: string, args: any[]): TransactionBuilder {
+  public callFunction(templateAddress: string, fct: string, args: any[]): TransactionBuilder {
     // return this.addInstruction({
     //   type: "CallFunction",
     //   templateAddress,
@@ -155,7 +173,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  callMethod(componentAddress: string, method: string, args: any[]): TransactionBuilder {
+  public callMethod(componentAddress: string, method: string, args: any[]): TransactionBuilder {
     // return this.addInstruction({
     //   type: "CallMethod",
     //   componentAddress,
@@ -165,12 +183,12 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  dropAllProofsInWorkspace(): TransactionBuilder {
+  public dropAllProofsInWorkspace(): TransactionBuilder {
     // return this.addInstruction({ type: "DropAllProofsInWorkspace" });
     return this;
   }
 
-  putLastInstructionOutputOnWorkspace(label: string): TransactionBuilder {
+  public putLastInstructionOutputOnWorkspace(label: string): TransactionBuilder {
     // return this.addInstruction({
     //   type: "PutLastInstructionOutputOnWorkspace",
     //   key: label,
@@ -178,7 +196,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  claimBurn(claim: any): TransactionBuilder {
+  public claimBurn(claim: any): TransactionBuilder {
     // const claimInstruction = {
     //   type: "ClaimBurn",
     //   claim,
@@ -190,7 +208,7 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  createProof(account: string, resourceAddr: string): TransactionBuilder {
+  public createProof(account: string, resourceAddr: string): TransactionBuilder {
     // return this.addInstruction({
     //   type: "CallMethod",
     //   componentAddress: account,
@@ -200,67 +218,67 @@ export class TransactionBuilder implements Builder {
     return this;
   }
 
-  withFeeInstructions(instructions: Instruction[]): TransactionBuilder {
+  public withFeeInstructions(instructions: Instruction[]): TransactionBuilder {
     this.unsignedTransaction.feeInstructions = instructions;
     this.signatures = [];
     return this;
   }
 
-  withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => TransactionBuilder): TransactionBuilder {
+  public withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => TransactionBuilder): TransactionBuilder {
     const newBuilder = builder(new TransactionBuilder());
     this.unsignedTransaction.feeInstructions = newBuilder.unsignedTransaction.instructions;
     this.signatures = [];
     return this;
   }
 
-  addFeeInstruction(instruction: Instruction): TransactionBuilder {
+  public addFeeInstruction(instruction: Instruction): TransactionBuilder {
     this.unsignedTransaction.feeInstructions.push(instruction);
     this.signatures = [];
     return this;
   }
 
-  addInstruction(instruction: Instruction): TransactionBuilder {
+  public addInstruction(instruction: Instruction): TransactionBuilder {
     this.unsignedTransaction.instructions.push(instruction);
     this.signatures = [];
     return this;
   }
 
-  withInstructions(instructions: Instruction[]): TransactionBuilder {
+  public withInstructions(instructions: Instruction[]): TransactionBuilder {
     this.unsignedTransaction.instructions.push(...instructions);
     this.signatures = [];
     return this;
   }
 
-  addInput(inputObject: SubstateRequirement): TransactionBuilder {
+  public addInput(inputObject: SubstateRequirement): TransactionBuilder {
     this.unsignedTransaction.inputs.add(inputObject);
     this.signatures = [];
     return this;
   }
 
-  withInputs(inputs: SubstateRequirement[]): TransactionBuilder {
+  public withInputs(inputs: SubstateRequirement[]): TransactionBuilder {
     // this.unsignedTransaction.inputs.push(...inputs);
     // this.signatures = [];
     return this;
   }
 
-  withMaxEpoch(maxEpoch: number): this {
+  public withMaxEpoch(maxEpoch: number): this {
     this.unsignedTransaction.maxEpoch = maxEpoch;
     // Reset the signatures as they are no longer valid
     this.signatures = [];
     return this;
   }
 
-  buildUnsignedTransaction(): UnsignedTransaction {
+  public buildUnsignedTransaction(): UnsignedTransaction {
     return this.unsignedTransaction;
   }
 
-  sign(secretKey: string): this {
+  public sign(secretKey: string): this {
     // this.signatures.push(TransactionSignature.sign(secretKey, this.unsignedTransaction));
     this.signatures.push();
     return this;
   }
 
-  build(): Transaction {
+  public build(): Transaction {
     return new Transaction(this.unsignedTransaction, this.signatures);
   }
 }
