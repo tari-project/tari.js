@@ -15,7 +15,7 @@
   "dependencies": {
     "@metamask/providers": "^9.0.0",
     "@tariproject/wallet_jrpc_client": "https://gitpkg.now.sh/tari-project/tari-dan/clients/javascript/wallet_daemon_client?development&scripts.postinstall=npm%20run%20build",
-    "@tariproject/typescript-bindings": "https://gitpkg.now.sh/tari-project/tari-dan/bindings?development"
+    "@tariproject/typescript-bindings": "https://gitpkg.now.sh/tari-project/tari-dan/bindings?development&scripts.postinstall=npm%20run%tsc"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
