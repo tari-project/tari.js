@@ -7,13 +7,12 @@ export type BuilderMethodNames = keyof BuilderMethods;
 export type BuilderReturnType<T extends BuilderMethodNames> = Awaited<ReturnType<BuilderMethods[T]>>;
 
 export type BuilderRequest<T extends BuilderMethodNames> = {
-  id: number;
   methodName: T;
   args: Parameters<BuilderMethods[T]>;
 };
 
 export type BuilderResponse<T extends BuilderMethodNames> = {
-  id: number;
   type: "call-method";
   result: BuilderReturnType<T>;
 };
+
