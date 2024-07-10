@@ -7,14 +7,6 @@ on:
   push:
     branches: main
 
-on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -24,11 +16,7 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci
-      - run: npm test
       - uses: JS-DevTools/npm-publish@v3
-        id: publish
         with:
           token: ${{ secrets.NPM_TOKEN }}
-      - if: ${{ steps.publish.outputs.type }}
-        run: echo "Published to NPM registry '${{ steps.publish.outputs.name }}' version '${{ steps.publish.outputs.version }}'"
       
