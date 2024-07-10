@@ -3,10 +3,9 @@
 # See https://github.com/marketplace/actions/npm-publish for more information
 name: Publish Package to npmjs
 
-# TODO: after confirming that the action works, set the trigger on "main" branch commits instead of PRs 
-# on:
-#   push:
-#     branches: main
+on:
+  push:
+    branches: main
 
 on:
   pull_request:
