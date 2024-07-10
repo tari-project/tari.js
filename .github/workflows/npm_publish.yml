@@ -1,0 +1,26 @@
+---
+# Publishing the package to the npm registry when the version number changes
+# See https://github.com/marketplace/actions/npm-publish for more information
+name: Publish Package to npmjs
+
+on:
+  push:
+    branches: main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm test
+      - uses: JS-DevTools/npm-publish@v3
+        id: publish
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+      - if: ${{ steps.publish.outputs.type }}
+        run: echo "Published to NPM registry '${{ steps.publish.outputs.name }}' version '${{ steps.publish.outputs.version }}'"
+      
