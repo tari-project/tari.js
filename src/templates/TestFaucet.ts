@@ -1,5 +1,7 @@
-import { Amount, ConfidentialWithdrawProof } from "@tariproject/typescript-bindings";
-import { TransactionBuilder, TariFunctionDefinition, TariMethodDefinition } from "../builders/transaction/builder";
+import { ConfidentialWithdrawProof } from "@tariproject/typescript-bindings";
+import { TransactionBuilder } from "../builders/transaction/TransactionBuilder";
+import { Amount } from "../builders/types/Amount";
+import { TariFunctionDefinition, TariMethodDefinition } from "../builders/types/Builder";
 
 interface MintFunction extends TariFunctionDefinition {
   functionName: "mint";
@@ -57,7 +59,7 @@ interface TotalSupplyMethod extends TariMethodDefinition {
   args?: [];
 }
 
-class TestFaucet {
+export class TestFaucet {
   public mint: MintFunction;
   public mintWithSymbol: MintWithSymbolFunction;
   public takeFreeCoins: TakeFreeCoinsMethod;
@@ -94,13 +96,17 @@ class TestFaucet {
   }
 }
 
+/**
 const builder = new TransactionBuilder();
 const fauncet = new TestFaucet("address");
 const key = new Uint8Array(0);
+const amount = new Amount(1);
 const tst = builder
   .createAccount("tst")
-  .callFunction(fauncet.mintWithSymbol, [1, "a"])
-  .callMethod(fauncet.payFee, [1])
+  .callFunction(fauncet.mintWithSymbol, [amount, "a"])
+  .callMethod(fauncet.payFee, [amount])
   .putLastInstructionOutputOnWorkspace(key)
   .withMinEpoch(1)
-  .build();
+  .build(); 
+ 
+ */

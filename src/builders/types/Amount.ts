@@ -1,7 +1,8 @@
+// TODO use it instead of imported Amount from bindings
 export class Amount {
   private value: number;
 
-  private constructor(value: number) {
+  constructor(value: number) {
     this.value = value;
   }
 

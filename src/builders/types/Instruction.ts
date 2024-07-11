@@ -1,11 +1,12 @@
-import { Amount } from "./amount";
-
-export enum LogLevel {
-  Error,
-  Warn,
-  Info,
-  Debug,
-}
+import {
+  Amount,
+  Arg,
+  ComponentAddress,
+  ConfidentialClaim,
+  ConfidentialOutput,
+  Epoch,
+  LogLevel,
+} from "@tariproject/typescript-bindings";
 
 export type Instruction =
   | CreateAccount
@@ -21,7 +22,7 @@ export type Instruction =
 interface CreateAccount {
   type: "CreateAccount";
   ownerPublicKey: string;
-  workspaceBucket?: string | null;
+  workspaceBucket?: string;
 }
 
 interface CallFunction {
@@ -33,7 +34,7 @@ interface CallFunction {
 
 interface CallMethod {
   type: "CallMethod";
-  componentAddress: string;
+  componentAddress: ComponentAddress;
   method: string;
   args: Arg[];
 }
@@ -51,12 +52,12 @@ interface EmitLog {
 
 interface ClaimBurn {
   type: "ClaimBurn";
-  claim: any;
+  claim: ConfidentialClaim;
 }
 
 interface ClaimValidatorFees {
   type: "ClaimValidatorFees";
-  epoch: number;
+  epoch: Epoch;
   validatorPublicKey: string;
 }
 
@@ -67,7 +68,5 @@ interface DropAllProofsInWorkspace {
 interface CreateFreeTestCoins {
   type: "CreateFreeTestCoins";
   revealedAmount: Amount;
-  output?: any | null;
+  output?: ConfidentialOutput;
 }
-
-export type Arg = BigInt | string | number | Amount | boolean | { [key: string]: Arg } | Arg[] | null;
