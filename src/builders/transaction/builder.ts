@@ -45,12 +45,12 @@ interface TransactionConstructor {
 
 export interface TariFunctionDefinition {
   functionName: string;
-  args?: Arg[];
+  args?: any[]; // //TODO add arg type
   templateAddress: string;
 }
 export interface TariMethodDefinition {
   methodName: string;
-  args?: Arg[];
+  args?: any[]; //TODO add arg type
   componentAddress: string;
 }
 
