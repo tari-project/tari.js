@@ -95,18 +95,3 @@ export class TestFaucet {
     } as T;
   }
 }
-
-/**
-const builder = new TransactionBuilder();
-const fauncet = new TestFaucet("address");
-const key = new Uint8Array(0);
-const amount = new Amount(1);
-const tst = builder
-  .createAccount("tst")
-  .callFunction(fauncet.mintWithSymbol, [amount, "a"])
-  .callMethod(fauncet.payFee, [amount])
-  .putLastInstructionOutputOnWorkspace(key)
-  .withMinEpoch(1)
-  .build(); 
- 
- */

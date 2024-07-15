@@ -1,4 +1,3 @@
-import { TransactionBuilder } from "../builders/transaction/TransactionBuilder";
 import { TariFunctionDefinition, TariMethodDefinition } from "../builders/types/Builder";
 
 interface MintWithSymbolFunction extends TariFunctionDefinition {
