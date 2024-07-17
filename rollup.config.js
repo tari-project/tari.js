@@ -19,5 +19,5 @@ export default {
     nodeResolve(),
     typescript(),
   ],
-  external: ["@tariproject/wallet_jrpc_client", "@metamask/providers"]
+  external: ["@tariproject/wallet_jrpc_client", "@metamask/providers", "@tariproject/typescript-bindings"]
 }

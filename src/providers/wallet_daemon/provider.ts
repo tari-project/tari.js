@@ -104,7 +104,7 @@ export class WalletDaemonTariProvider implements TariProvider {
             address: account.address.Component,
             public_key,
             // TODO: should be vaults not resources
-            resources: balances.map((b) => ({
+            resources: balances.map((b: any) => ({
                 type: b.resource_type,
                 resource_address: b.resource_address,
                 balance: b.balance + b.confidential_balance,

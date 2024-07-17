@@ -17,6 +17,7 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } from "./providers/wallet_daemon";
 import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
 import * as permissions from "./providers/wallet_daemon";
+import { WalletConnectTariProvider } from "./providers/walletconnect";
 
 export {
   utils,
@@ -39,4 +40,5 @@ export {
   MetaMaskInpageProvider,
   Substate,
   permissions,
+  WalletConnectTariProvider,
 };
