@@ -11,15 +11,21 @@ import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, TransactionSubmitRequest } from "@tariproject/wallet_jrpc_client";
 
-// TODO: we don't have yet Tari support in WalletConnect
-//       so the workaround for now is to use other namespaces like polkadot
-//       note that the exact same chains and methods must be supported on the wallet side
 const walletConnectParams = {
     requiredNamespaces: {
       polkadot: {
-        methods: ['polkadot_signTransaction', 'polkadot_signMessage'],
+        methods: [
+            'tari_getSubstate',
+            'tari_getDefaultAccount',
+            'tari_getAccountBalances',
+            'tari_submitTransaction',
+            'tari_getTransactionResult',
+            'tari_getTemplate',
+            'tari_createKey',
+            'tari_viewConfidentialVaultBalance'
+        ],
         chains: [
-          'polkadot:91b171bb158e2d3848fa23a9f1c25182', // polkadot
+          'tari:devnet',
         ],
         events: ['chainChanged", "accountsChanged']
       }
@@ -75,24 +81,12 @@ export class WalletConnectTariProvider implements TariProvider {
             throw "WalletConnect session not initialized";
         }
 
-        const payload = {
-            method,
-            params
-        };
-        console.log({payload});
-
-        // this is just a mock address to be able to use polkadot's namespace
-        const address = this.wcSession.namespaces.polkadot.accounts[0];
-
         const requestResult = await this.wcProvider.client.request({
             topic: this.wcSession.topic,
-            chainId: 'polkadot:91b171bb158e2d3848fa23a9f1c25182',
+            chainId: 'tari:devnet',
             request: {
-              method: 'polkadot_signTransaction',
-              params: {
-                address,
-                transactionPayload: payload
-              }
+              method,
+              params
             }
         });
 
@@ -108,7 +102,7 @@ export class WalletConnectTariProvider implements TariProvider {
     }
 
     async getAccount(): Promise<Account> {
-        const {account, public_key} = await this.sendRequest('accounts.get_default', {});
+        const {account, public_key} = await this.sendRequest('tari_getDefaultAccount', {});
         const {balances} = await this.sendRequest(
             'accounts.get_balances',
             {account: {ComponentAddress: account.address.Component }, refresh: false
@@ -130,7 +124,7 @@ export class WalletConnectTariProvider implements TariProvider {
     }
     async getSubstate(substate_address: string): Promise<Substate> {
         const substateId = stringToSubstateId(substate_address);
-        const method = 'substates.get';
+        const method = 'tari_getSubstate';
         const params = { substate_id: substateId };
         const { value, record } = await this.sendRequest(method, params);
         return {
@@ -143,7 +137,7 @@ export class WalletConnectTariProvider implements TariProvider {
     }
 
     async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-        const method = 'transactions.submit';
+        const method = 'tari_submitTransaction';
         const params = {
             transaction: null,
             signing_key_index: req.account_id,
@@ -168,7 +162,7 @@ export class WalletConnectTariProvider implements TariProvider {
     }
 
     async getTransactionResult(transactionId: string): Promise<TransactionResult> {
-        const res = await this.sendRequest('transactions.get_result', {transaction_id: transactionId});
+        const res = await this.sendRequest('tari_getTransactionResult', {transaction_id: transactionId});
 
         return {
             transaction_id: transactionId,
@@ -178,17 +172,17 @@ export class WalletConnectTariProvider implements TariProvider {
     }
 
     async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
-        let resp = await this.sendRequest('templates.get', {template_address});
+        let resp = await this.sendRequest('tari_getTemplate', {template_address});
         return resp.template_definition as TemplateDefinition;
     }
 
     async getPublicKey(branch: string, index: number): Promise<string> {
-        const res = await this.sendRequest('keys.create', {branch: branch as KeyBranch, specific_index: index});
+        const res = await this.sendRequest('tari_createKey', {branch: branch as KeyBranch, specific_index: index});
         return res.public_key;
     }
 
     async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null, max: number | null): Promise<VaultBalances> {
-        const method = 'confidential.view_vault_balance';
+        const method = 'tari_viewConfidentialVaultBalance';
         const params = {
             view_key_id: viewKeyId,
             vault_id: vaultId,
