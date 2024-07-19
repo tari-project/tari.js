@@ -1,5 +1,11 @@
-export * from "./Address";
-export * from "./Amount";
-export * from "./Builder";
-export * from "./Instruction";
-export * from "./UnsignedTransaction";
+export { TemplateAddress } from "./Address";
+export { Amount } from "./Amount";
+export {
+  Builder,
+  TariCreateAccountDefinition,
+  TariFunctionDefinition,
+  TariMethodDefinition,
+  TransactionConstructor,
+} from "./Builder";
+export { Instruction } from "./Instruction";
+export { UnsignedTransaction } from "./UnsignedTransaction";

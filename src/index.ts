@@ -17,6 +17,8 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } from "./providers/wallet_daemon";
 import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
 import * as permissions from "./providers/wallet_daemon";
+import { TransactionBuilder, Builder, transactionHelper } from "./builders";
+import { TariswapTemplate, AccountTemplate, PoolTemplate, TestFaucet } from "./templates";
 
 export {
   utils,
@@ -39,4 +41,11 @@ export {
   MetaMaskInpageProvider,
   Substate,
   permissions,
+  TransactionBuilder,
+  Builder,
+  AccountTemplate,
+  TariswapTemplate,
+  PoolTemplate,
+  TestFaucet,
+  transactionHelper,
 };

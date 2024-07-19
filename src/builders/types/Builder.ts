@@ -1,16 +1,16 @@
 import {
   ComponentAddress,
   ConfidentialClaim,
-  LogLevel,
   SubstateRequirement,
   Transaction,
   TransactionSignature,
+  Instruction,
+  UnsignedTransaction,
+  ResourceAddress,
 } from "@tariproject/typescript-bindings";
-import { Instruction } from "./Instruction";
-import { UnsignedTransaction } from "./UnsignedTransaction";
 import { TemplateAddress } from "./Address";
 import { TransactionBuilder } from "../transaction/TransactionBuilder";
-import { TransactionReq } from "../transaction/TransactionReq";
+import { Amount } from "./Amount";
 
 export interface TransactionConstructor {
   new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
@@ -35,24 +35,29 @@ export interface TariCreateAccountDefinition {
   };
 }
 
+export interface WorkspaceArg {
+  Workspace: number[];
+}
+
 export interface Builder {
   callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this;
   callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this;
-  createAccount(ownerPublicKey: string, workspaceBucket?: string): this;
-  putLastInstructionOutputOnWorkspace(label: Uint8Array): this;
+  createAccount(ownerPublicKey: string, workspaceBucket: string | null): this;
+  createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this;
+  putLastInstructionOutputOnWorkspace(label: Array<number>): this;
   dropAllProofsInWorkspace(): this;
   claimBurn(claim: ConfidentialClaim): this;
-  withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): this;
-  withFeeInstructions(instructions: Instruction[]): this;
-  withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => this): this;
-  addFeeInstruction(instruction: Instruction): this;
-  addInstruction(instruction: Instruction): this;
-  withInstructions(instructions: Instruction[]): this;
   addInput(inputObject: SubstateRequirement): this;
-  withInputs(inputs: SubstateRequirement[]): this;
+  addInstruction(instruction: Instruction): this;
+  addFeeInstruction(instruction: Instruction): this;
   withMinEpoch(minEpoch: number): this;
   withMaxEpoch(maxEpoch: number): this;
+  withInputs(inputs: SubstateRequirement[]): this;
+  withInstructions(instructions: Instruction[]): this;
+  withFeeInstructions(instructions: Instruction[]): this;
+  withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => this): this;
+  withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): this;
+  feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this;
   buildUnsignedTransaction(): UnsignedTransaction;
-  emitLog(logLvl: LogLevel, message: string): this;
-  build(): TransactionReq; //TODO return Transaction type from bindings? 
+  build(): Transaction;
 }

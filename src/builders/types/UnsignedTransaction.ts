@@ -1,5 +1,4 @@
-import { SubstateRequirement, VersionedSubstateId } from "@tariproject/typescript-bindings";
-import { Instruction } from "./Instruction";
+import { Instruction, SubstateRequirement, VersionedSubstateId } from "@tariproject/typescript-bindings";
 
 // differs from bindings implementation because of 'Instruction'
 export interface UnsignedTransaction {
@@ -7,6 +6,6 @@ export interface UnsignedTransaction {
   instructions: Instruction[];
   inputs: SubstateRequirement[];
   filledInputs: VersionedSubstateId[];
-  minEpoch: number | null;
-  maxEpoch: number | null;
+  minEpoch?: number;
+  maxEpoch?: number;
 }

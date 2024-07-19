@@ -32,6 +32,10 @@ export class Amount {
     return this.value;
   }
 
+  public getStringValue(): string {
+    return this.value.toString();
+  }
+
   public checkedAdd(other: Amount): Amount | null {
     const result = this.value + other.value;
     if (result < Number.MIN_SAFE_INTEGER || result > Number.MAX_SAFE_INTEGER) {

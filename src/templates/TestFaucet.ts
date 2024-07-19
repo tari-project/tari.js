@@ -1,7 +1,7 @@
 import { ConfidentialWithdrawProof } from "@tariproject/typescript-bindings";
-import { TransactionBuilder } from "../builders/transaction/TransactionBuilder";
 import { Amount } from "../builders/types/Amount";
 import { TariFunctionDefinition, TariMethodDefinition } from "../builders/types/Builder";
+import { TemplateFactory } from "./TemplateFactory";
 
 interface MintFunction extends TariFunctionDefinition {
   functionName: "mint";
@@ -13,27 +13,11 @@ interface MintWithSymbolFunction extends TariFunctionDefinition {
   args?: [Amount, string];
 }
 
-/**
- * Adds a fee instruction that calls the "take_fee" method on a component.
- * This method must exist and return a Bucket with containing revealed confidential XTR resource.
- * This allows the fee to originate from sources other than the transaction sender's account.
- * The fee instruction will lock up the "max_fee" amount for the duration of the transaction.
- * @param componentAddress
- * @param maxFee
- * @returns
- */
 interface PayFeeMethod extends TariMethodDefinition {
   methodName: "pay_fee";
   args?: [Amount];
 }
-// /**
-//  * Adds a fee instruction that calls the "take_fee_confidential" method on a component.
-//  * This method must exist and return a Bucket with containing revealed confidential XTR resource.
-//  * This allows the fee to originate from sources other than the transaction sender's account.
-//  * @param componentAddress
-//  * @param proof
-//  * @returns
-//  */
+
 interface PayFeeConfidentialMethod extends TariMethodDefinition {
   methodName: "pay_fee_confidential";
   args?: [ConfidentialWithdrawProof]; //TODO proof as arg
@@ -41,7 +25,7 @@ interface PayFeeConfidentialMethod extends TariMethodDefinition {
 
 interface TakeFreeCoinsMethod extends TariMethodDefinition {
   methodName: "take_free_coins";
-  args?: []; //TODO no args
+  args?: [];
 }
 
 interface TakeFreeCoinsConfidentialMethod extends TariMethodDefinition {
@@ -59,7 +43,7 @@ interface TotalSupplyMethod extends TariMethodDefinition {
   args?: [];
 }
 
-export class TestFaucet {
+export class TestFaucet extends TemplateFactory {
   public mint: MintFunction;
   public mintWithSymbol: MintWithSymbolFunction;
   public takeFreeCoins: TakeFreeCoinsMethod;
@@ -70,8 +54,15 @@ export class TestFaucet {
   public payFeeConfidential: PayFeeConfidentialMethod;
 
   constructor(public templateAddress: string) {
+    super(templateAddress);
+    this._initFunctions();
+    this._initMethods();
+  }
+  protected _initFunctions(): void {
     this.mint = this._defineFunction<MintFunction>("mint");
     this.mintWithSymbol = this._defineFunction<MintWithSymbolFunction>("mint_with_symbol");
+  }
+  protected _initMethods(): void {
     this.takeFreeCoins = this._defineMethod<TakeFreeCoinsMethod>("take_free_coins");
     this.takeFreeCoinsConfidential =
       this._defineMethod<TakeFreeCoinsConfidentialMethod>("take_free_coins_confidential");
@@ -79,19 +70,5 @@ export class TestFaucet {
     this.totalSupply = this._defineMethod<TotalSupplyMethod>("total_supply");
     this.payFee = this._defineMethod<PayFeeMethod>("pay_fee");
     this.payFeeConfidential = this._defineMethod<PayFeeConfidentialMethod>("pay_fee_confidential");
-  }
-
-  private _defineFunction<T extends TariFunctionDefinition>(name: T["functionName"]): T {
-    return {
-      templateAddress: this.templateAddress,
-      functionName: name,
-    } as T;
-  }
-
-  private _defineMethod<T extends TariMethodDefinition>(name: T["methodName"]): T {
-    return {
-      componentAddress: this.templateAddress,
-      methodName: name,
-    } as T;
   }
 }

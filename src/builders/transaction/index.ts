@@ -1,2 +1,1 @@
-export * as TransactionBuilder from "./TransactionBuilder";
-export * as TransactionReq from "./TransactionReq";
+export { TransactionBuilder } from "./TransactionBuilder";
