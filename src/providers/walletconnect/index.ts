@@ -6,10 +6,11 @@ import {
     VaultBalances, TemplateDefinition, Substate,
     Account,
     TransactionStatus,
+    ListSubstatesResponse,
 } from "../types";
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, TransactionSubmitRequest } from "@tariproject/wallet_jrpc_client";
+import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, SubstateType, TransactionSubmitRequest } from "@tariproject/wallet_jrpc_client";
 
 const walletConnectParams = {
     requiredNamespaces: {
@@ -41,6 +42,8 @@ export class WalletConnectTariProvider implements TariProvider {
 
     constructor(projectId: string) {
         this.projectId = projectId;
+        this.wcProvider = null;
+        this.wcSession = null;
     }
 
     async connect(): Promise<void> {
@@ -135,6 +138,26 @@ export class WalletConnectTariProvider implements TariProvider {
                 version: record.version
             }
         };
+    }
+
+    public async listSubstates(filter_by_template: string | null, filter_by_type: SubstateType | null, limit: number | null, offset: number | null): Promise<ListSubstatesResponse>
+    {
+        const method = 'tari_listSubstates';
+        const params = {
+            filter_by_template,
+            filter_by_type,
+            limit,
+            offset
+        };
+        const res = await this.sendRequest(method, params);
+        const substates = res.substates.map((s: any) =>  ({
+            substate_id: substateIdToString(s.substate_id),
+            module_name: s.module_name,
+            version: s.version,
+            template_address: s.template_address
+        }));
+
+        return {substates};
     }
 
     public async createFreeTestCoins(): Promise<Account> {
