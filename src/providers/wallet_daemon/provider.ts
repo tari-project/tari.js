@@ -7,6 +7,7 @@ import {
     TransactionStatus,
     SubmitTransactionResponse,
     VaultBalances, TemplateDefinition, Substate,
+    ListSubstatesResponse,
 } from "../types";
 import {Account} from "../types";
 import {
@@ -183,15 +184,23 @@ export class WalletDaemonTariProvider implements TariProvider {
         return {balances: res.balances as unknown as Map<string, number | null>};
     }
 
-    public async listSubstates(
-        template: string | null,
-        substateType: SubstateType | null
-    ) {
+    public async listSubstates(filter_by_template: string | null, filter_by_type: SubstateType | null, limit: number | null, offset: number | null): Promise<ListSubstatesResponse>
+    {
         const resp = await this.client.substatesList({
-            filter_by_template: template,
-            filter_by_type: substateType
+            filter_by_template,
+            filter_by_type,
+            limit,
+            offset
         } as SubstatesListRequest);
-        return resp.substates as any[];
+
+        const substates = resp.substates.map((s) =>  ({
+            substate_id: substateIdToString(s.substate_id),
+            module_name: s.module_name,
+            version: s.version,
+            template_address: s.template_address
+        }));
+
+        return {substates};
     }
 }
 

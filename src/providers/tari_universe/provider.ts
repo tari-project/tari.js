@@ -6,6 +6,7 @@ import {
   Substate,
   TemplateDefinition,
   VaultBalances,
+  ListSubstatesResponse,
 } from "../types";
 import {
   ProviderRequest,
@@ -16,7 +17,7 @@ import {
   WindowSize,
 } from "./types";
 import { TariProvider } from "../index";
-import { AccountsGetBalancesResponse } from "@tariproject/wallet_jrpc_client";
+import { AccountsGetBalancesResponse, SubstateType } from "@tariproject/wallet_jrpc_client";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
@@ -38,8 +39,12 @@ export class TariUniverseProvider implements TariProvider {
     req: Omit<ProviderRequest<MethodName>, "id">,
   ): Promise<ProviderReturnType<MethodName>> {
     const id = ++this.__id;
-    return new Promise<ProviderReturnType<MethodName>>(function (resolve, _reject) {
+    return new Promise<ProviderReturnType<MethodName>>(function (resolve, reject) {
       const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
+        if (resp.data.resultError) {
+          window.removeEventListener("message", event_ref);
+          reject(resp.data.resultError);
+        }
         if (resp && resp.data && resp.data.id && resp.data.id == id && resp.data.type === "provider-call") {
           window.removeEventListener("message", event_ref);
           resolve(resp.data.result);
@@ -57,6 +62,18 @@ export class TariUniverseProvider implements TariProvider {
 
   public getPublicKey(): Promise<string> {
     return this.sendRequest<"getPublicKey">({ methodName: "getPublicKey", args: [] });
+  }
+
+  public async listSubstates(
+    filter_by_template: string | null,
+    filter_by_type: SubstateType | null,
+    limit: number | null,
+    offset: number | null,
+  ): Promise<ListSubstatesResponse> {
+    return this.sendRequest<"listSubstates">({
+      methodName: "listSubstates",
+      args: [filter_by_template, filter_by_type, limit, offset],
+    });
   }
 
   public getConfidentialVaultBalances(
@@ -83,10 +100,10 @@ export class TariUniverseProvider implements TariProvider {
     return this.sendRequest({ methodName: "getAccount", args: [] });
   }
 
-  public async getAccountBalances(): Promise<AccountsGetBalancesResponse> {
+  public async getAccountBalances(componentAddress: string): Promise<AccountsGetBalancesResponse> {
     return this.sendRequest({
       methodName: "getAccountBalances",
-      args: [],
+      args: [componentAddress],
     });
   }
 
