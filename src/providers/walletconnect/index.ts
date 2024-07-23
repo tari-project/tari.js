@@ -24,7 +24,8 @@ const walletConnectParams = {
             'tari_getTemplate',
             'tari_createKey',
             'tari_viewConfidentialVaultBalance',
-            'tari_createFreeTestCoins'
+            'tari_createFreeTestCoins',
+            'tari_listSubstates'
         ],
         chains: [
           'tari:devnet',
