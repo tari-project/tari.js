@@ -13,7 +13,7 @@ import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, Transac
 
 const walletConnectParams = {
     requiredNamespaces: {
-      polkadot: {
+      tari: {
         methods: [
             'tari_getSubstate',
             'tari_getDefaultAccount',
@@ -22,7 +22,8 @@ const walletConnectParams = {
             'tari_getTransactionResult',
             'tari_getTemplate',
             'tari_createKey',
-            'tari_viewConfidentialVaultBalance'
+            'tari_viewConfidentialVaultBalance',
+            'tari_createFreeTestCoins'
         ],
         chains: [
           'tari:devnet',
@@ -133,6 +134,23 @@ export class WalletConnectTariProvider implements TariProvider {
                 substate_id: substateIdToString(record.substate_id),
                 version: record.version
             }
+        };
+    }
+
+    public async createFreeTestCoins(): Promise<Account> {
+        const method = 'tari_createFreeTestCoins';
+        const params = {
+            account: {Name: "template_web"},
+            amount: 1000000,
+            max_fee: null,
+            key_id: 0
+        };
+        const res = await this.sendRequest(method, params);
+        return {
+            account_id: res.account.key_index,
+            address: (res.account.address as { Component: string }).Component,
+            public_key: res.public_key,
+            resources: []
         };
     }
 

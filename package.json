@@ -2,12 +2,10 @@
   "name": "@tariproject/tarijs",
   "version": "0.1.19",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "build-tsc": "tsc",
-    "start": "rollup -c -w"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
@@ -17,14 +15,11 @@
     "@tariproject/typescript-bindings": "file:../tari-dan/typescript-bindings",
     "@tariproject/wallet_jrpc_client": "file:../tari-dan/clients/javascript/wallet_daemon_client",
     "@walletconnect/modal": "^2.6.2",
+    "@walletconnect/modal-core": "2.6.2",
     "@walletconnect/universal-provider": "^2.13.3"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/node": "^20.12.6",
-    "rollup": "^3.20.6",
-    "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^5.0.4"
   },
   "files": [
