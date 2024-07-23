@@ -109,7 +109,7 @@ export class WalletConnectTariProvider implements TariProvider {
     async getAccount(): Promise<Account> {
         const {account, public_key} = await this.sendRequest('tari_getDefaultAccount', {});
         const {balances} = await this.sendRequest(
-            'accounts.get_balances',
+            'tari_getAccountBalances',
             {account: {ComponentAddress: account.address.Component }, refresh: false
         });
 
