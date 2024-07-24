@@ -3,40 +3,35 @@ import {
   Instruction,
   SubstateRequirement,
   Transaction,
-  TransactionSignature,
+  TransactionId,
   UnsignedTransaction,
   VersionedSubstateId,
-} from "@tariproject/typescript-bindings";
-import { TransactionId } from "../types/TransactionId";
-import { TransactionBuilder } from "./TransactionBuilder";
+} from "../types";
+import { TransactionSignature } from "../types/TransactionSignature";
 
 ///TODO this implementation is not fully done, see:
 /// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
 export class TransactionRequest implements Transaction {
   id: TransactionId;
-  fee_instructions: Array<Instruction>;
+  feeInstructions: Array<Instruction>;
   instructions: Array<Instruction>;
   inputs: Array<SubstateRequirement>;
-  min_epoch: Epoch | null;
-  max_epoch: Epoch | null;
   signatures: Array<TransactionSignature>;
-  filled_inputs: Array<VersionedSubstateId>;
-  unsigned_transaction: UnsignedTransaction;
-
-  static builder(): TransactionBuilder {
-    return new TransactionBuilder();
-  }
+  filledInputs: Array<VersionedSubstateId>;
+  unsignedTransaction: UnsignedTransaction;
+  minEpoch?: Epoch;
+  maxEpoch?: Epoch;
 
   constructor(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]) {
     this.id = this.calculateHash();
-    this.fee_instructions = unsignedTransaction.fee_instructions;
+    this.feeInstructions = unsignedTransaction.feeInstructions;
     this.instructions = unsignedTransaction.instructions;
     this.inputs = unsignedTransaction.inputs;
-    this.min_epoch = unsignedTransaction.min_epoch;
-    this.max_epoch = unsignedTransaction.max_epoch;
     this.signatures = signatures;
+    this.minEpoch = unsignedTransaction.minEpoch;
+    this.maxEpoch = unsignedTransaction.maxEpoch;
     /// Inputs filled by some authority. These are not part of the transaction hash nor the signature
-    this.filled_inputs = [];
+    this.filledInputs = [];
   }
 
   //TODO
@@ -52,18 +47,17 @@ export class TransactionRequest implements Transaction {
     return this.id;
   }
 
-  //TODO
   checkId(): boolean {
     const id = this.calculateHash();
     return id === this.id;
   }
 
   getUnsignedTransaction(): UnsignedTransaction {
-    return this.unsigned_transaction;
+    return this.unsignedTransaction;
   }
 
   getFeeInstructions(): Instruction[] {
-    return this.fee_instructions;
+    return this.feeInstructions;
   }
 
   getInstructions(): Instruction[] {
@@ -83,18 +77,18 @@ export class TransactionRequest implements Transaction {
   }
 
   getFilledInputs(): VersionedSubstateId[] {
-    return this.filled_inputs;
+    return this.filledInputs;
   }
 
   getFilledInputsMut(): VersionedSubstateId[] {
-    return this.filled_inputs;
+    return this.filledInputs;
   }
 
-  minEpoch(): Epoch | null {
-    return this.min_epoch;
+  getMinEpoch(): Epoch | undefined {
+    return this.minEpoch;
   }
 
-  maxEpoch(): Epoch | null {
-    return this.max_epoch;
+  getMaxEpoch(): Epoch | undefined {
+    return this.maxEpoch;
   }
 }

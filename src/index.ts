@@ -17,9 +17,16 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } from "./providers/wallet_daemon";
 import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
 import * as permissions from "./providers/wallet_daemon";
-import { TransactionBuilder, Builder, transactionHelper } from "./builders";
+import {
+  TransactionBuilder,
+  TransactionRequest,
+  buildTransactionRequest,
+  fromWorkspace,
+  toWorkspace,
+} from "./builders";
 import { TariswapTemplate, AccountTemplate, PoolTemplate, TestFaucet } from "./templates";
 
+export * from "./builders/types";
 export {
   utils,
   TariProvider,
@@ -42,10 +49,12 @@ export {
   Substate,
   permissions,
   TransactionBuilder,
-  Builder,
   AccountTemplate,
   TariswapTemplate,
   PoolTemplate,
   TestFaucet,
-  transactionHelper,
+  TransactionRequest,
+  buildTransactionRequest,
+  fromWorkspace,
+  toWorkspace,
 };

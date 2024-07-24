@@ -1,16 +1,15 @@
-import {
-  ComponentAddress,
-  ConfidentialClaim,
-  SubstateRequirement,
-  Transaction,
-  TransactionSignature,
-  Instruction,
-  UnsignedTransaction,
-  ResourceAddress,
-} from "@tariproject/typescript-bindings";
-import { TemplateAddress } from "./Address";
+import { TemplateAddress } from "./TemplateAddress";
 import { TransactionBuilder } from "../transaction/TransactionBuilder";
 import { Amount } from "./Amount";
+import { Instruction } from "./Instruction";
+import { UnsignedTransaction } from "./UnsignedTransaction";
+import { Transaction } from "./Transaction";
+import { ConfidentialClaim } from "./ConfidentialClaim";
+import { ComponentAddress } from "./ComponentAddress";
+import { SubstateRequirement } from "./SubstateRequirement";
+import { Arg } from "./Arg";
+import { TransactionSignature } from "./TransactionSignature";
+import { ResourceAddress } from "./ResourceAddress";
 
 export interface TransactionConstructor {
   new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
@@ -18,12 +17,12 @@ export interface TransactionConstructor {
 
 export interface TariFunctionDefinition {
   functionName: string;
-  args?: any[]; //TODO add arg type
+  args?: Arg[];
   templateAddress: TemplateAddress;
 }
 export interface TariMethodDefinition {
   methodName: string;
-  args?: any[]; //TODO add arg type
+  args?: Arg[];
   componentAddress: ComponentAddress;
 }
 
@@ -35,16 +34,12 @@ export interface TariCreateAccountDefinition {
   };
 }
 
-export interface WorkspaceArg {
-  Workspace: number[];
-}
-
 export interface Builder {
   callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this;
   callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this;
-  createAccount(ownerPublicKey: string, workspaceBucket: string | null): this;
+  createAccount(ownerPublicKey: string, workspaceBucket?: string): this;
   createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this;
-  putLastInstructionOutputOnWorkspace(label: Array<number>): this;
+  saveVar(key: string): this;
   dropAllProofsInWorkspace(): this;
   claimBurn(claim: ConfidentialClaim): this;
   addInput(inputObject: SubstateRequirement): this;

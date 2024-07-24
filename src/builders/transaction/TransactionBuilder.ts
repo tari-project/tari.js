@@ -1,18 +1,19 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
-import {
-  ConfidentialClaim,
-  SubstateRequirement,
-  TransactionSignature,
-  Instruction,
-  UnsignedTransaction,
-  Transaction,
-  ComponentAddress,
-  ResourceAddress,
-} from "@tariproject/typescript-bindings";
 import { Builder, TariFunctionDefinition, TariMethodDefinition } from "../types/Builder";
-import { TransactionRequest } from "./Transaction";
-import { Amount } from "../types";
+import { TransactionRequest } from "./TransactionRequest";
+import {
+  Amount,
+  ComponentAddress,
+  ConfidentialClaim,
+  Instruction,
+  ResourceAddress,
+  SubstateRequirement,
+  Transaction,
+  TransactionSignature,
+  UnsignedTransaction,
+} from "../types";
+import { toWorkspace } from "../helpers/workspace";
 
 export class TransactionBuilder implements Builder {
   private unsignedTransaction: UnsignedTransaction;
@@ -20,72 +21,73 @@ export class TransactionBuilder implements Builder {
 
   constructor() {
     this.unsignedTransaction = {
-      fee_instructions: [],
+      feeInstructions: [],
       instructions: [],
       inputs: [],
-      min_epoch: null,
-      max_epoch: null,
+      filledInputs: [],
+      minEpoch: undefined,
+      maxEpoch: undefined,
     };
     this.signatures = [];
   }
 
   public callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this {
-    const encoder = new TextEncoder();
     return this.addInstruction({
-      CallFunction: {
-        template_address: encoder.encode(func.templateAddress),
-        function: func.functionName,
-        args,
-      },
+      type: "CallFunction",
+      templateAddress: func.templateAddress,
+      function: func.functionName,
+      args,
     });
   }
 
   public callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this {
     return this.addInstruction({
-      CallMethod: {
-        component_address: method.componentAddress,
-        method: method.methodName,
-        args,
-      },
+      type: "CallMethod",
+      componentAddress: method.componentAddress,
+      method: method.methodName,
+      args,
     });
   }
 
-  public createAccount(ownerPublicKey: string, workspaceBucket: string | null): this {
+  public createAccount(ownerPublicKey: string, workspaceBucket?: string): this {
     return this.addInstruction({
-      CreateAccount: {
-        owner_public_key: ownerPublicKey,
-        workspace_bucket: workspaceBucket,
-      },
+      type: "CreateAccount",
+      ownerPublicKey,
+      workspaceBucket,
     });
   }
 
   public createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this {
     return this.addInstruction({
-      CallMethod: {
-        component_address: account,
-        method: "create_proof_for_resource",
-        args: [resourceAddress],
-      },
+      type: "CallMethod",
+      componentAddress: account,
+      method: "create_proof_for_resource",
+      args: [resourceAddress],
     });
   }
 
   public dropAllProofsInWorkspace(): this {
-    return this.addInstruction("DropAllProofsInWorkspace");
+    return this.addInstruction({
+      type: "DropAllProofsInWorkspace",
+    });
   }
 
-  public putLastInstructionOutputOnWorkspace(key: Array<number>): this {
+  /**
+   * `SaveVar` replaces
+   * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
+   * but under the hood it does the same.
+   */
+  public saveVar(key: string): this {
     return this.addInstruction({
-      PutLastInstructionOutputOnWorkspace: {
-        key,
-      },
+      type: "PutLastInstructionOutputOnWorkspace",
+      key: toWorkspace(key),
     });
   }
 
   public claimBurn(claim: ConfidentialClaim): this {
     return this.addInstruction({
-      ClaimBurn: {
-        claim,
-      },
+      type: "ClaimBurn",
+      claim,
     });
   }
 
@@ -98,11 +100,10 @@ export class TransactionBuilder implements Builder {
    */
   public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this {
     return this.addFeeInstruction({
-      CallMethod: {
-        component_address: componentAddress,
-        method: "pay_fee",
-        args: [maxFee.getStringValue()],
-      },
+      type: "CallMethod",
+      componentAddress,
+      method: "pay_fee",
+      args: [maxFee],
     });
   }
 
@@ -113,14 +114,14 @@ export class TransactionBuilder implements Builder {
   }
 
   public withFeeInstructions(instructions: Instruction[]): this {
-    this.unsignedTransaction.fee_instructions = instructions;
+    this.unsignedTransaction.feeInstructions = instructions;
     this.signatures = [];
     return this;
   }
 
   public withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => TransactionBuilder): this {
     const newBuilder = builder(new TransactionBuilder());
-    this.unsignedTransaction.fee_instructions = newBuilder.unsignedTransaction.instructions;
+    this.unsignedTransaction.feeInstructions = newBuilder.unsignedTransaction.instructions;
     this.signatures = [];
     return this;
   }
@@ -132,7 +133,7 @@ export class TransactionBuilder implements Builder {
   }
 
   public addFeeInstruction(instruction: Instruction): this {
-    this.unsignedTransaction.fee_instructions.push(instruction);
+    this.unsignedTransaction.feeInstructions.push(instruction);
     this.signatures = [];
     return this;
   }
@@ -156,14 +157,14 @@ export class TransactionBuilder implements Builder {
   }
 
   public withMinEpoch(minEpoch: number): this {
-    this.unsignedTransaction.min_epoch = minEpoch;
+    this.unsignedTransaction.minEpoch = minEpoch;
     // Reset the signatures as they are no longer valid
     this.signatures = [];
     return this;
   }
 
   public withMaxEpoch(maxEpoch: number): this {
-    this.unsignedTransaction.max_epoch = maxEpoch;
+    this.unsignedTransaction.maxEpoch = maxEpoch;
     // Reset the signatures as they are no longer valid
     this.signatures = [];
     return this;

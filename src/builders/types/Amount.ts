@@ -1,4 +1,3 @@
-// TODO use it instead of imported Amount from bindings
 export class Amount {
   private value: number;
 

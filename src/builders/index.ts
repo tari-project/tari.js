@@ -1,3 +1,3 @@
 export * from "./types";
-export * from "./transaction";
-export * from "./helpers";
+export { TransactionBuilder, TransactionRequest } from "./transaction";
+export { buildTransactionRequest, fromWorkspace, toWorkspace } from "./helpers";

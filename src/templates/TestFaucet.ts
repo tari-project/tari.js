@@ -1,6 +1,4 @@
-import { ConfidentialWithdrawProof } from "@tariproject/typescript-bindings";
-import { Amount } from "../builders/types/Amount";
-import { TariFunctionDefinition, TariMethodDefinition } from "../builders/types/Builder";
+import { Amount, ConfidentialWithdrawProof, TariFunctionDefinition, TariMethodDefinition } from "../builders/types";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface MintFunction extends TariFunctionDefinition {
@@ -20,7 +18,7 @@ interface PayFeeMethod extends TariMethodDefinition {
 
 interface PayFeeConfidentialMethod extends TariMethodDefinition {
   methodName: "pay_fee_confidential";
-  args?: [ConfidentialWithdrawProof]; //TODO proof as arg
+  args?: [ConfidentialWithdrawProof];
 }
 
 interface TakeFreeCoinsMethod extends TariMethodDefinition {

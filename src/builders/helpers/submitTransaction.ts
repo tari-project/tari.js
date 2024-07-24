@@ -1,5 +1,5 @@
-import { Transaction } from "@tariproject/typescript-bindings";
 import { SubmitTransactionRequest, SubstateRequirement } from "../../providers/types";
+import { Transaction } from "../types";
 
 export function buildTransactionRequest(
   transaction: Transaction,
@@ -11,12 +11,12 @@ export function buildTransactionRequest(
   return {
     account_id: accountId,
     instructions: transaction.instructions as object[], //TODO refactor SubTxReq type to change 'object[]'
-    fee_instructions: transaction.fee_instructions as object[],
+    fee_instructions: transaction.feeInstructions as object[],
     inputs: transaction.inputs,
     input_refs: inputRefs, //TODO
     required_substates: requiredSubstates,
     is_dry_run: isDryRun,
-    min_epoch: transaction.min_epoch,
-    max_epoch: transaction.max_epoch,
+    min_epoch: transaction.minEpoch ?? null, //TODO
+    max_epoch: transaction.maxEpoch ?? null,
   };
 }

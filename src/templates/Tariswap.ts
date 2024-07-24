@@ -1,6 +1,5 @@
-import { ConfidentialWithdrawProof, ResourceAddress } from "@tariproject/typescript-bindings";
-import { Amount } from "../builders/types/Amount";
-import { TariFunctionDefinition, TariMethodDefinition, WorkspaceArg } from "../builders/types/Builder";
+import { Amount, ConfidentialWithdrawProof, ResourceAddress } from "../builders/types";
+import { TariFunctionDefinition, TariMethodDefinition, WorkspaceArg } from "../builders/types";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface NewPoolFunction extends TariFunctionDefinition {

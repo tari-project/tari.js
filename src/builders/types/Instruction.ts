@@ -1,12 +1,9 @@
-import {
-  Amount,
-  Arg,
-  ComponentAddress,
-  ConfidentialClaim,
-  ConfidentialOutput,
-  Epoch,
-  LogLevel,
-} from "@tariproject/typescript-bindings";
+import { ComponentAddress, LogLevel } from "@tariproject/typescript-bindings";
+import { Arg } from "./Arg";
+import { ConfidentialClaim } from "./ConfidentialClaim";
+import { Epoch } from "./Epoch";
+import { Amount } from "./Amount";
+import { ConfidentialOutput } from "./ConfidentialOutput";
 
 export type Instruction =
   | CreateAccount
