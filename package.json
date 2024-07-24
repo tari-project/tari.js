@@ -12,8 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "^9.0.0",
-    "@tariproject/typescript-bindings": "file:../tari-dan/bindings",
-    "@tariproject/wallet_jrpc_client": "file:../tari-dan/clients/javascript/wallet_daemon_client",
+    "@tariproject/wallet_jrpc_client": "https://gitpkg.now.sh/tari-project/tari-dan/clients/javascript/wallet_daemon_client?development&scripts.postinstall=npm%20run%20build",
+    "@tariproject/typescript-bindings": "https://gitpkg.now.sh/tari-project/tari-dan/bindings?development&scripts.postinstall=npm%20run%20tsc",
     "@walletconnect/modal": "^2.6.2",
     "@walletconnect/universal-provider": "^2.13.3"
   },
