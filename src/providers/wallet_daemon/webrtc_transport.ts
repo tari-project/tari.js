@@ -1,4 +1,4 @@
-import {transports} from "@tariproject/wallet_jrpc_client";
+import {transports} from "@tari-project/wallet_jrpc_client";
 import {TariConnection} from "./webrtc";
 
 export class WebRtcRpcTransport implements transports.RpcTransport {

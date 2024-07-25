@@ -1,5 +1,5 @@
 {
-  "name": "@tariproject/tarijs",
+  "name": "@tari-project/tarijs",
   "version": "0.1.20",
   "description": "",
   "main": "./src/index.js",
@@ -12,8 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "^9.0.0",
-    "@tariproject/wallet_jrpc_client": "https://gitpkg.now.sh/tari-project/tari-dan/clients/javascript/wallet_daemon_client?development&scripts.postinstall=npm%20run%20build",
-    "@tariproject/typescript-bindings": "https://gitpkg.now.sh/tari-project/tari-dan/bindings?development&scripts.postinstall=npm%20run%20tsc",
+    "@tari-project/wallet_jrpc_client": "^1.0.7",
+    "@tari-project/typescript-bindings": "^1.0.3",
     "@walletconnect/modal": "^2.6.2",
     "@walletconnect/universal-provider": "^2.13.3"
   },

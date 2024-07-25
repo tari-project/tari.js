@@ -10,7 +10,7 @@ import {
 } from "../types";
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, SubstateType, TransactionSubmitRequest } from "@tariproject/wallet_jrpc_client";
+import { Instruction, KeyBranch, stringToSubstateId, substateIdToString, SubstateType, TransactionSubmitRequest } from "@tari-project/wallet_jrpc_client";
 
 const walletConnectParams = {
     requiredNamespaces: {
