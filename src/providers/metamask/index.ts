@@ -11,7 +11,7 @@ import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
 import {Maybe} from "@metamask/providers/dist/utils";
 import {Account} from "../types";
-import { SubstateType } from "@tariproject/typescript-bindings";
+import { SubstateType } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = 'METAMASK_NOT_INSTALLED';
 export const MetamaskIsNotFlask = 'METAMASK_IS_NOT_FLASK';

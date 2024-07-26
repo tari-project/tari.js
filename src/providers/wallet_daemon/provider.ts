@@ -19,7 +19,7 @@ import {
     SubstateType,
     SubstatesListRequest,
     KeyBranch,
-} from "@tariproject/wallet_jrpc_client";
+} from "@tari-project/wallet_jrpc_client";
 import {WebRtcRpcTransport} from "./webrtc_transport";
 
 export const WalletDaemonNotConnected = 'WALLET_DAEMON_NOT_CONNECTED';

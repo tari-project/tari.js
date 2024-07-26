@@ -1,5 +1,5 @@
 import {TariPermissions} from "./tari_permissions";
-import {transports} from "@tariproject/wallet_jrpc_client";
+import {transports} from "@tari-project/wallet_jrpc_client";
 
 class SignaligServer {
     private _token?: string;
