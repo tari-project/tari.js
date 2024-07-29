@@ -1,4 +1,4 @@
-import type { SubstateType } from "@tariproject/typescript-bindings";
+import type { SubstateType } from "@tari-project/typescript-bindings";
 import {
   Account,
   SubmitTransactionRequest,

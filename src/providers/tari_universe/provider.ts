@@ -17,7 +17,7 @@ import {
   WindowSize,
 } from "./types";
 import { TariProvider } from "../index";
-import { AccountsGetBalancesResponse, SubstateType } from "@tariproject/wallet_jrpc_client";
+import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
