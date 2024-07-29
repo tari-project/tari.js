@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "",
   "main": "./dist/index.js",
   "type": "module",
