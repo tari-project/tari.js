@@ -1,6 +1,6 @@
 {
-  "name": "@tariproject/tarijs",
-  "version": "0.1.19",
+  "name": "@tari-project/tarijs",
+  "version": "0.1.20",
   "description": "",
   "main": "./dist/index.js",
   "type": "module",
@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "^9.0.0",
-    "@tariproject/wallet_jrpc_client": "1.0.5"
+    "@tari-project/wallet_jrpc_client": "^1.0.8",
+    "@tari-project/typescript-bindings": "^1.0.3"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

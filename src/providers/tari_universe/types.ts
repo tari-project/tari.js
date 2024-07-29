@@ -29,4 +29,5 @@ export type ProviderResponse<T extends ProviderMethodNames> = {
   id: number;
   type: "provider-call";
   result: ProviderReturnType<T>;
+  resultError?: string;
 };

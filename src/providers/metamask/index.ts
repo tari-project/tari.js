@@ -5,11 +5,13 @@ import {
     TransactionStatus,
     SubmitTransactionResponse,
     VaultBalances, TemplateDefinition, Substate,
+    ListSubstatesResponse,
 } from "../types";
 import {MetaMaskInpageProvider} from '@metamask/providers';
 import {connectSnap, getSnap, isFlask, Snap} from "./utils";
 import {Maybe} from "@metamask/providers/dist/utils";
 import {Account} from "../types";
+import { SubstateType } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = 'METAMASK_NOT_INSTALLED';
 export const MetamaskIsNotFlask = 'METAMASK_IS_NOT_FLASK';
@@ -80,6 +82,17 @@ export class MetamaskTariProvider implements TariProvider {
     async getSubstate(substate_address: string): Promise<Substate> {
         const {substate, address: substate_id, version} = await this.metamaskRequest<any>('getSubstate', { substate_address });
         return {value: substate, address: {substate_id, version}}
+    }
+
+    async listSubstates(filter_by_template: string | null, filter_by_type: SubstateType | null, limit: number | null, offset: number | null): Promise<ListSubstatesResponse> {
+        const res = await this.metamaskRequest('listSubstates', {
+            filter_by_template,
+            filter_by_type,
+            limit,
+            offset,
+        }) as any;
+
+        return res;
     }
 
     async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
