@@ -3,11 +3,11 @@ import {
   Instruction,
   SubstateRequirement,
   Transaction,
+  TransactionId,
+  TransactionSignature,
   UnsignedTransaction,
   VersionedSubstateId,
 } from "../types";
-import { TransactionSignature } from "../types/TransactionSignature";
-import { TransactionId } from "../types";
 
 ///TODO this implementation is not fully done, see:
 /// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
@@ -17,7 +17,6 @@ export class TransactionRequest implements Transaction {
   instructions: Array<Instruction>;
   inputs: Array<SubstateRequirement>;
   signatures: Array<TransactionSignature>;
-  // filled_inputs: Array<VersionedSubstateId>;
   unsignedTransaction: UnsignedTransaction;
   minEpoch?: Epoch;
   maxEpoch?: Epoch;
@@ -31,11 +30,10 @@ export class TransactionRequest implements Transaction {
     this.signatures = signatures;
     this.minEpoch = unsignedTransaction.minEpoch;
     this.maxEpoch = unsignedTransaction.maxEpoch;
-    /// Inputs filled by some authority. These are not part of the transaction hash nor the signature
+    // Inputs filled by some authority. These are not part of the transaction hash nor the signature
     this.filledInputs = [];
   }
 
-  //TODO
   private calculateHash(): TransactionId {
     return "";
   }

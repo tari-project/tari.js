@@ -1,2 +1,2 @@
-//TODO refactor type
+//TODO refactor Arg type
 export type Arg = any;

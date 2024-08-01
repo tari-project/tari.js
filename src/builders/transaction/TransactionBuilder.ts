@@ -1,7 +1,6 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 import { toWorkspace } from "../helpers";
-// import { Instruction } from "../types";
 import { Builder, TariFunctionDefinition, TariMethodDefinition } from "../types/Builder";
 import { TransactionRequest } from "./TransactionRequest";
 import {

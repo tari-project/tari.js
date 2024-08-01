@@ -1,11 +1,22 @@
 import { ComponentAddress, LogLevel } from "@tariproject/typescript-bindings";
 import { Arg } from "./Arg";
 import { ConfidentialClaim } from "./ConfidentialClaim";
-import { Epoch } from "./Epoch";
 import { Amount } from "./Amount";
 import { ConfidentialOutput } from "./ConfidentialOutput";
+import { TemplateAddress } from "./TemplateAddress";
 
 export type Instruction =
+  | { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } }
+  | { CallFunction: { template_address: TemplateAddress; function: string; args: Array<Arg> } }
+  | { CallMethod: { component_address: ComponentAddress; method: string; args: Array<string> } }
+  | { PutLastInstructionOutputOnWorkspace: { key: number[] } }
+  | { EmitLog: { level: LogLevel; message: string } }
+  | { ClaimBurn: { claim: ConfidentialClaim } }
+  | { ClaimValidatorFees: { epoch: number; validator_public_key: string } }
+  | "DropAllProofsInWorkspace"
+  | { CreateFreeTestCoins: { revealed_amount: Amount; output: ConfidentialOutput | null } };
+
+export type InstructionTypes =
   | CreateAccount
   | CallFunction
   | CallMethod
@@ -16,54 +27,14 @@ export type Instruction =
   | DropAllProofsInWorkspace
   | CreateFreeTestCoins;
 
-interface CreateAccount {
-  type: "CreateAccount";
-  ownerPublicKey: string;
-  workspaceBucket?: string;
-}
-
-interface CallFunction {
-  type: "CallFunction";
-  templateAddress: string;
-  function: string;
-  args: Arg[];
-}
-
-interface CallMethod {
-  type: "CallMethod";
-  componentAddress: ComponentAddress;
-  method: string;
-  args: Arg[];
-}
-
-interface PutLastInstructionOutputOnWorkspace {
-  type: "PutLastInstructionOutputOnWorkspace";
-  key: Uint8Array;
-}
-
-interface EmitLog {
-  type: "EmitLog";
-  level: LogLevel;
-  message: string;
-}
-
-interface ClaimBurn {
-  type: "ClaimBurn";
-  claim: ConfidentialClaim;
-}
-
-interface ClaimValidatorFees {
-  type: "ClaimValidatorFees";
-  epoch: Epoch;
-  validatorPublicKey: string;
-}
-
-interface DropAllProofsInWorkspace {
-  type: "DropAllProofsInWorkspace";
-}
-
-interface CreateFreeTestCoins {
-  type: "CreateFreeTestCoins";
-  revealedAmount: Amount;
-  output?: ConfidentialOutput;
-}
+export type CreateAccount = { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } };
+export type CallFunction = { CallFunction: { template_address: TemplateAddress; function: string; args: Array<Arg> } };
+export type CallMethod = { CallMethod: { component_address: ComponentAddress; method: string; args: Array<string> } };
+export type PutLastInstructionOutputOnWorkspace = { PutLastInstructionOutputOnWorkspace: { key: number[] } };
+export type EmitLog = { EmitLog: { level: LogLevel; message: string } };
+export type ClaimBurn = { ClaimBurn: { claim: ConfidentialClaim } };
+export type ClaimValidatorFees = { ClaimValidatorFees: { epoch: number; validator_public_key: string } };
+export type DropAllProofsInWorkspace = "DropAllProofsInWorkspace";
+export type CreateFreeTestCoins = {
+  CreateFreeTestCoins: { revealed_amount: Amount; output: ConfidentialOutput | null };
+};
