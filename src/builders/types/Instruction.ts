@@ -6,17 +6,6 @@ import { ConfidentialOutput } from "./ConfidentialOutput";
 import { TemplateAddress } from "./TemplateAddress";
 
 export type Instruction =
-  | { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } }
-  | { CallFunction: { template_address: TemplateAddress; function: string; args: Array<Arg> } }
-  | { CallMethod: { component_address: ComponentAddress; method: string; args: Array<string> } }
-  | { PutLastInstructionOutputOnWorkspace: { key: number[] } }
-  | { EmitLog: { level: LogLevel; message: string } }
-  | { ClaimBurn: { claim: ConfidentialClaim } }
-  | { ClaimValidatorFees: { epoch: number; validator_public_key: string } }
-  | "DropAllProofsInWorkspace"
-  | { CreateFreeTestCoins: { revealed_amount: Amount; output: ConfidentialOutput | null } };
-
-export type InstructionTypes =
   | CreateAccount
   | CallFunction
   | CallMethod
