@@ -3,12 +3,12 @@ import { TemplateFactory } from "./TemplateFactory";
 
 interface MintFunction extends TariFunctionDefinition {
   functionName: "mint";
-  args?: [Amount];
+  args?: [string];
 }
 
 interface MintWithSymbolFunction extends TariFunctionDefinition {
   functionName: "mint_with_symbol";
-  args?: [Amount, string];
+  args?: [amount: string, symbol: string];
 }
 
 interface PayFeeMethod extends TariMethodDefinition {

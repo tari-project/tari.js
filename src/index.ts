@@ -21,6 +21,8 @@ import {
   TransactionBuilder,
   TransactionRequest,
   buildTransactionRequest,
+  submitAndWaitForTransaction,
+  waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
 } from "./builders";
@@ -55,6 +57,8 @@ export {
   TestFaucet,
   TransactionRequest,
   buildTransactionRequest,
+  submitAndWaitForTransaction,
+  waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
 };

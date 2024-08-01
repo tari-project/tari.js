@@ -1,9 +1,10 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
+import { toWorkspace } from "../helpers";
+// import { Instruction } from "../types";
 import { Builder, TariFunctionDefinition, TariMethodDefinition } from "../types/Builder";
 import { TransactionRequest } from "./TransactionRequest";
 import {
-  Amount,
   ComponentAddress,
   ConfidentialClaim,
   Instruction,
@@ -13,7 +14,6 @@ import {
   TransactionSignature,
   UnsignedTransaction,
 } from "../types";
-import { toWorkspace } from "../helpers/workspace";
 
 export class TransactionBuilder implements Builder {
   private unsignedTransaction: UnsignedTransaction;
@@ -33,43 +33,45 @@ export class TransactionBuilder implements Builder {
 
   public callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this {
     return this.addInstruction({
-      type: "CallFunction",
-      templateAddress: func.templateAddress,
-      function: func.functionName,
-      args,
+      CallFunction: {
+        template_address: func.templateAddress,
+        function: func.functionName,
+        args,
+      },
     });
   }
 
   public callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this {
     return this.addInstruction({
-      type: "CallMethod",
-      componentAddress: method.componentAddress,
-      method: method.methodName,
-      args,
+      CallMethod: {
+        component_address: method.componentAddress,
+        method: method.methodName,
+        args,
+      },
     });
   }
 
   public createAccount(ownerPublicKey: string, workspaceBucket?: string): this {
     return this.addInstruction({
-      type: "CreateAccount",
-      ownerPublicKey,
-      workspaceBucket,
+      CreateAccount: {
+        owner_public_key: ownerPublicKey,
+        workspace_bucket: workspaceBucket ?? null,
+      },
     });
   }
 
   public createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this {
     return this.addInstruction({
-      type: "CallMethod",
-      componentAddress: account,
-      method: "create_proof_for_resource",
-      args: [resourceAddress],
+      CallMethod: {
+        component_address: account,
+        method: "create_proof_for_resource",
+        args: [resourceAddress],
+      },
     });
   }
 
   public dropAllProofsInWorkspace(): this {
-    return this.addInstruction({
-      type: "DropAllProofsInWorkspace",
-    });
+    return this.addInstruction("DropAllProofsInWorkspace");
   }
 
   /**
@@ -79,15 +81,17 @@ export class TransactionBuilder implements Builder {
    */
   public saveVar(key: string): this {
     return this.addInstruction({
-      type: "PutLastInstructionOutputOnWorkspace",
-      key: toWorkspace(key),
+      PutLastInstructionOutputOnWorkspace: {
+        key: toWorkspace(key),
+      },
     });
   }
 
   public claimBurn(claim: ConfidentialClaim): this {
     return this.addInstruction({
-      type: "ClaimBurn",
-      claim,
+      ClaimBurn: {
+        claim,
+      },
     });
   }
 
@@ -98,12 +102,13 @@ export class TransactionBuilder implements Builder {
    * This allows the fee to originate from sources other than the transaction sender's account.
    * The fee instruction will lock up the "max_fee" amount for the duration of the transaction.
    */
-  public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this {
+  public feeTransactionPayFromComponent(component_address: ComponentAddress, maxFee: string): this {
     return this.addFeeInstruction({
-      type: "CallMethod",
-      componentAddress,
-      method: "pay_fee",
-      args: [maxFee],
+      CallMethod: {
+        component_address,
+        method: "pay_fee",
+        args: [maxFee],
+      },
     });
   }
 

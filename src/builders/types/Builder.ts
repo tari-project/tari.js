@@ -1,16 +1,26 @@
 import { TemplateAddress } from "./TemplateAddress";
-import { TransactionBuilder } from "../transaction/TransactionBuilder";
-import { Amount } from "./Amount";
-import { Instruction } from "./Instruction";
-import { UnsignedTransaction } from "./UnsignedTransaction";
-import { Transaction } from "./Transaction";
-import { ConfidentialClaim } from "./ConfidentialClaim";
-import { ComponentAddress } from "./ComponentAddress";
-import { SubstateRequirement } from "./SubstateRequirement";
+// import { TransactionBuilder } from "../transaction/TransactionBuilder";
+// import { Amount } from "./Amount";
+// import { Instruction } from "./Instruction";
+// import { UnsignedTransaction } from "./UnsignedTransaction";
+// import { Transaction } from "./Transaction";
+// import { ConfidentialClaim } from "./ConfidentialClaim";
+// import { ComponentAddress } from "./ComponentAddress";
+// import { SubstateRequirement } from "./SubstateRequirement";
 import { Arg } from "./Arg";
-import { TransactionSignature } from "./TransactionSignature";
-import { ResourceAddress } from "./ResourceAddress";
-
+// import { TransactionSignature } from "./TransactionSignature";
+// import { ResourceAddress } from "./ResourceAddress";
+import {
+  ComponentAddress,
+  ConfidentialClaim,
+  ResourceAddress,
+  SubstateRequirement,
+  Transaction,
+  TransactionSignature,
+  UnsignedTransaction,
+} from ".";
+import { Instruction } from "./Instruction";
+import { TransactionBuilder } from "../transaction";
 export interface TransactionConstructor {
   new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
 }
@@ -52,7 +62,7 @@ export interface Builder {
   withFeeInstructions(instructions: Instruction[]): this;
   withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => this): this;
   withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): this;
-  feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this;
+  feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this;
   buildUnsignedTransaction(): UnsignedTransaction;
   build(): Transaction;
 }

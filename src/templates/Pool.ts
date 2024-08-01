@@ -1,4 +1,5 @@
-import { TariMethodDefinition, WorkspaceArg } from "../builders/types/Builder";
+import { TariMethodDefinition } from "../builders/types/Builder";
+import { WorkspaceArg } from "../builders/types/Workspace";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface CreatePool extends TariMethodDefinition {

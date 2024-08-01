@@ -1,2 +1,2 @@
-export { buildTransactionRequest } from "./submitTransaction";
+export { buildTransactionRequest, submitAndWaitForTransaction, waitForTransactionResult } from "./submitTransaction";
 export { fromWorkspace, toWorkspace } from "./workspace";
