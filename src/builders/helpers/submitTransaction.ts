@@ -15,6 +15,7 @@ export function buildTransactionRequest(
 ): SubmitTransactionRequest {
   return {
     //TODO refactor SubTxReq type to not use 'object[]' and types match
+    // https://github.com/tari-project/tari.js/issues/25
     account_id: accountId,
     instructions: transaction.instructions as object[],
     fee_instructions: transaction.feeInstructions as object[],
@@ -63,7 +64,7 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp as any as TransactionResult; //TODO fix: type mismatch
+      return resp as any as TransactionResult; //TODO fix: type mismatch (https://github.com/tari-project/tari.js/issues/29)
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }

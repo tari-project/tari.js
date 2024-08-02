@@ -18,7 +18,7 @@ export type Instruction =
 
 export type CreateAccount = { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } };
 export type CallFunction = { CallFunction: { template_address: TemplateAddress; function: string; args: Array<Arg> } };
-export type CallMethod = { CallMethod: { component_address: ComponentAddress; method: string; args: Array<string> } };
+export type CallMethod = { CallMethod: { component_address: ComponentAddress; method: string; args: Array<Arg> } };
 export type PutLastInstructionOutputOnWorkspace = { PutLastInstructionOutputOnWorkspace: { key: number[] } };
 export type EmitLog = { EmitLog: { level: LogLevel; message: string } };
 export type ClaimBurn = { ClaimBurn: { claim: ConfidentialClaim } };

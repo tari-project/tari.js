@@ -6,6 +6,7 @@ import { TransactionRequest } from "./TransactionRequest";
 import {
   ComponentAddress,
   ConfidentialClaim,
+  ConfidentialWithdrawProof,
   Instruction,
   ResourceAddress,
   SubstateRequirement,
@@ -69,23 +70,6 @@ export class TransactionBuilder implements Builder {
     });
   }
 
-  public dropAllProofsInWorkspace(): this {
-    return this.addInstruction("DropAllProofsInWorkspace");
-  }
-
-  /**
-   * `SaveVar` replaces
-   * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
-   * but under the hood it does the same.
-   */
-  public saveVar(key: string): this {
-    return this.addInstruction({
-      PutLastInstructionOutputOnWorkspace: {
-        key: toWorkspace(key),
-      },
-    });
-  }
-
   public claimBurn(claim: ConfidentialClaim): this {
     return this.addInstruction({
       ClaimBurn: {
@@ -95,20 +79,54 @@ export class TransactionBuilder implements Builder {
   }
 
   /**
-   *
-   * Adds a fee instruction that calls the "take_fee" method on a component.
+   * The `SaveVar` method replaces
+   * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
+   * to make saving variables easier.
+   */
+  public saveVar(key: string): this {
+    return this.addInstruction({
+      PutLastInstructionOutputOnWorkspace: {
+        key: toWorkspace(key),
+      },
+    });
+  }
+
+  /**
+   * Adds a fee instruction that calls the `take_fee` method on a component.
    * This method must exist and return a Bucket with containing revealed confidential XTR resource.
    * This allows the fee to originate from sources other than the transaction sender's account.
-   * The fee instruction will lock up the "max_fee" amount for the duration of the transaction.
+   * The fee instruction will lock up the `max_fee` amount for the duration of the transaction.
    */
-  public feeTransactionPayFromComponent(component_address: ComponentAddress, maxFee: string): this {
+  public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this {
     return this.addFeeInstruction({
       CallMethod: {
-        component_address,
+        component_address: componentAddress,
         method: "pay_fee",
         args: [maxFee],
       },
     });
+  }
+
+  /**
+   * Adds a fee instruction that calls the `take_fee_confidential` method on a component.
+   * This method must exist and return a Bucket with containing revealed confidential XTR resource.
+   * This allows the fee to originate from sources other than the transaction sender's account.
+   */
+  public feeTransactionPayFromComponentConfidential(
+    componentAddress: ComponentAddress,
+    proof: ConfidentialWithdrawProof,
+  ): this {
+    return this.addFeeInstruction({
+      CallMethod: {
+        component_address: componentAddress,
+        method: "pay_fee_confidential",
+        args: [proof],
+      },
+    });
+  }
+
+  public dropAllProofsInWorkspace(): this {
+    return this.addInstruction("DropAllProofsInWorkspace");
   }
 
   public withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): this {

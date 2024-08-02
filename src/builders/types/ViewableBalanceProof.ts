@@ -1,3 +1,5 @@
+//TODO refactor type (https://github.com/tari-project/tari.js/issues/29)
+
 export interface ViewableBalanceProof {
   elgamal_encrypted: Uint8Array;
   elgamal_public_nonce: Uint8Array;

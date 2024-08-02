@@ -1,26 +1,18 @@
 import { TemplateAddress } from "./TemplateAddress";
-// import { TransactionBuilder } from "../transaction/TransactionBuilder";
-// import { Amount } from "./Amount";
-// import { Instruction } from "./Instruction";
-// import { UnsignedTransaction } from "./UnsignedTransaction";
-// import { Transaction } from "./Transaction";
-// import { ConfidentialClaim } from "./ConfidentialClaim";
-// import { ComponentAddress } from "./ComponentAddress";
-// import { SubstateRequirement } from "./SubstateRequirement";
 import { Arg } from "./Arg";
-// import { TransactionSignature } from "./TransactionSignature";
-// import { ResourceAddress } from "./ResourceAddress";
 import {
   ComponentAddress,
   ConfidentialClaim,
+  ConfidentialWithdrawProof,
+  Instruction,
   ResourceAddress,
   SubstateRequirement,
   Transaction,
   TransactionSignature,
   UnsignedTransaction,
 } from ".";
-import { Instruction } from "./Instruction";
 import { TransactionBuilder } from "../transaction";
+
 export interface TransactionConstructor {
   new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
 }
@@ -63,6 +55,10 @@ export interface Builder {
   withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => this): this;
   withUnsignedTransaction(unsignedTransaction: UnsignedTransaction): this;
   feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this;
+  feeTransactionPayFromComponentConfidential(
+    componentAddress: ComponentAddress,
+    proof: ConfidentialWithdrawProof,
+  ): this;
   buildUnsignedTransaction(): UnsignedTransaction;
   build(): Transaction;
 }
