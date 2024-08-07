@@ -18,7 +18,18 @@ import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } fro
 import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
 import * as permissions from "./providers/wallet_daemon";
 import { WalletConnectTariProvider } from "./providers/walletconnect";
+import {
+  TransactionBuilder,
+  TransactionRequest,
+  buildTransactionRequest,
+  submitAndWaitForTransaction,
+  waitForTransactionResult,
+  fromWorkspace,
+  toWorkspace,
+} from "./builders";
+import { TariswapTemplate, AccountTemplate, PoolTemplate, TestFaucet } from "./templates";
 
+export * from "./builders/types";
 export {
   utils,
   TariProvider,
@@ -41,4 +52,15 @@ export {
   Substate,
   permissions,
   WalletConnectTariProvider,
+  TransactionBuilder,
+  AccountTemplate,
+  TariswapTemplate,
+  PoolTemplate,
+  TestFaucet,
+  TransactionRequest,
+  buildTransactionRequest,
+  submitAndWaitForTransaction,
+  waitForTransactionResult,
+  fromWorkspace,
+  toWorkspace,
 };

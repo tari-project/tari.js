@@ -1,9 +1,11 @@
+import { FinalizeResult } from "@tariproject/typescript-bindings";
+
 export type SubstateMetadata = {
   substate_id: string;
   module_name: string | null;
   version: number;
   template_address: string | null;
-}
+};
 
 export type SubstateRequirement = {
   substate_id: string;
@@ -29,7 +31,7 @@ export type SubmitTransactionResponse = {
 export type TransactionResult = {
   transaction_id: string;
   status: TransactionStatus;
-  result: object | null;
+  result: FinalizeResult | null;
 };
 
 export enum TransactionStatus {
