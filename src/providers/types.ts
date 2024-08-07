@@ -1,4 +1,4 @@
-import { FinalizeResult } from "@tariproject/typescript-bindings";
+import { FinalizeResult } from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
