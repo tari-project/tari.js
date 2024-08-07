@@ -1,13 +1,11 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "build-tsc": "tsc",
-    "start": "rollup -c -w"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
@@ -15,14 +13,13 @@
   "dependencies": {
     "@metamask/providers": "^9.0.0",
     "@tari-project/wallet_jrpc_client": "^1.0.8",
-    "@tari-project/typescript-bindings": "^1.0.3"
+    "@tari-project/typescript-bindings": "^1.0.3",
+    "@walletconnect/modal": "^2.6.2",
+    "@walletconnect/universal-provider": "^2.13.3"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "rollup": "^3.20.6",
-    "rollup-plugin-typescript2": "^0.34.1",
-    "typescript": "^5.0.4",
-    "@types/node": "^20.12.6"
+    "@types/node": "^20.12.6",
+    "typescript": "^5.0.4"
   },
   "files": [
     "dist"
