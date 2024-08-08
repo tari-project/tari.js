@@ -41,7 +41,7 @@ export async function submitAndWaitForTransaction(
       result,
     };
   } catch (e) {
-    throw new Error("Transaction failed:", e);
+    throw new Error(`Transaction failed: ${e}`);
   }
 }
 

@@ -1,4 +1,4 @@
-import { SubstateId } from "@tariproject/typescript-bindings";
+import { SubstateId } from "@tari-project/typescript-bindings";
 
 export interface VersionedSubstateId {
   substateId: SubstateId;

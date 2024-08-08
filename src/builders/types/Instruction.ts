@@ -1,4 +1,4 @@
-import { ComponentAddress, LogLevel } from "@tariproject/typescript-bindings";
+import { ComponentAddress, LogLevel } from "@tari-project/typescript-bindings";
 import { Arg } from "./Arg";
 import { ConfidentialClaim } from "./ConfidentialClaim";
 import { Amount } from "./Amount";

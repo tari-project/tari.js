@@ -1,4 +1,4 @@
-import { FeeReceipt, InstructionResult, LogEntry, RejectReason } from "@tariproject/typescript-bindings";
+import { FeeReceipt, InstructionResult, LogEntry, RejectReason } from "@tari-project/typescript-bindings";
 import { SubstateDiff } from "./SubstateDiff";
 
 export type TxResultAccept = { Accept: SubstateDiff };

@@ -1,4 +1,4 @@
-import { TransactionSignature } from "@tariproject/typescript-bindings";
+import { TransactionSignature } from "@tari-project/typescript-bindings";
 import { Instruction } from "./Instruction";
 import { SubstateRequirement } from "./SubstateRequirement";
 import { Epoch } from "./Epoch";
