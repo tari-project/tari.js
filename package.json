@@ -1,9 +1,11 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "",
-  "main": "./src/index.js",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b"
   },
@@ -22,6 +24,8 @@
     "typescript": "^5.0.4"
   },
   "files": [
-    "dist"
-  ]
+    "/dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
 }
