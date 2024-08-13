@@ -18,7 +18,6 @@ import {
 } from "./types";
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
-import { substateIdToString } from "@tari-project/typescript-bindings";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
