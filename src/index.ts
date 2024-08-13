@@ -27,7 +27,7 @@ import {
   fromWorkspace,
   toWorkspace,
 } from "./builders";
-import { TariswapTemplate, AccountTemplate, PoolTemplate, TestFaucet } from "./templates";
+import * as templates from "./templates";
 
 export * from "./builders/types";
 export {
@@ -53,14 +53,11 @@ export {
   permissions,
   WalletConnectTariProvider,
   TransactionBuilder,
-  AccountTemplate,
-  TariswapTemplate,
-  PoolTemplate,
-  TestFaucet,
   TransactionRequest,
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
+  templates,
 };
