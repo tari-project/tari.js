@@ -18,6 +18,7 @@ import {
 } from "./types";
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
+import { substateIdToString } from "@tari-project/typescript-bindings";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
@@ -70,10 +71,18 @@ export class TariUniverseProvider implements TariProvider {
     limit: number | null,
     offset: number | null,
   ): Promise<ListSubstatesResponse> {
-    return this.sendRequest<"listSubstates">({
+    const res = await this.sendRequest<"listSubstates">({
       methodName: "listSubstates",
       args: [filter_by_template, filter_by_type, limit, offset],
     });
+    const substates = res.substates.map((s: any) => ({
+      substate_id: substateIdToString(s.substate_id),
+      module_name: s.module_name,
+      version: s.version,
+      template_address: s.template_address,
+    }));
+
+    return { substates };
   }
 
   public getConfidentialVaultBalances(
