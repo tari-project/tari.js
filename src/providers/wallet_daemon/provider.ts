@@ -133,24 +133,24 @@ export class WalletDaemonTariProvider implements TariProvider {
 
     public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
         const params = {
-            transaction: null,
+            transaction: {
+                instructions: req.instructions as Instruction[],
+                fee_instructions: req.fee_instructions as Instruction[],
+                inputs: req.required_substates.map((s) => ({
+                    // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
+                    substate_id: s.substate_id as any,
+                    version: s.version
+                })),
+                min_epoch: null,
+                max_epoch: null,
+            },
             signing_key_index: req.account_id,
-            fee_instructions: req.fee_instructions as Instruction[],
-            instructions: req.instructions as Instruction[],
-            inputs: req.required_substates.map((s) => ({
-                // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-                substate_id: s.substate_id as any,
-                version: s.version
-            })),
-            input_refs: [],
-            override_inputs: false,
-            is_dry_run: req.is_dry_run,
+            autofill_inputs: [],
+            detect_inputs: true,
             proof_ids: [],
-            min_epoch: null,
-            max_epoch: null,
         } as TransactionSubmitRequest;
-        const res = await this.client.submitTransaction(params);
 
+        const res = await this.client.submitTransaction(params);
         return {transaction_id: res.transaction_id};
     }
 
