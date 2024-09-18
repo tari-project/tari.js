@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.1.24",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -14,8 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "^9.0.0",
-    "@tari-project/wallet_jrpc_client": "^1.0.8",
-    "@tari-project/typescript-bindings": "^1.0.6",
+    "@tari-project/wallet_jrpc_client": "^1.1.0",
+    "@tari-project/typescript-bindings": "^1.1.0",
     "@walletconnect/modal": "^2.6.2",
     "@walletconnect/universal-provider": "^2.13.3"
   },
