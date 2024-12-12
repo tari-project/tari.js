@@ -12,12 +12,12 @@ import {
   ProviderRequest,
   ProviderMethodNames,
   ProviderReturnType,
-  ProviderResponse,
   TariUniverseProviderParameters,
   WindowSize,
 } from "./types";
 import { TariProvider } from "../index";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
+import { sendProviderCall } from "./utils";
 
 export class TariUniverseProvider implements TariProvider {
   public providerName = "TariUniverse";
@@ -39,21 +39,7 @@ export class TariUniverseProvider implements TariProvider {
     req: Omit<ProviderRequest<MethodName>, "id">,
   ): Promise<ProviderReturnType<MethodName>> {
     const id = ++this.__id;
-    return new Promise<ProviderReturnType<MethodName>>(function (resolve, reject) {
-      const event_ref = function (resp: MessageEvent<ProviderResponse<MethodName>>) {
-        if (resp.data.resultError) {
-          window.removeEventListener("message", event_ref);
-          reject(resp.data.resultError);
-        }
-        if (resp && resp.data && resp.data.id && resp.data.id == id && resp.data.type === "provider-call") {
-          window.removeEventListener("message", event_ref);
-          resolve(resp.data.result);
-        }
-      };
-      window.addEventListener("message", event_ref, false);
-
-      window.parent.postMessage({ ...req, id, type: "provider-call" }, "*");
-    });
+    return sendProviderCall(req, id);
   }
 
   public isConnected(): boolean {
