@@ -19,20 +19,28 @@ import {
     SubstateType,
     SubstatesListRequest,
     KeyBranch,
+    SubstateId,
 } from "@tari-project/wallet_jrpc_client";
 import {WebRtcRpcTransport} from "./webrtc_transport";
 
 export const WalletDaemonNotConnected = 'WALLET_DAEMON_NOT_CONNECTED';
 export const Unsupported = 'UNSUPPORTED';
 
-export type WalletDaemonParameters = {
-    signalingServerUrl?: string,
+export interface WalletDaemonBaseParameters {
     permissions: TariPermissions,
-    optionalPermissions: TariPermissions,
+    optionalPermissions?: TariPermissions,
+    onConnection?: () => void
+}
+
+export interface WalletDaemonParameters extends WalletDaemonBaseParameters {
+    signalingServerUrl?: string,
     webRtcConfig?: RTCConfiguration,
     name?: string,
-    onConnection?: () => void
 };
+
+export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters {
+  serverUrl: string,
+}
 
 export class WalletDaemonTariProvider implements TariProvider {
     public providerName = "WalletDaemon";
@@ -45,10 +53,7 @@ export class WalletDaemonTariProvider implements TariProvider {
     }
 
     static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariProvider> {
-        const allPermissions = new TariPermissions();
-        allPermissions.addPermissions(params.permissions);
-        allPermissions.addPermissions(params.optionalPermissions);
-        console.log({allPermissions});
+        const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
         let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
         const client = WalletDaemonClient.new(WebRtcRpcTransport.new(connection));
         await connection.init(allPermissions, (conn) => {
@@ -60,8 +65,34 @@ export class WalletDaemonTariProvider implements TariProvider {
         return new WalletDaemonTariProvider(params, client);
     }
 
+    static async buildFetchProvider(params: WalletDaemonFetchParameters) {
+        const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
+        const client = WalletDaemonClient.usingFetchTransport(params.serverUrl);
+
+        const plainPermissions = allPermissions.toJSON().flatMap((p) => typeof(p) === "string" ? [p] : []);
+        const authResponse = await client.authRequest(plainPermissions);
+        await client.authAccept(authResponse, "WalletDaemon");
+
+        params.onConnection?.();
+        return new WalletDaemonTariProvider(params, client);
+    }
+
+    private static buildPermissions(params: WalletDaemonBaseParameters): TariPermissions {
+        const allPermissions = new TariPermissions();
+        allPermissions.addPermissions(params.permissions);
+        if (params.optionalPermissions) {
+          allPermissions.addPermissions(params.optionalPermissions);
+        }
+        return allPermissions;
+    }
+
+    private getWebRtcTransport(): WebRtcRpcTransport | undefined {
+        const transport = this.client.getTransport();
+        return transport instanceof WebRtcRpcTransport ? transport : undefined;
+    }
+
     public get token(): string | undefined {
-        return (this.client.getTransport() as WebRtcRpcTransport).token();
+        return this.getWebRtcTransport()?.token();
     }
 
     public get tokenUrl(): string | undefined {
@@ -78,7 +109,7 @@ export class WalletDaemonTariProvider implements TariProvider {
     }
 
     public isConnected(): boolean {
-        return (this.client.getTransport() as WebRtcRpcTransport).isConnected();
+        return this.getWebRtcTransport()?.isConnected() || true;
     }
 
     public async createFreeTestCoins(): Promise<Account> {
@@ -98,18 +129,19 @@ export class WalletDaemonTariProvider implements TariProvider {
 
     public async getAccount(): Promise<Account> {
         const {account, public_key} = await this.client.accountsGetDefault({}) as any;
-        const {balances} = await this.client.accountsGetBalances({account: {ComponentAddress: account.address.Component }, refresh: false});
+        const address = typeof account.address === "object" ? account.address.Component : account.address;
+        const {balances} = await this.client.accountsGetBalances({account: {ComponentAddress: address }, refresh: false});
 
         return {
             account_id: account.key_index,
-            address: account.address.Component,
+            address,
             public_key,
             // TODO: should be vaults not resources
             resources: balances.map((b: any) => ({
                 type: b.resource_type,
                 resource_address: b.resource_address,
                 balance: b.balance + b.confidential_balance,
-                vault_id: ('Vault' in b.vault_address) ? b.vault_address.Vault : b.vault_address,
+                vault_id: (typeof(b.vault_address) === "object" && 'Vault' in b.vault_address) ? b.vault_address.Vault : b.vault_address,
                 token_symbol: b.token_symbol,
             }))
         };
@@ -119,9 +151,9 @@ export class WalletDaemonTariProvider implements TariProvider {
         return await this.client.accountsGetBalances({account: {ComponentAddress: componentAddress}, refresh: true});
     }
 
-    public async getSubstate(substate_id: string): Promise<Substate> {
-        const substateId = stringToSubstateId(substate_id);
-        const { value, record } = await this.client.substatesGet({ substate_id: substateId });
+    public async getSubstate(substateId: string): Promise<Substate> {
+        // Wallet daemon expects a SubstateId as a string
+        const { value, record } = await this.client.substatesGet({ substate_id: substateId as unknown as SubstateId });
         return {
             value,
             address: {
@@ -133,22 +165,27 @@ export class WalletDaemonTariProvider implements TariProvider {
 
     public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
         const params = {
-            transaction: {
-                instructions: req.instructions as Instruction[],
-                fee_instructions: req.fee_instructions as Instruction[],
-                inputs: req.required_substates.map((s) => ({
-                    // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-                    substate_id: s.substate_id as any,
-                    version: s.version
-                })),
-                min_epoch: null,
-                max_epoch: null,
+          transaction: {
+            V1: {
+              network: req.network,
+              instructions: req.instructions as Instruction[],
+              fee_instructions: req.fee_instructions as Instruction[],
+              inputs: req.required_substates.map((s) => ({
+                // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
+                substate_id: s.substate_id as any,
+                version: s.version ?? null,
+              })),
+              min_epoch: null,
+              max_epoch: null,
+              is_seal_signer_authorized: req.is_seal_signer_authorized,
             },
-            signing_key_index: req.account_id,
-            autofill_inputs: [],
-            detect_inputs: true,
-            proof_ids: [],
-        } as TransactionSubmitRequest;
+          },
+          signing_key_index: req.account_id,
+          autofill_inputs: [],
+          detect_inputs: true,
+          proof_ids: [],
+          detect_inputs_use_unversioned: req.detect_inputs_use_unversioned,
+        };
 
         const res = await this.client.submitTransaction(params);
         return {transaction_id: res.transaction_id};
@@ -193,11 +230,11 @@ export class WalletDaemonTariProvider implements TariProvider {
             offset
         } as SubstatesListRequest);
 
-        const substates = resp.substates.map((s) =>  ({
-            substate_id: substateIdToString(s.substate_id),
-            module_name: s.module_name,
-            version: s.version,
-            template_address: s.template_address
+        const substates = resp.substates.map((s) => ({
+          substate_id: typeof s.substate_id === "string" ? s.substate_id : substateIdToString(s.substate_id),
+          module_name: s.module_name,
+          version: s.version,
+          template_address: s.template_address,
         }));
 
         return {substates};
