@@ -1,4 +1,4 @@
-import { TariUniverseProvider } from "../../providers/tari_universe";
+import { TariUniverseProvider } from "@tari-project/tari-universe-provider";
 import { SubmitTransactionRequest, TariProvider } from "@tari-project/tari-provider";
 import {SubstateRequirement } from "@tari-project/typescript-bindings"
 import { Transaction, TransactionResult, TransactionStatus, DownSubstates, UpSubstates } from "../types";

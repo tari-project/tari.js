@@ -15,10 +15,19 @@
       "path": "packages/metamask_provider"
     },
     {
+      "path": "packages/tari_permissions"
+    },
+    {
       "path": "packages/tari_provider"
     },
     {
+      "path": "packages/tari_universe"
+    },
+    {
       "path": "packages/tarijs"
+    },
+    {
+      "path": "packages/tarijs_types"
     },
     {
       "path": "packages/types"

@@ -11,11 +11,5 @@
     "src/**/*"
   ],
   "references": [
-    {
-      "path": "../tari_provider"
-    },
-    {
-      "path": "../tari_universe"
-    }
   ]
 }

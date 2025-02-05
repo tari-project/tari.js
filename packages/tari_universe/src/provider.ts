@@ -1,13 +1,14 @@
 import {
-  SubmitTransactionRequest,
-  TransactionResult,
   SubmitTransactionResponse,
   Account,
   Substate,
   TemplateDefinition,
   VaultBalances,
   ListSubstatesResponse,
-} from "../types";
+  SubmitTransactionRequest,
+  TariProvider,
+  TransactionResult
+} from "@tari-project/tari-provider";
 import {
   ProviderRequest,
   ProviderMethodNames,
@@ -15,7 +16,7 @@ import {
   TariUniverseProviderParameters,
   WindowSize,
 } from "./types";
-import { TariProvider } from "../index";
+import {  } from "@tari-project/tari-provider";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
 import { sendProviderCall } from "./utils";
 

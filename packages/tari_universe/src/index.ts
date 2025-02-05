@@ -1,3 +1,3 @@
-export * from "../wallet_daemon/tari_permissions";
+export * from "@tari-project/tari-permissions";
 export * from "./provider";
 export * from "./types";

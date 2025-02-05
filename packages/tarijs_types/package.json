@@ -1,5 +1,5 @@
 {
-  "name": "@tari-project/tarijs-builders",
+  "name": "@tari-project/tarijs-types",
   "version": "0.3.0",
   "description": "",
   "type": "module",
@@ -13,9 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tari-project/tari-provider": "workspace:^",
-    "@tari-project/tari-universe-provider": "workspace:^",
-    "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:"
   },
   "devDependencies": {

@@ -12,10 +12,10 @@
   ],
   "references": [
     {
-      "path": "../tari_provider"
+      "path": "../tari_permissions"
     },
     {
-      "path": "../tari_universe"
+      "path": "../tari_provider"
     }
   ]
 }
