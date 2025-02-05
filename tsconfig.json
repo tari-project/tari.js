@@ -9,7 +9,19 @@
   },
   "references": [
     {
+      "path": "packages/metamask_provider"
+    },
+    {
+      "path": "packages/tari_provider"
+    },
+    {
       "path": "packages/tarijs"
+    },
+    {
+      "path": "packages/types"
+    },
+    {
+      "path": "packages/walletconnect"
     }
   ]
 }

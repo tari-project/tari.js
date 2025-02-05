@@ -9,21 +9,7 @@ import {
   Substate,
   ListSubstatesResponse,
 } from "./types";
-import { ProviderMethods, ProviderMethodNames, ProviderReturnType } from "./tari_universe/types";
 
-export type {
-  Account,
-  SubmitTransactionRequest,
-  TransactionResult,
-  SubmitTransactionResponse,
-  VaultBalances,
-  TemplateDefinition,
-  Substate,
-  ListSubstatesResponse,
-  ProviderMethods,
-  ProviderMethodNames,
-  ProviderReturnType,
-};
 
 export interface TariProvider {
   providerName: string;

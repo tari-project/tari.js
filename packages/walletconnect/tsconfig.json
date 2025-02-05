@@ -13,9 +13,6 @@
   "references": [
     {
       "path": "../tari_provider"
-    },
-    {
-      "path": "../walletconnect"
     }
   ]
 }

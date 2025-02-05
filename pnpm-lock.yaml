@@ -18,6 +18,9 @@ catalogs:
     '@types/node':
       specifier: ^22.13.1
       version: 22.13.1
+    '@walletconnect/modal':
+      specifier: ^2.6.2
+      version: 2.7.0
     '@walletconnect/universal-provider':
       specifier: ^2.13.3
       version: 2.18.0
@@ -36,11 +39,74 @@ importers:
         specifier: ^1.32.1
         version: 1.32.1
 
+  packages/builders:
+    dependencies:
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
+      '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.4.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/metamask_provider:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/tari_provider:
+    dependencies:
+      '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.4.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
   packages/tarijs:
     dependencies:
       '@metamask/providers':
         specifier: 'catalog:'
         version: 18.3.1(webextension-polyfill@0.12.0)
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
+      '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.4.0
+      '@tari-project/wallet-connect-provider':
+        specifier: workspace:^
+        version: link:../walletconnect
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.1)
+
+  packages/walletconnect:
+    dependencies:
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.4.0
@@ -48,7 +114,7 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0
       '@walletconnect/modal':
-        specifier: ^2.6.2
+        specifier: 'catalog:'
         version: 2.7.0(react@18.3.1)
       '@walletconnect/universal-provider':
         specifier: 'catalog:'
@@ -60,9 +126,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
-      vitest:
-        specifier: 'catalog:'
-        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.1)
 
 packages:
 

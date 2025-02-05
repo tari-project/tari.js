@@ -1,5 +1,5 @@
 {
-  "name": "@tari-project/tarijs",
+  "name": "@tari-project/tarijs-builders",
   "version": "0.3.0",
   "description": "",
   "type": "module",
@@ -7,22 +7,18 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -b",
-    "integration-tests": "vitest run integration-tests"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@metamask/providers": "catalog:",
     "@tari-project/tari-provider": "workspace:^",
-    "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet-connect-provider": "workspace:^"
+    "@tari-project/typescript-bindings": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "files": [
     "/dist"

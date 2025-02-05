@@ -7,15 +7,5 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "references": [
-    {
-      "path": "../tari_provider"
-    },
-    {
-      "path": "../walletconnect"
-    }
-  ]
+  "include": ["src/**/*"]
 }
