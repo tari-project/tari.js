@@ -1,4 +1,4 @@
-import { TariPermissions } from "../wallet_daemon";
+import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariUniverseProvider } from "./provider";
 
 export type TariUniverseProviderParameters = {
