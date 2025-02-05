@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "module": "ES2020",
-    "target": "ESNext",
-    "moduleResolution": "Bundler",
     "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "strict": true,
+    "composite": true
   },
-  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "packages/tarijs"
+    }
+  ]
 }

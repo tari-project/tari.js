@@ -1,0 +1,6 @@
+# Enable Node.js and override default settings
+language: 'typescript'
+node:
+  packageManager: 'pnpm'
+typescript:
+   syncProjectReferences: true

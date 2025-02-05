@@ -3,31 +3,14 @@
   "version": "0.3.1",
   "description": "",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "build": "tsc -b",
-    "integration-tests": "vitest run integration-tests"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@metamask/providers": "^18.2.0",
-    "@tari-project/typescript-bindings": "^1.4.0",
-    "@tari-project/wallet_jrpc_client": "^1.4.0",
-    "@walletconnect/modal": "^2.6.2",
-    "@walletconnect/universal-provider": "^2.13.3"
+  "engines": {
+    "node": "22.13.1"
   },
   "devDependencies": {
-    "@types/node": "^20.12.6",
-    "typescript": "^5.0.4",
-    "vitest": "^3.0.4"
+    "@moonrepo/cli": "^1.32.1"
   },
-  "files": [
-    "/dist"
-  ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts"
+  "packageManager": "pnpm@9.15.3"
 }

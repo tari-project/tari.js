@@ -1,0 +1,33 @@
+{
+  "name": "@tari-project/tarijs",
+  "version": "0.3.0",
+  "description": "",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "integration-tests": "vitest run integration-tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@metamask/providers": "catalog:",
+    "@tari-project/typescript-bindings": "catalog:",
+    "@tari-project/wallet_jrpc_client": "catalog:",
+    "@walletconnect/modal": "^2.6.2",
+    "@walletconnect/universal-provider": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "/dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
+}
