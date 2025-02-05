@@ -12,10 +12,14 @@ export function buildTransactionRequest(
   requiredSubstates: SubstateRequirement[],
   inputRefs = [],
   isDryRun = false,
+  network = 0,
+  isSealSignerAuthorized = true,
+  detectInputsUseUnversioned = true,
 ): SubmitTransactionRequest {
   return {
     //TODO refactor SubTxReq type to not use 'object[]' and types match
     // https://github.com/tari-project/tari.js/issues/25
+    network,
     account_id: accountId,
     instructions: transaction.instructions as object[],
     fee_instructions: transaction.feeInstructions as object[],
@@ -25,6 +29,8 @@ export function buildTransactionRequest(
     is_dry_run: isDryRun,
     min_epoch: transaction.minEpoch ?? null,
     max_epoch: transaction.maxEpoch ?? null,
+    is_seal_signer_authorized: isSealSignerAuthorized,
+    detect_inputs_use_unversioned: detectInputsUseUnversioned,
   };
 }
 

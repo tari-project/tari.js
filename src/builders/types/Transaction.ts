@@ -1,8 +1,8 @@
-import { TransactionSignature } from "@tari-project/typescript-bindings";
 import { Instruction } from "./Instruction";
 import { SubstateRequirement } from "./SubstateRequirement";
 import { Epoch } from "./Epoch";
 import { VersionedSubstateId } from "./VersionedSubstateId";
+import { TransactionSignature } from "./TransactionSignature";
 
 export interface Transaction {
   id: string;

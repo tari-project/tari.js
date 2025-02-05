@@ -13,6 +13,7 @@ export type SubstateRequirement = {
 };
 
 export type SubmitTransactionRequest = {
+  network: number;
   account_id: number;
   instructions: object[];
   fee_instructions: object[];
@@ -22,6 +23,8 @@ export type SubmitTransactionRequest = {
   is_dry_run: boolean;
   min_epoch: number | null;
   max_epoch: number | null;
+  is_seal_signer_authorized: boolean;
+  detect_inputs_use_unversioned: boolean;
 };
 
 export type SubmitTransactionResponse = {

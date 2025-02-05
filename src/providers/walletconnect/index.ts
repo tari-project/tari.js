@@ -180,23 +180,28 @@ export class WalletConnectTariProvider implements TariProvider {
 
     async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
         const method = 'tari_submitTransaction';
-        const params = {
+        const params: TransactionSubmitRequest = {
             transaction: {
+              V1: {
+                network: req.network,
                 fee_instructions: req.fee_instructions as Instruction[],
                 instructions: req.instructions as Instruction[],
                 inputs: req.required_substates.map((s) => ({
                     // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
                     substate_id: s.substate_id as any,
-                    version: s.version
+                    version: s.version ?? null,
                 })),
                 min_epoch: null,
                 max_epoch: null,
+                is_seal_signer_authorized: req.is_seal_signer_authorized,
+              },
             },
             signing_key_index: req.account_id,
             autofill_inputs: [],
             detect_inputs: true,
             proof_ids: [],
-        } as TransactionSubmitRequest;
+            detect_inputs_use_unversioned: req.detect_inputs_use_unversioned,
+        };
 
         const res = await this.sendRequest(method, params);
 
