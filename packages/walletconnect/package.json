@@ -13,8 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/tarijs-builders": "workspace:^",
+    "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet_jrpc_client": "catalog:",
     "@walletconnect/modal": "catalog:",
     "@walletconnect/universal-provider": "catalog:"

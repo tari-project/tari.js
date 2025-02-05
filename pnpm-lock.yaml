@@ -107,6 +107,9 @@ importers:
       '@tari-project/tari-provider':
         specifier: workspace:^
         version: link:../tari_provider
+      '@tari-project/tarijs-builders':
+        specifier: workspace:^
+        version: link:../builders
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.4.0

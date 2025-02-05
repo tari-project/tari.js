@@ -8,7 +8,7 @@ import {
 } from "@tari-project/tari-provider";
 import {
   TransactionStatus,
-} from "@tari-project/typescript-bindings";
+} from "@tari-project/tarijs-builders";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import {
