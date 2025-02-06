@@ -1,4 +1,4 @@
-import { TariProvider } from "../index";
+import { TariProvider } from "@tari-project/tari-provider";
 import {
   SubmitTransactionRequest,
   TransactionResult,
@@ -8,10 +8,10 @@ import {
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
-} from "../types";
+  Account
+} from "@tari-project/tari-provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
-import { Account } from "../types";
 import { SubstateType } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = "METAMASK_NOT_INSTALLED";
