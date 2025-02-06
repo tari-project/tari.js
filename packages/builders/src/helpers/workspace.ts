@@ -1,4 +1,4 @@
-import { WorkspaceArg } from "../types";
+import { WorkspaceArg } from "@tari-project/tarijs-types";
 
 /**
  *

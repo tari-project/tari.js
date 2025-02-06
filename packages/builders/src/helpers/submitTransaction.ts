@@ -1,9 +1,16 @@
 import { TariUniverseProvider } from "@tari-project/tari-universe-provider";
-import { SubmitTransactionRequest, TariProvider } from "@tari-project/tari-provider";
-import {SubstateRequirement } from "@tari-project/typescript-bindings"
-import { Transaction, TransactionResult, TransactionStatus, DownSubstates, UpSubstates } from "../types";
-import { FinalizeResultStatus, TxResultAccept } from "../types/FinalizeResult";
-import { SubmitTxResult } from "../types/TransactionResult";
+import { TariProvider, SubmitTransactionRequest } from "@tari-project/tari-provider";
+import { SubstateRequirement } from "@tari-project/typescript-bindings";
+import {
+  Transaction,
+  TransactionResult,
+  TransactionStatus,
+  DownSubstates,
+  UpSubstates,
+  FinalizeResultStatus,
+  TxResultAccept,
+  SubmitTxResult,
+} from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
   transaction: Transaction,

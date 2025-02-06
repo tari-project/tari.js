@@ -9,4 +9,4 @@ export {
   ListSubstatesResponse,
 } from "./types";
 
-export * from './TariProvider'
+export { TariProvider } from "./TariProvider";

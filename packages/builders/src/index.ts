@@ -1,4 +1,4 @@
-export * from "./types";
+export * from "@tari-project/tarijs-types";
 export { TransactionBuilder, TransactionRequest } from "./transaction";
 export {
   buildTransactionRequest,

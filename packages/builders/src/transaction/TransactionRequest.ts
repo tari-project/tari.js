@@ -7,7 +7,7 @@ import {
   TransactionSignature,
   UnsignedTransaction,
   VersionedSubstateId,
-} from "../types";
+} from "@tari-project/tarijs-types";
 
 ///TODO this implementation is not fully done, see:
 /// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
