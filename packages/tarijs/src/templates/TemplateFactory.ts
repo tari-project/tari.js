@@ -1,4 +1,4 @@
-import { TariFunctionDefinition, TariMethodDefinition } from "../builders/types";
+import { TariFunctionDefinition, TariMethodDefinition } from "@tari-project/tarijs-builders";
 
 export abstract class TemplateFactory {
   constructor(public templateAddress: string) {}

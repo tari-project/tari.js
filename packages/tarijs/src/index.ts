@@ -1,4 +1,4 @@
-import { TariProvider } from "./providers";
+import { TariProvider } from "@tari-project/tari-provider";
 import * as utils from "./utils";
 import {
   Account,
@@ -11,13 +11,17 @@ import {
   TemplateDefinition,
   SubstateRequirement,
   Substate,
-} from "./providers/types";
-import { MetamaskTariProvider } from "./providers/metamask";
+} from "@tari-project/tari-provider";
+import { MetamaskTariProvider } from "@tari-project/metamask-provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
-import { WalletDaemonTariProvider, WalletDaemonParameters, TariPermissions } from "./providers/wallet_daemon";
-import { TariUniverseProvider, TariUniverseProviderParameters } from "./providers/tari_universe";
-import * as permissions from "./providers/wallet_daemon";
-import { WalletConnectTariProvider } from "./providers/walletconnect";
+import {
+  WalletDaemonTariProvider,
+  WalletDaemonParameters,
+  TariPermissions,
+} from "@tari-project/wallet-daemon-provider";
+import { TariUniverseProvider, TariUniverseProviderParameters } from "@tari-project/tari-universe-provider";
+import * as permissions from "@tari-project/tari-permissions";
+import { WalletConnectTariProvider } from "@tari-project/wallet-connect-provider";
 import {
   TransactionBuilder,
   TransactionRequest,
@@ -26,10 +30,10 @@ import {
   waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
-} from "./builders";
+} from "@tari-project/tarijs-builders";
 import * as templates from "./templates";
 
-export * from "./builders/types";
+export * from "@tari-project/tarijs-types";
 export {
   utils,
   TariProvider,

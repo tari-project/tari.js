@@ -1,4 +1,4 @@
-import { Amount, ConfidentialWithdrawProof, TariFunctionDefinition, TariMethodDefinition } from "../builders/types";
+import { Amount, ConfidentialWithdrawProof, TariFunctionDefinition, TariMethodDefinition } from "@tari-project/tarijs-builders";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface MintFunction extends TariFunctionDefinition {

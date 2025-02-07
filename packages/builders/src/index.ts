@@ -1,5 +1,5 @@
 export * from "@tari-project/tarijs-types";
-export { TransactionBuilder, TransactionRequest } from "./transaction";
+export { TransactionBuilder, TransactionRequest, TariMethodDefinition, TariFunctionDefinition } from "./transaction";
 export {
   buildTransactionRequest,
   submitAndWaitForTransaction,

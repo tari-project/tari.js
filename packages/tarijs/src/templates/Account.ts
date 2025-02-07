@@ -1,6 +1,6 @@
 import { ConfidentialWithdrawProof, NonFungibleId, ResourceAddress } from "@tari-project/typescript-bindings";
-import { Amount } from "../builders/types/Amount";
-import { TariMethodDefinition, WorkspaceArg } from "../builders/types";
+import { Amount } from "@tari-project/tarijs-types";
+import { TariMethodDefinition, WorkspaceArg  } from "@tari-project/tarijs-builders";
 import { TemplateFactory } from "./TemplateFactory";
 
 /**

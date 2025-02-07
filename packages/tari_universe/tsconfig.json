@@ -16,6 +16,9 @@
     },
     {
       "path": "../tari_provider"
+    },
+    {
+      "path": "../tarijs_types"
     }
   ]
 }

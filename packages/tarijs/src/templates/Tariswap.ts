@@ -1,5 +1,11 @@
-import { Amount, ConfidentialWithdrawProof, ResourceAddress } from "../builders/types";
-import { TariFunctionDefinition, TariMethodDefinition, WorkspaceArg } from "../builders/types";
+import {
+  Amount,
+  ConfidentialWithdrawProof,
+  ResourceAddress,
+  TariFunctionDefinition,
+  TariMethodDefinition,
+  WorkspaceArg,
+} from "@tari-project/tarijs-builders";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface NewPoolFunction extends TariFunctionDefinition {
@@ -81,6 +87,7 @@ export class TariswapTemplate extends TemplateFactory {
     this.mint = this._defineFunction<MintFunction>("mint");
     this.mintWithSymbol = this._defineFunction<MintWithSymbolFunction>("mint_with_symbol");
   }
+
   protected _initMethods(): void {
     this.totalSupply = this._defineMethod<TotalSupplyMethod>("total_supply");
     this.payFee = this._defineMethod<PayFeeMethod>("pay_fee");
