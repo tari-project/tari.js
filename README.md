@@ -15,9 +15,11 @@ Please read the [TODO](TODO.md) file for upcoming features.
 You must have the [tari-dan](https://github.com/tari-project/tari-dan) repo cloned at the same folder level as this repo.
 
 To build the library:
+First you must install [proto](https://moonrepo.dev/proto) to manage node and pnpm versions 
 ```shell
-npm install
-npm run build
+proto use
+pnpm install
+moon tarijs:build
 ```
 
 The bundled files for deployment or publication will be located under the `dist` folder.
@@ -29,18 +31,17 @@ To run the example site you will need to:
 * Have access to a Tari Wallet Daemon and to the Tari MetaMask Snap.
 * Copy the `example/.env.example` file to `example/.env` and edit the correct environment variable values.
 
-To run in development mode:
+To run in development mode, in the packages/tarijs folder:
 ```shell
 cd example
-npm install
-npm run dev
+moon tarijs:build
+pnpm run dev
 ```
 
-For building and distribution
+For building and distribution,  in the packages/tarijs folder
 ```shell
 cd example
-npm install
-npm run build
+moon tarijs:build
 ```
 The distribution files will be under the `example/dist` folder. 
 
