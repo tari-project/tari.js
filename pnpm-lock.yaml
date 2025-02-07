@@ -6,30 +6,15 @@ settings:
 
 catalogs:
   default:
-    '@metamask/providers':
-      specifier: ^18.2.0
-      version: 18.3.1
-    '@tari-project/typescript-bindings':
-      specifier: ^1.4.0
-      version: 1.4.0
     '@tari-project/wallet_jrpc_client':
       specifier: ^1.4.0
       version: 1.4.0
     '@types/node':
       specifier: ^22.13.1
       version: 22.13.1
-    '@walletconnect/modal':
-      specifier: ^2.6.2
-      version: 2.7.0
-    '@walletconnect/universal-provider':
-      specifier: ^2.13.3
-      version: 2.18.0
     typescript:
       specifier: ^5.0.4
       version: 5.7.3
-    vitest:
-      specifier: ^3.0.4
-      version: 3.0.5
 
 importers:
 
@@ -158,6 +143,25 @@ importers:
   packages/tarijs_types:
     dependencies:
       '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.4.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/wallet_daemon:
+    dependencies:
+      '@tari-project/tari-permissions':
+        specifier: workspace:^
+        version: link:../tari_permissions
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
+      '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
     devDependencies:

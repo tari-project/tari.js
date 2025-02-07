@@ -1,5 +1,5 @@
 export { TariConnection } from "./webrtc";
 
 
-export * from "./tari_permissions";
+export * from "@tari-project/tari-permissions";
 export * from "./provider";
