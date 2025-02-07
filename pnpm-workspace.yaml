@@ -5,6 +5,7 @@ packages:
 catalog:
   typescript: ^5.0.4
   vitest: ^3.0.4
+  vite: ^6.1.0
   "@types/node": ^22.13.1
   "@tari-project/typescript-bindings": ^1.4.0
   "@tari-project/wallet_jrpc_client": ^1.4.0

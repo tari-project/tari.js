@@ -12,7 +12,25 @@
   ],
   "references": [
     {
+      "path": "../builders"
+    },
+    {
+      "path": "../metamask_provider"
+    },
+    {
+      "path": "../tari_permissions"
+    },
+    {
       "path": "../tari_provider"
+    },
+    {
+      "path": "../tari_universe"
+    },
+    {
+      "path": "../tarijs_types"
+    },
+    {
+      "path": "../wallet_daemon"
     },
     {
       "path": "../walletconnect"

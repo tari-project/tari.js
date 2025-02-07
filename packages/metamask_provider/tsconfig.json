@@ -7,5 +7,15 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../tari_provider"
+    },
+    {
+      "path": "../tarijs_types"
+    }
+  ]
 }
