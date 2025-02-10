@@ -119,33 +119,32 @@ export class WalletConnectTariProvider implements TariProvider {
     const { balances } = await this.sendRequest(
       "tari_getAccountBalances",
       {
-        account: { ComponentAddress: account.address.Component }, refresh: false,
+        account: { ComponentAddress: account.address }, refresh: false,
       });
 
     return {
       account_id: account.key_index,
-      address: account.address.Component,
+      address: account.address,
       public_key,
       // TODO: should be vaults not resources
       resources: balances.map((b: any) => ({
         type: b.resource_type,
         resource_address: b.resource_address,
         balance: b.balance + b.confidential_balance,
-        vault_id: ("Vault" in b.vault_address) ? b.vault_address.Vault : b.vault_address,
+        vault_id: (typeof (b.vault_address) === "object" && "Vault" in b.vault_address) ? b.vault_address.Vault : b.vault_address,
         token_symbol: b.token_symbol,
       })),
     };
   }
 
   async getSubstate(substate_address: string): Promise<Substate> {
-    const substateId = stringToSubstateId(substate_address);
     const method = "tari_getSubstate";
-    const params = { substate_id: substateId };
+    const params = { substate_id: substate_address };
     const { value, record } = await this.sendRequest(method, params);
     return {
       value,
       address: {
-        substate_id: substateIdToString(record.substate_id),
+        substate_id: record.substate_id,
         version: record.version,
       },
     };
