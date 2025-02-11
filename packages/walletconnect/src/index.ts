@@ -79,6 +79,7 @@ export class WalletConnectTariProvider implements TariProvider {
     // wait for the wallet to approve the connection
     console.log("waiting for session approval from the wallet app");
     const session = await approval();
+    walletConnectModal.closeModal();
 
     // at this point session is open
     console.log("session approved by the wallet");

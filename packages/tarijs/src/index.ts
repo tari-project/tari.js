@@ -1,5 +1,6 @@
 import { TariProvider } from "@tari-project/tari-provider";
 import * as utils from "./utils";
+import { Network } from "./network";
 import {
   Account,
   TransactionStatus,
@@ -36,6 +37,7 @@ import * as templates from "./templates";
 export * from "@tari-project/tarijs-types";
 export {
   utils,
+  Network,
   TariProvider,
   Account,
   TransactionStatus,
