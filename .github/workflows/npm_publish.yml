@@ -15,7 +15,7 @@ jobs:
       - uses: 'moonrepo/setup-toolchain@v0'
         with:
           auto-install: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: moon :build
       - run: pnpm publish -r
         env:
