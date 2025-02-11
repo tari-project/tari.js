@@ -1,15 +1,42 @@
 {
   "compilerOptions": {
-    "module": "ES2020",
-    "target": "ESNext",
-    "moduleResolution": "Bundler",
     "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "strict": true,
+    "composite": true
   },
-  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "packages/builders"
+    },
+    {
+      "path": "packages/metamask_provider"
+    },
+    {
+      "path": "packages/tari_permissions"
+    },
+    {
+      "path": "packages/tari_provider"
+    },
+    {
+      "path": "packages/tari_universe"
+    },
+    {
+      "path": "packages/tarijs"
+    },
+    {
+      "path": "packages/tarijs_types"
+    },
+    {
+      "path": "packages/types"
+    },
+    {
+      "path": "packages/wallet_daemon"
+    },
+    {
+      "path": "packages/walletconnect"
+    }
+  ]
 }

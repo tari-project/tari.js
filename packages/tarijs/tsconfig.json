@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "ES2020",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../builders"
+    },
+    {
+      "path": "../metamask_provider"
+    },
+    {
+      "path": "../tari_permissions"
+    },
+    {
+      "path": "../tari_provider"
+    },
+    {
+      "path": "../tari_universe"
+    },
+    {
+      "path": "../tarijs_types"
+    },
+    {
+      "path": "../wallet_daemon"
+    },
+    {
+      "path": "../walletconnect"
+    }
+  ]
+}

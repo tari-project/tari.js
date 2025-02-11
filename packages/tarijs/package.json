@@ -1,0 +1,39 @@
+{
+  "name": "@tari-project/tarijs",
+  "version": "0.3.1",
+  "description": "",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "integration-tests": "vitest run integration-tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@metamask/providers": "catalog:",
+    "@tari-project/metamask-provider": "workspace:^",
+    "@tari-project/tari-permissions": "workspace:^",
+    "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/tari-universe-provider": "workspace:^",
+    "@tari-project/tarijs-builders": "workspace:^",
+    "@tari-project/tarijs-types": "workspace:^",
+    "@tari-project/typescript-bindings": "catalog:",
+    "@tari-project/wallet-connect-provider": "workspace:^",
+    "@tari-project/wallet-daemon-provider": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "/dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
+}
