@@ -15,9 +15,10 @@ jobs:
       - uses: 'moonrepo/setup-toolchain@v0'
         with:
           auto-install: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: moon :build
-      - uses: simenandre/publish-with-pnpm@v2
-        with:
-          npm-auth-token: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm publish --no-git-checks -r
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 
