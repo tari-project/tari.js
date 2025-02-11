@@ -13,6 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: 'moonrepo/setup-toolchain@v0'
+        with:
+          auto-install: true
       - run: pnpm install
       - run: moon :build
       - uses: simenandre/publish-with-pnpm@v2
