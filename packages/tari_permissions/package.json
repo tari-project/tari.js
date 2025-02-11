@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tari-permissions",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "",
   "type": "module",
   "publishConfig": {
