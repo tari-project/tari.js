@@ -17,8 +17,10 @@ jobs:
           auto-install: true
       - run: pnpm install --frozen-lockfile
       - run: moon :build
-      - run: pnpm publish --no-git-checks -r
+      - name: Publish
+        run: |
+          pnpm config set git-checks false
+          pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+          pnpm publish --access public --no-git-checks -r
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-
