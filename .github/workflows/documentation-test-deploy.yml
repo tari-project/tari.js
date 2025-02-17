@@ -19,8 +19,8 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        working-directory: ./docusaurus
+        working-directory: ./docusaurus/tari.js
         run: npm ci
       - name: Test build website
-        working-directory: ./docusaurus
+        working-directory: ./docusaurus/tari.js
         run: npm run build

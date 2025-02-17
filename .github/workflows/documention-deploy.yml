@@ -19,10 +19,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        working-directory: ./docusaurus
+        working-directory: ./docusaurus/tari.js
         run: npm ci
       - name: Build website
-        working-directory: ./docusaurus
+        working-directory: ./docusaurus/tari.js
         run: npm run build
 
       - name: Upload Build Artifact
