@@ -1,0 +1,8 @@
+{
+  "label": "Submit transaction",
+  "position": 5,
+  "link": {
+    "type": "doc",
+    "id": "transactions-index"
+  }
+}
