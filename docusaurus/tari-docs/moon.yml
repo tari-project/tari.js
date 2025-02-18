@@ -1,0 +1,41 @@
+language: "typescript"
+platform: 'node'
+type: 'application'
+
+fileGroups:
+  configs:
+    - "docusaurus.config.ts"
+    - "package.json"
+    - "tsconfig.json"
+  sources:
+    - "sidebars.ts"
+    - "src/**/*"
+  docs:
+    - "docs/**/*"
+    - "static/**/*"
+
+tasks:
+  build:
+    script: "pnpm run build"
+    inputs:
+      - "@files(configs)"
+      - "@files(sources)"
+      - "@files(docs)"
+    outputs:
+      - "build"
+
+  start:
+    script: "pnpm run start"
+    inputs:
+      - "@files(configs)"
+      - "@files(sources)"
+      - "@files(docs)"
+
+  serve:
+    script: "pnpm run start"
+    inputs:
+      - "@files(configs)"
+      - "@files(sources)"
+      - "@files(docs)"
+    deps:
+      - 'build'

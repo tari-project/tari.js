@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - apps/*
+  - docusaurus/*
   - "!**/test/**"
 catalog:
   typescript: ^5.0.4

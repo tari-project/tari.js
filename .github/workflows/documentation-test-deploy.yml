@@ -13,14 +13,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: 'moonrepo/setup-toolchain@v0'
         with:
-          node-version: 18
-          cache: npm
-
-      - name: Install dependencies
-        working-directory: ./docusaurus/tari.js
-        run: npm ci
-      - name: Test build website
-        working-directory: ./docusaurus/tari.js
-        run: npm run build
+          auto-install: true
+      - run: pnpm install
+      - run: moon tari-docs:build
