@@ -45,3 +45,22 @@ moon tarijs:build
 ```
 The distribution files will be under the `example/dist` folder. 
 
+## Documentation
+
+This monorepo includes a documentation site located in the `docusaurus` folder.  It's built using [Docusaurus](https://docusaurus.io/) and generates a static website.
+
+### Modifying the Documentation
+
+To start the documentation site:
+
+```bash
+$ moon tari-docs:start
+```
+
+This will open the documentation site in your browser at `http://localhost:3000/tari.js/`
+
+You can now update the documentation by editing files in the `docusaurus/tari-docs/docs/` folder. Changes will be reflected automatically.
+
+### Publishing documentation
+
+The documentation is hosted on GitHub Pages and served from the `/docs` folder of the `gh-pages` branch. The `documentation-deploy.yml` workflow defines the deployment process.

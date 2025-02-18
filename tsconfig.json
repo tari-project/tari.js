@@ -9,6 +9,9 @@
   },
   "references": [
     {
+      "path": "docusaurus/tari-docs"
+    },
+    {
       "path": "packages/builders"
     },
     {

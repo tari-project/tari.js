@@ -1,0 +1,8 @@
+{
+  "label": "Interaction with the wallet",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Features of TariProvider."
+  }
+}
