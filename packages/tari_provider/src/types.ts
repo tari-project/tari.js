@@ -58,6 +58,8 @@ export interface VaultData {
   type: string;
   balance: number;
   resource_address: string;
+  token_symbol: string;
+  vault_id: string;
 }
 
 export interface VaultBalances {
