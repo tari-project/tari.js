@@ -16,7 +16,6 @@ import {
   TariUniverseProviderParameters,
   WindowSize,
 } from "./types";
-import {} from "@tari-project/tari-provider";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
 import { sendProviderCall } from "./utils";
 
