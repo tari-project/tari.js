@@ -10,7 +10,6 @@ import {
   ListSubstatesResponse,
 } from "./types";
 
-
 export interface TariProvider {
   providerName: string;
   isConnected(): boolean;
