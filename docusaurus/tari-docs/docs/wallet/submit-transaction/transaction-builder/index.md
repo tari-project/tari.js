@@ -1,5 +1,7 @@
 ---
-sidebar_position: 1
+id: transaction-builder-index
+title: Transaction Builder
+description: Overview of a transaction builder
 ---
 
 # Transaction Builder
@@ -421,3 +423,4 @@ const txResult = await submitAndWaitForTransaction(provider, submitTransactionRe
   }
 }
 ```
+
