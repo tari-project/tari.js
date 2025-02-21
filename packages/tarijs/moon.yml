@@ -54,6 +54,14 @@ tasks:
       - "@files(configs)"
       - "@files(tests)"
   test:
+    command: "pnpm run test"
+    inputs:
+      - "@files(sources)"
+      - "@files(tests)"
+      - "@files(configs)"
+    deps:
+      - "build"
+  integration-test:
     command: "pnpm run integration-tests"
     inputs:
       - "@files(sources)"

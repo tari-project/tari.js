@@ -33,6 +33,7 @@ import {
   toWorkspace,
 } from "@tari-project/tarijs-builders";
 import * as templates from "./templates";
+import { parseCbor, getCborValueByPath } from "./cbor";
 
 export * from "@tari-project/tarijs-types";
 export {
@@ -66,4 +67,6 @@ export {
   fromWorkspace,
   toWorkspace,
   templates,
+  parseCbor,
+  getCborValueByPath,
 };

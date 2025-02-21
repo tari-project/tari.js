@@ -23,3 +23,4 @@ jobs:
           auto-install: true
       - run: pnpm install
       - run: moon :build
+      - run: moon :test
