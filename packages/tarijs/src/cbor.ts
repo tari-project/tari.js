@@ -60,8 +60,12 @@ export function getCborValueByPath(cborRepr: CborValue | null, path: string): un
     }
 
     if ("Array" in value) {
-      value = value.Array[parseInt(part)];
-      continue;
+      const arr = value.Array;
+      const index = parseInt(part);
+      if (!Number.isNaN(index) && Array.isArray(arr) && arr.length > index) {
+        value = arr[index];
+        continue;
+      }
     }
 
     return null;

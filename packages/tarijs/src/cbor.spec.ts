@@ -201,6 +201,10 @@ describe("parseCbor", () => {
       expect(parseCbor(value as CborValue)).toEqual(expected);
     });
   });
+  
+  it.each([{}, { Unknown: 2 }])("throws, when data in unknown format is found", (value: unknown) => {
+    expect(() => parseCbor(value as CborValue)).toThrow();
+  });
 });
 
 describe("getCborValueByPath", () => {
@@ -220,6 +224,14 @@ describe("getCborValueByPath", () => {
     {
       path: "$.key_nested.nested1",
       expected: "Nested text",
+    },
+    {
+      path: "$.missing.path",
+      expected: null,
+    },
+    {
+      path: "$.key6.999",
+      expected: null,
     },
   ])("gets value by path", ({ path, expected }) => {
     const cbor: CborValue = {
