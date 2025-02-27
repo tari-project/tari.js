@@ -1,18 +1,18 @@
 import { assert, describe, expect, it } from "vitest";
 
-import { SubmitTransactionRequest, TariPermissions, WalletDaemonTariProvider } from "../../src";
+import { SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../src";
 
-function buildProvider(): Promise<WalletDaemonTariProvider> {
+function buildProvider(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
   const serverUrl = process.env.WALLET_DAEMON_JSON_RPC_URL;
   assert(serverUrl, "WALLET_DAEMON_JSON_RPC_URL must be set");
-  return WalletDaemonTariProvider.buildFetchProvider({
+  return WalletDaemonTariSigner.buildFetchProvider({
     permissions,
     serverUrl,
   });
 }
 
-describe("WalletDaemonTariProvider", () => {
+describe("WalletDaemonTariSigner", () => {
   describe("signerName", () => {
     it("returns the provider name", async () => {
       const provider = await buildProvider();

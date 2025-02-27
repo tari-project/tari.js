@@ -42,7 +42,7 @@ export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters 
   serverUrl: string;
 }
 
-export class WalletDaemonTariProvider implements TariSigner {
+export class WalletDaemonTariSigner implements TariSigner {
   public signerName = "WalletDaemon";
   params: WalletDaemonParameters;
   client: WalletDaemonClient;
@@ -52,8 +52,8 @@ export class WalletDaemonTariProvider implements TariSigner {
     this.client = connection;
   }
 
-  static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariProvider> {
-    const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
+  static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariSigner> {
+    const allPermissions = WalletDaemonTariSigner.buildPermissions(params);
     let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
     const client = WalletDaemonClient.new(WebRtcRpcTransport.new(connection));
     await connection.init(allPermissions, (conn) => {
@@ -62,11 +62,11 @@ export class WalletDaemonTariProvider implements TariSigner {
         client.setToken(conn.token);
       }
     });
-    return new WalletDaemonTariProvider(params, client);
+    return new WalletDaemonTariSigner(params, client);
   }
 
   static async buildFetchProvider(params: WalletDaemonFetchParameters) {
-    const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
+    const allPermissions = WalletDaemonTariSigner.buildPermissions(params);
     const client = WalletDaemonClient.usingFetchTransport(params.serverUrl);
 
     const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
@@ -74,7 +74,7 @@ export class WalletDaemonTariProvider implements TariSigner {
     await client.authAccept(authResponse, "WalletDaemon");
 
     params.onConnection?.();
-    return new WalletDaemonTariProvider(params, client);
+    return new WalletDaemonTariSigner(params, client);
   }
 
   private static buildPermissions(params: WalletDaemonBaseParameters): TariPermissions {
