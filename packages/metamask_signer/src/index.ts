@@ -20,7 +20,7 @@ export const TariSnapNotInstalled = "TARI_SNAP_NOT_INSTALLED";
 
 type Maybe<T> = T | null | undefined;
 
-export class MetamaskTariProvider implements TariSigner {
+export class MetamaskTariSigner implements TariSigner {
   public signerName = "Metamask";
   snapId: string;
   snapVersion: string | undefined;

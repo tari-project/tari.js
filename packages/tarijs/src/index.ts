@@ -13,7 +13,7 @@ import {
   SubstateRequirement,
   Substate,
 } from "@tari-project/tari-signer";
-import { MetamaskTariProvider } from "@tari-project/metamask-provider";
+import { MetamaskTariSigner } from "@tari-project/metamask-signer";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import {
   WalletDaemonTariProvider,
@@ -48,7 +48,7 @@ export {
   VaultData,
   TemplateDefinition,
   SubstateRequirement,
-  MetamaskTariProvider,
+  MetamaskTariSigner,
   WalletDaemonTariProvider,
   WalletDaemonParameters,
   TariUniverseSigner,

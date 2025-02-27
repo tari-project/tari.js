@@ -15,7 +15,7 @@
       "path": "packages/builders"
     },
     {
-      "path": "packages/metamask_provider"
+      "path": "packages/metamask_signer"
     },
     {
       "path": "packages/tari_permissions"

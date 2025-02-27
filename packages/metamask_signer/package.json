@@ -1,6 +1,6 @@
 {
-  "name": "@tari-project/metamask-provider",
-  "version": "0.4.0",
+  "name": "@tari-project/metamask-signer",
+  "version": "0.5.0",
   "description": "",
   "type": "module",
   "publishConfig": {

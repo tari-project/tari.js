@@ -13,7 +13,7 @@
       "path": "../builders"
     },
     {
-      "path": "../metamask_provider"
+      "path": "../metamask_signer"
     },
     {
       "path": "../tari_permissions"
