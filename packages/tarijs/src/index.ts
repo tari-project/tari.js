@@ -18,7 +18,7 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { WalletDaemonTariSigner, WalletDaemonParameters, TariPermissions } from "@tari-project/wallet-daemon-provider";
 import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 import * as permissions from "@tari-project/tari-permissions";
-import { WalletConnectTariProvider } from "@tari-project/wallet-connect-provider";
+import { WalletConnectTariSigner } from "@tari-project/wallet-connect-provider";
 import {
   TransactionBuilder,
   TransactionRequest,
@@ -53,7 +53,7 @@ export {
   MetaMaskInpageProvider,
   Substate,
   permissions,
-  WalletConnectTariProvider,
+  WalletConnectTariSigner,
   TransactionBuilder,
   TransactionRequest,
   buildTransactionRequest,

@@ -42,7 +42,7 @@ const walletConnectParams = {
   },
 };
 
-export class WalletConnectTariProvider implements TariSigner {
+export class WalletConnectTariSigner implements TariSigner {
   public signerName = "WalletConnect";
   projectId: string;
   wcProvider: UniversalProvider | null;
