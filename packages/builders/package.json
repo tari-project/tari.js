@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tari-project/tari-provider": "workspace:^",
-    "@tari-project/tari-universe-provider": "workspace:^",
+    "@tari-project/tari-signer": "workspace:^",
+    "@tari-project/tari-universe-signer": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:"
   },

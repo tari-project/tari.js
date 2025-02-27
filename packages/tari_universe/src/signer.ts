@@ -6,24 +6,18 @@ import {
   VaultBalances,
   ListSubstatesResponse,
   SubmitTransactionRequest,
-  TariProvider,
+  TariSigner,
   TransactionResult,
-} from "@tari-project/tari-provider";
-import {
-  ProviderRequest,
-  ProviderMethodNames,
-  ProviderReturnType,
-  TariUniverseProviderParameters,
-  WindowSize,
-} from "./types";
+} from "@tari-project/tari-signer";
+import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
 import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
-import { sendProviderCall } from "./utils";
+import { sendSignerCall } from "./utils";
 
-export class TariUniverseProvider implements TariProvider {
-  public providerName = "TariUniverse";
+export class TariUniverseSigner implements TariSigner {
+  public signerName = "TariUniverse";
   private __id = 0;
 
-  public constructor(public params: TariUniverseProviderParameters) {
+  public constructor(public params: TariUniverseSignerParameters) {
     const filterResizeEvent = function (event: MessageEvent) {
       if (event.data && event.data.type === "resize") {
         const resizeEvent = new CustomEvent("resize", {
@@ -35,11 +29,11 @@ export class TariUniverseProvider implements TariProvider {
     window.addEventListener("message", (event) => filterResizeEvent(event), false);
   }
 
-  private async sendRequest<MethodName extends ProviderMethodNames>(
-    req: Omit<ProviderRequest<MethodName>, "id">,
-  ): Promise<ProviderReturnType<MethodName>> {
+  private async sendRequest<MethodName extends SignerMethodNames>(
+    req: Omit<SignerRequest<MethodName>, "id">,
+  ): Promise<SignerReturnType<MethodName>> {
     const id = ++this.__id;
-    return sendProviderCall(req, id);
+    return sendSignerCall(req, id);
   }
 
   public isConnected(): boolean {

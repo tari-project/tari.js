@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tarijs-builders": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet_jrpc_client": "catalog:",

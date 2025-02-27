@@ -10,8 +10,8 @@ import {
   ListSubstatesResponse,
 } from "./types";
 
-export interface TariProvider {
-  providerName: string;
+export interface TariSigner {
+  signerName: string;
   isConnected(): boolean;
   getAccount(): Promise<Account>;
   getSubstate(substate_address: string): Promise<Substate>;

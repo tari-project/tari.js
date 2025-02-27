@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "catalog:",
-    "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:"
   },

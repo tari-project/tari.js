@@ -21,7 +21,7 @@
       "path": "packages/tari_permissions"
     },
     {
-      "path": "packages/tari_provider"
+      "path": "packages/tari_signer"
     },
     {
       "path": "packages/tari_universe"

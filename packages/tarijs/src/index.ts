@@ -1,4 +1,4 @@
-import { TariProvider } from "@tari-project/tari-provider";
+import { TariSigner } from "@tari-project/tari-signer";
 import * as utils from "./utils";
 import { Network } from "./network";
 import {
@@ -12,7 +12,7 @@ import {
   TemplateDefinition,
   SubstateRequirement,
   Substate,
-} from "@tari-project/tari-provider";
+} from "@tari-project/tari-signer";
 import { MetamaskTariProvider } from "@tari-project/metamask-provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import {
@@ -20,7 +20,7 @@ import {
   WalletDaemonParameters,
   TariPermissions,
 } from "@tari-project/wallet-daemon-provider";
-import { TariUniverseProvider, TariUniverseProviderParameters } from "@tari-project/tari-universe-provider";
+import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 import * as permissions from "@tari-project/tari-permissions";
 import { WalletConnectTariProvider } from "@tari-project/wallet-connect-provider";
 import {
@@ -38,7 +38,7 @@ export * from "@tari-project/tarijs-types";
 export {
   utils,
   Network,
-  TariProvider,
+  TariSigner,
   Account,
   TransactionStatus,
   TransactionResult,
@@ -51,8 +51,8 @@ export {
   MetamaskTariProvider,
   WalletDaemonTariProvider,
   WalletDaemonParameters,
-  TariUniverseProvider,
-  TariUniverseProviderParameters,
+  TariUniverseSigner,
+  TariUniverseSignerParameters,
   TariPermissions,
   MetaMaskInpageProvider,
   Substate,

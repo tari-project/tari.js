@@ -1,7 +1,7 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { TariUniverseProvider } from "./provider";
+import { TariUniverseSigner } from "./signer";
 
-export type TariUniverseProviderParameters = {
+export type TariUniverseSignerParameters = {
   permissions: TariPermissions;
   optionalPermissions: TariPermissions;
   name?: string;
@@ -15,19 +15,19 @@ export type WindowSize = {
 
 export type PickMatching<T, V> = { [K in keyof T as T[K] extends V ? K : never]: T[K] };
 export type ExtractMethods<T> = PickMatching<T, Function>;
-export type ProviderMethods = ExtractMethods<TariUniverseProvider>;
-export type ProviderMethodNames = keyof ProviderMethods;
-export type ProviderReturnType<T extends ProviderMethodNames> = Awaited<ReturnType<ProviderMethods[T]>>;
+export type SignerMethods = ExtractMethods<TariUniverseSigner>;
+export type SignerMethodNames = keyof SignerMethods;
+export type SignerReturnType<T extends SignerMethodNames> = Awaited<ReturnType<SignerMethods[T]>>;
 
-export type ProviderRequest<T extends ProviderMethodNames> = {
+export type SignerRequest<T extends SignerMethodNames> = {
   id: number;
   methodName: T;
-  args: Parameters<ProviderMethods[T]>;
+  args: Parameters<SignerMethods[T]>;
 };
 
-export type ProviderResponse<T extends ProviderMethodNames> = {
+export type SignerResponse<T extends SignerMethodNames> = {
   id: number;
-  type: "provider-call";
-  result: ProviderReturnType<T>;
+  type: "signer-call";
+  result: SignerReturnType<T>;
   resultError?: string;
 };

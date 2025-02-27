@@ -1,15 +1,17 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariConnection } from "./webrtc";
-import { TariProvider } from "@tari-project/tari-provider";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
   TransactionResult,
   TransactionStatus,
   SubmitTransactionResponse,
-  VaultBalances, TemplateDefinition, Substate,
+  VaultBalances,
+  TemplateDefinition,
+  Substate,
   ListSubstatesResponse,
-} from "@tari-project/tari-provider";
-import { Account } from "@tari-project/tari-provider";
+} from "@tari-project/tari-signer";
+import { Account } from "@tari-project/tari-signer";
 import {
   WalletDaemonClient,
   substateIdToString,
@@ -25,23 +27,23 @@ export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
 export const Unsupported = "UNSUPPORTED";
 
 export interface WalletDaemonBaseParameters {
-  permissions: TariPermissions,
-  optionalPermissions?: TariPermissions,
-  onConnection?: () => void
+  permissions: TariPermissions;
+  optionalPermissions?: TariPermissions;
+  onConnection?: () => void;
 }
 
 export interface WalletDaemonParameters extends WalletDaemonBaseParameters {
-  signalingServerUrl?: string,
-  webRtcConfig?: RTCConfiguration,
-  name?: string,
-};
-
-export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters {
-  serverUrl: string,
+  signalingServerUrl?: string;
+  webRtcConfig?: RTCConfiguration;
+  name?: string;
 }
 
-export class WalletDaemonTariProvider implements TariProvider {
-  public providerName = "WalletDaemon";
+export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters {
+  serverUrl: string;
+}
+
+export class WalletDaemonTariProvider implements TariSigner {
+  public signerName = "WalletDaemon";
   params: WalletDaemonParameters;
   client: WalletDaemonClient;
 
@@ -67,7 +69,7 @@ export class WalletDaemonTariProvider implements TariProvider {
     const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
     const client = WalletDaemonClient.usingFetchTransport(params.serverUrl);
 
-    const plainPermissions = allPermissions.toJSON().flatMap((p) => typeof (p) === "string" ? [p] : []);
+    const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
     const authResponse = await client.authRequest(plainPermissions);
     await client.authAccept(authResponse, "WalletDaemon");
 
@@ -98,7 +100,7 @@ export class WalletDaemonTariProvider implements TariProvider {
       return undefined;
     }
 
-    const name = this.params.name && encodeURIComponent(this.params.name) || "";
+    const name = (this.params.name && encodeURIComponent(this.params.name)) || "";
     const token = this.token;
     const permissions = JSON.stringify(this.params.permissions);
     const optionalPermissions = JSON.stringify(this.params.optionalPermissions);
@@ -126,7 +128,7 @@ export class WalletDaemonTariProvider implements TariProvider {
   }
 
   public async getAccount(): Promise<Account> {
-    const { account, public_key } = await this.client.accountsGetDefault({}) as any;
+    const { account, public_key } = (await this.client.accountsGetDefault({})) as any;
     const address = typeof account.address === "object" ? account.address.Component : account.address;
     const { balances } = await this.client.accountsGetBalances({
       account: { ComponentAddress: address },
@@ -142,7 +144,8 @@ export class WalletDaemonTariProvider implements TariProvider {
         type: b.resource_type,
         resource_address: b.resource_address,
         balance: b.balance + b.confidential_balance,
-        vault_id: (typeof (b.vault_address) === "object" && "Vault" in b.vault_address) ? b.vault_address.Vault : b.vault_address,
+        vault_id:
+          typeof b.vault_address === "object" && "Vault" in b.vault_address ? b.vault_address.Vault : b.vault_address,
         token_symbol: b.token_symbol,
       })),
     };
@@ -212,7 +215,12 @@ export class WalletDaemonTariProvider implements TariProvider {
     return resp.template_definition as TemplateDefinition;
   }
 
-  public async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null = null, max: number | null = null): Promise<VaultBalances> {
+  public async getConfidentialVaultBalances(
+    viewKeyId: number,
+    vaultId: string,
+    min: number | null = null,
+    max: number | null = null,
+  ): Promise<VaultBalances> {
     const res = await this.client.viewVaultBalance({
       view_key_id: viewKeyId,
       vault_id: vaultId,
@@ -222,7 +230,12 @@ export class WalletDaemonTariProvider implements TariProvider {
     return { balances: res.balances as unknown as Map<string, number | null> };
   }
 
-  public async listSubstates(filter_by_template: string | null, filter_by_type: SubstateType | null, limit: number | null, offset: number | null): Promise<ListSubstatesResponse> {
+  public async listSubstates(
+    filter_by_template: string | null,
+    filter_by_type: SubstateType | null,
+    limit: number | null,
+    offset: number | null,
+  ): Promise<ListSubstatesResponse> {
     const resp = await this.client.substatesList({
       filter_by_template,
       filter_by_type,

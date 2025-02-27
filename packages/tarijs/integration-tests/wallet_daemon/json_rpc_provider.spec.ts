@@ -13,10 +13,10 @@ function buildProvider(): Promise<WalletDaemonTariProvider> {
 }
 
 describe("WalletDaemonTariProvider", () => {
-  describe("providerName", () => {
+  describe("signerName", () => {
     it("returns the provider name", async () => {
       const provider = await buildProvider();
-      expect(provider.providerName).toBe("WalletDaemon");
+      expect(provider.signerName).toBe("WalletDaemon");
     });
   });
 
@@ -77,15 +77,15 @@ describe("WalletDaemonTariProvider", () => {
 
       const fee = 2000;
       const fee_instructions = [
-          {
-              CallMethod: {
-                  component_address: account.address,
-                  method: "pay_fee",
-                  args: [`Amount(${fee})`]
-              }
-          }
+        {
+          CallMethod: {
+            component_address: account.address,
+            method: "pay_fee",
+            args: [`Amount(${fee})`],
+          },
+        },
       ];
-      
+
       const request: SubmitTransactionRequest = {
         network: 0x10, // LocalNet
         account_id: account.account_id,
@@ -146,7 +146,7 @@ describe("WalletDaemonTariProvider", () => {
       expect(templateDefinition).toMatchObject({
         V1: {
           functions: expect.any(Array),
-        }
+        },
       });
     });
   });
@@ -175,7 +175,7 @@ describe("WalletDaemonTariProvider", () => {
       const substateWithTemplate = substates.find((substate) => substate.template_address);
       assert(substateWithTemplate, "No substate with template found");
 
-      const templateAddress = substateWithTemplate.template_address
+      const templateAddress = substateWithTemplate.template_address;
       const { substates: filteredSubstates } = await provider.listSubstates(templateAddress, null, 10, 0);
 
       expect(filteredSubstates.every((substate) => substate.template_address === templateAddress)).toBe(true);
