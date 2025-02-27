@@ -15,10 +15,10 @@ import {
 } from "@tari-project/tari-signer";
 import { MetamaskTariSigner } from "@tari-project/metamask-signer";
 import { MetaMaskInpageProvider } from "@metamask/providers";
-import { WalletDaemonTariSigner, WalletDaemonParameters, TariPermissions } from "@tari-project/wallet-daemon-provider";
+import { WalletDaemonTariSigner, WalletDaemonParameters, TariPermissions } from "@tari-project/wallet-daemon-signer";
 import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 import * as permissions from "@tari-project/tari-permissions";
-import { WalletConnectTariSigner } from "@tari-project/wallet-connect-provider";
+import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
 import {
   TransactionBuilder,
   TransactionRequest,

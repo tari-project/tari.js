@@ -202,10 +202,10 @@ importers:
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.4.0
-      '@tari-project/wallet-connect-provider':
+      '@tari-project/wallet-connect-signer':
         specifier: workspace:^
         version: link:../walletconnect
-      '@tari-project/wallet-daemon-provider':
+      '@tari-project/wallet-daemon-signer':
         specifier: workspace:^
         version: link:../wallet_daemon
     devDependencies:

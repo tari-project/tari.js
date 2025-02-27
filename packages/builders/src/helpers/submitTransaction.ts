@@ -40,12 +40,12 @@ export function buildTransactionRequest(
 }
 
 export async function submitAndWaitForTransaction(
-  provider: TariSigner,
+  signer: TariSigner,
   req: SubmitTransactionRequest,
 ): Promise<SubmitTxResult> {
   try {
-    const response = await provider.submitTransaction(req);
-    const result = await waitForTransactionResult(provider, response.transaction_id);
+    const response = await signer.submitTransaction(req);
+    const result = await waitForTransactionResult(signer, response.transaction_id);
 
     return {
       response,
@@ -57,12 +57,12 @@ export async function submitAndWaitForTransaction(
 }
 
 export async function waitForTransactionResult(
-  provider: TariSigner | TariUniverseSigner,
+  signer: TariSigner | TariUniverseSigner,
   transactionId: string,
 ): Promise<TransactionResult> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const resp = await provider.getTransactionResult(transactionId);
+    const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
       TransactionStatus.Accepted,
       TransactionStatus.Rejected,

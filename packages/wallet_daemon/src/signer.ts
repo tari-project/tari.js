@@ -65,7 +65,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     return new WalletDaemonTariSigner(params, client);
   }
 
-  static async buildFetchProvider(params: WalletDaemonFetchParameters) {
+  static async buildFetchSigner(params: WalletDaemonFetchParameters) {
     const allPermissions = WalletDaemonTariSigner.buildPermissions(params);
     const client = WalletDaemonClient.usingFetchTransport(params.serverUrl);
 

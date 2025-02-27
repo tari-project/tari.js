@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -22,8 +22,8 @@
     "@tari-project/tarijs-builders": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet-connect-provider": "workspace:^",
-    "@tari-project/wallet-daemon-provider": "workspace:^"
+    "@tari-project/wallet-connect-signer": "workspace:^",
+    "@tari-project/wallet-daemon-signer": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:",
