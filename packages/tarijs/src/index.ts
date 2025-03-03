@@ -1,4 +1,5 @@
 import { TariSigner } from "@tari-project/tari-signer";
+import { TariProvider } from "@tari-project/tari-provider";
 import * as utils from "./utils";
 import { Network } from "./network";
 import {
@@ -35,6 +36,7 @@ export {
   utils,
   Network,
   TariSigner,
+  TariProvider,
   Account,
   TransactionStatus,
   TransactionResult,
@@ -52,7 +54,6 @@ export {
   TariPermissions,
   MetaMaskInpageProvider,
   Substate,
-  permissions,
   WalletConnectTariSigner,
   TransactionBuilder,
   TransactionRequest,
@@ -61,5 +62,6 @@ export {
   waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
+  permissions,
   templates,
 };
