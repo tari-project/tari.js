@@ -7,19 +7,8 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "references": [
-    {
-      "path": "../builders"
-    },
-    {
-      "path": "../indexer_provider"
-    },
-    {
-      "path": "../metamask_signer"
-    },
     {
       "path": "../tari_permissions"
     },
@@ -27,19 +16,7 @@
       "path": "../tari_provider"
     },
     {
-      "path": "../tari_signer"
-    },
-    {
-      "path": "../tari_universe"
-    },
-    {
       "path": "../tarijs_types"
-    },
-    {
-      "path": "../wallet_daemon"
-    },
-    {
-      "path": "../walletconnect"
     }
   ]
 }

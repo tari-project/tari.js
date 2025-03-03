@@ -30,6 +30,11 @@ import {
   toWorkspace,
 } from "@tari-project/tarijs-builders";
 import * as templates from "./templates";
+import {
+  IndexerProvider,
+  IndexerProviderFetchParameters,
+  IndexerProviderParameters,
+} from "@tari-project/indexer-provider";
 
 export * from "@tari-project/tarijs-types";
 export {
@@ -57,6 +62,9 @@ export {
   WalletConnectTariSigner,
   TransactionBuilder,
   TransactionRequest,
+  IndexerProvider,
+  IndexerProviderParameters,
+  IndexerProviderFetchParameters,
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,

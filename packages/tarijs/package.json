@@ -24,7 +24,8 @@
     "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet-connect-signer": "workspace:^",
     "@tari-project/wallet-daemon-signer": "workspace:^",
-    "@tari-project/tari-provider": "workspace:^"
+    "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/indexer-provider": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:",
