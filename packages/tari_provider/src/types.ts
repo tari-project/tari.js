@@ -52,18 +52,6 @@ export interface TemplateDefinition {
   [key: string]: any;
 }
 
-export interface Substate {
-  value: any;
-  address: {
-    substate_id: string;
-    version: number;
-  };
-}
-
-export type ListSubstatesResponse = {
-  substates: Array<SubstateMetadata>;
-};
-
 export type SubmitTransactionRequest = {
   network: number;
   account_id: number;
@@ -90,7 +78,19 @@ export type ListSubstatesRequest = {
   offset: number | null;
 };
 
+export type ListSubstatesResponse = {
+  substates: Array<SubstateMetadata>;
+};
+
 export type GetSubstateRequest = {
   substate_address: string;
   version: number | null;
 };
+
+export interface Substate {
+  value: any;
+  address: {
+    substate_id: string;
+    version: number;
+  };
+}

@@ -31,13 +31,13 @@ export class IndexerProviderClient {
   private token: string | null;
   private transport: RpcTransport;
   private id: number;
-  private _isConnected: boolean;
+  private connected: boolean;
 
   constructor(transport: RpcTransport) {
     this.token = null;
     this.transport = transport;
     this.id = 0;
-    this._isConnected = false;
+    this.connected = false;
   }
 
   public static new(transport: RpcTransport): IndexerProviderClient {
@@ -57,7 +57,7 @@ export class IndexerProviderClient {
   }
 
   public isConnected() {
-    return this._isConnected;
+    return this.connected;
   }
 
   public setToken(token: string) {
@@ -119,11 +119,11 @@ export class IndexerProviderClient {
   public async getIdentity(): Promise<IndexerGetIdentityResponse | undefined> {
     try {
       const res: IndexerGetIdentityResponse = await this.__invokeRpc("get_identity");
-      this._isConnected = res.public_key != "";
+      this.connected = !!res.public_key;
       return res;
     } catch (e) {
       console.error("Failed to get Indexer identity:", e);
-      this._isConnected = false;
+      this.connected = false;
     }
   }
 
