@@ -11,11 +11,19 @@ import { WebRtcRpcTransport } from "./transports/webrtc_transport";
 import { convertStringToTransactionStatus } from "./utils";
 import { IndexerProviderClient } from "./transports";
 import {
+  GetTemplateDefinitionResponse,
+  IndexerGetSubstateRequest,
+  IndexerGetSubstateResponse,
+  IndexerSubmitTransactionRequest,
+  IndexerSubmitTransactionResponse,
+  ListTemplatesResponse,
   stringToSubstateId,
+  SubstateId,
   substateIdToString,
   SubstatesListRequest,
   SubstateType,
 } from "@tari-project/typescript-bindings";
+import { SubmitTransactionResponse } from "../../tarijs_types/src";
 
 export interface IndexerProviderBaseParameters {
   permissions: TariPermissions;
@@ -65,9 +73,9 @@ export class IndexerProvider implements TariProvider {
   }
 
   static async buildFetchSigner(params: IndexerProviderFetchParameters) {
-    const allPermissions = this.buildPermissions(params);
     const client = IndexerProviderClient.usingFetchTransport(params.serverUrl);
 
+    // const allPermissions = this.buildPermissions(params);
     // const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
     // const authResponse = await client.authRequest(plainPermissions);
     // await client.authAccept(authResponse, "WalletDaemon");
@@ -86,7 +94,7 @@ export class IndexerProvider implements TariProvider {
     limit: number | null,
     offset: number | null,
   ): Promise<ListSubstatesResponse> {
-    const resp = await this.client.substatesList({
+    const resp = await this.client.listSubstates({
       filter_by_template,
       filter_by_type,
       limit,
@@ -103,30 +111,42 @@ export class IndexerProvider implements TariProvider {
     return { substates };
   }
 
-  public async getSubstate(substateId: string): Promise<Substate> {
-    const { value, record } = await this.client.substatesGet({ substate_id: stringToSubstateId(substateId) });
-    return {
-      value,
-      address: {
-        substate_id: substateIdToString(record.substate_id),
-        version: record.version,
-      },
-    };
+  public async submitTransaction({
+    transaction,
+    required_substates,
+    is_dry_run,
+  }: IndexerSubmitTransactionRequest): Promise<IndexerSubmitTransactionResponse> {
+    const resp = await this.client.submitTransaction({ transaction, required_substates, is_dry_run });
+    return resp;
+  }
+
+  public async getSubstate({
+    address,
+    local_search_only,
+    version,
+  }: IndexerGetSubstateRequest): Promise<IndexerGetSubstateResponse> {
+    const resp = await this.client.getSubstate({ address, version, local_search_only });
+    return resp;
+  }
+
+  public async listTemplates(limit: number = 0): Promise<ListTemplatesResponse> {
+    const resp = await this.client.listTemplates({ limit });
+    return resp;
   }
 
   public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
-    const res = await this.client.getTransactionResult({ transaction_id: transactionId });
+    const resp = await this.client.getTransactionResult({ transaction_id: transactionId });
 
     return {
       transaction_id: transactionId,
-      status: convertStringToTransactionStatus(res.status),
-      result: res.result,
+      status: convertStringToTransactionStatus(resp.status),
+      result: resp.result,
     };
   }
 
-  public async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
-    let resp = await this.client.templatesGet({ template_address });
-    return resp.template_definition as TemplateDefinition;
+  public async getTemplateDefinition(template_address: string): Promise<GetTemplateDefinitionResponse> {
+    let resp = await this.client.getTemplateDefinition({ template_address });
+    return resp;
   }
 
   private getWebRtcTransport(): WebRtcRpcTransport | undefined {

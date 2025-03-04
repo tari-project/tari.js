@@ -1,7 +1,7 @@
-import { transports } from "@tari-project/wallet_jrpc_client";
+import { RpcRequest, RpcTransport, RpcTransportOptions } from "./rpc";
 import { TariConnection } from "./webrtc";
 
-export class WebRtcRpcTransport implements transports.RpcTransport {
+export class WebRtcRpcTransport implements RpcTransport {
   connection: TariConnection;
 
   constructor(connection: TariConnection) {
@@ -20,7 +20,7 @@ export class WebRtcRpcTransport implements transports.RpcTransport {
     return this.connection.isConnected();
   }
 
-  sendRequest<T>(data: transports.RpcRequest, options: transports.RpcTransportOptions): Promise<T> {
+  sendRequest<T>(data: RpcRequest, options: RpcTransportOptions): Promise<T> {
     return this.connection.sendMessage<T>(data, options.token);
   }
 }

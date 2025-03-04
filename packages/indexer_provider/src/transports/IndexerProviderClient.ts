@@ -1,163 +1,34 @@
-/*
- * //  Copyright 2024 The Tari Project
- * //  SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {
-  AccountGetDefaultRequest,
-  AccountGetRequest,
-  AccountGetResponse,
-  AccountSetDefaultRequest,
-  AccountSetDefaultResponse,
-  AccountsCreateFreeTestCoinsRequest,
-  AccountsCreateFreeTestCoinsResponse,
-  AccountsCreateRequest,
-  AccountsCreateResponse,
-  AccountsGetBalancesRequest,
-  AccountsGetBalancesResponse,
-  AccountsListRequest,
-  AccountsListResponse,
-  AccountsTransferRequest,
-  AccountsTransferResponse,
   AuthGetAllJwtRequest,
   AuthGetAllJwtResponse,
   AuthRevokeTokenRequest,
   AuthRevokeTokenResponse,
-  ClaimBurnRequest,
-  ClaimBurnResponse,
-  ClaimValidatorFeesRequest,
-  ClaimValidatorFeesResponse,
-  ComponentAddressOrName,
-  ConfidentialTransferRequest,
-  ConfidentialTransferResponse,
-  ConfidentialViewVaultBalanceRequest,
-  ConfidentialViewVaultBalanceResponse,
-  KeyBranch,
-  KeysCreateRequest,
-  KeysCreateResponse,
-  KeysListRequest,
-  KeysListResponse,
-  KeysSetActiveRequest,
-  KeysSetActiveResponse,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
-  PublishTemplateRequest,
-  PublishTemplateResponse,
-  RevealFundsRequest,
-  RevealFundsResponse,
-  SettingsGetResponse,
-  SettingsSetRequest,
-  SettingsSetResponse,
-  SubstatesGetRequest,
-  SubstatesGetResponse,
+  GetEpochManagerStatsResponse,
+  GetNonFungibleCollectionsResponse,
+  GetNonFungibleCountRequest,
+  GetNonFungibleCountResponse,
+  GetNonFungiblesRequest,
+  GetNonFungiblesResponse,
+  GetRelatedTransactionsRequest,
+  GetRelatedTransactionsResponse,
+  GetTemplateDefinitionRequest,
+  GetTemplateDefinitionResponse,
+  IndexerGetSubstateRequest,
+  IndexerGetSubstateResponse,
+  IndexerSubmitTransactionRequest,
+  IndexerSubmitTransactionResponse,
+  InspectSubstateRequest,
+  InspectSubstateResponse,
+  ListTemplatesRequest,
+  ListTemplatesResponse,
   SubstatesListRequest,
   SubstatesListResponse,
-  TemplatesGetRequest,
-  TemplatesGetResponse,
-  TransactionGetAllRequest,
-  TransactionGetAllResponse,
-  TransactionGetRequest,
-  TransactionGetResponse,
   TransactionGetResultRequest,
   TransactionGetResultResponse,
-  TransactionSubmitRequest,
-  TransactionSubmitResponse,
   TransactionWaitResultRequest,
   TransactionWaitResultResponse,
-  WebRtcStartRequest,
-  WebRtcStartResponse,
-  Arg,
-  FinalizeResult,
-  TemplateDef,
-  FunctionDef,
-  Type,
-  ArgDef,
-  Instruction,
-  SubstateType,
-  TransactionStatus,
-  SubstateId,
-  substateIdToString,
-  stringToSubstateId,
-  rejectReasonToString,
 } from "@tari-project/typescript-bindings";
 import { FetchRpcTransport, RpcTransport } from "./rpc";
-
-export { substateIdToString, stringToSubstateId, rejectReasonToString };
-
-export type {
-  AccountGetDefaultRequest,
-  AccountGetRequest,
-  AccountGetResponse,
-  AccountSetDefaultRequest,
-  AccountSetDefaultResponse,
-  AccountsCreateFreeTestCoinsRequest,
-  AccountsCreateFreeTestCoinsResponse,
-  AccountsCreateRequest,
-  AccountsCreateResponse,
-  AccountsGetBalancesRequest,
-  AccountsGetBalancesResponse,
-  AccountsListRequest,
-  AccountsListResponse,
-  AccountsTransferRequest,
-  AccountsTransferResponse,
-  AuthGetAllJwtRequest,
-  AuthGetAllJwtResponse,
-  AuthRevokeTokenRequest,
-  AuthRevokeTokenResponse,
-  ClaimBurnRequest,
-  ClaimBurnResponse,
-  ClaimValidatorFeesRequest,
-  ClaimValidatorFeesResponse,
-  ComponentAddressOrName,
-  ConfidentialTransferRequest,
-  ConfidentialTransferResponse,
-  ConfidentialViewVaultBalanceRequest,
-  ConfidentialViewVaultBalanceResponse,
-  KeyBranch,
-  KeysCreateRequest,
-  KeysCreateResponse,
-  KeysListRequest,
-  KeysListResponse,
-  KeysSetActiveRequest,
-  KeysSetActiveResponse,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
-  PublishTemplateRequest,
-  PublishTemplateResponse,
-  RevealFundsRequest,
-  RevealFundsResponse,
-  SettingsGetResponse,
-  SettingsSetRequest,
-  SettingsSetResponse,
-  SubstatesGetRequest,
-  SubstatesGetResponse,
-  SubstatesListRequest,
-  SubstatesListResponse,
-  TemplatesGetRequest,
-  TemplatesGetResponse,
-  TransactionGetAllRequest,
-  TransactionGetAllResponse,
-  TransactionGetRequest,
-  TransactionGetResponse,
-  TransactionGetResultRequest,
-  TransactionGetResultResponse,
-  TransactionSubmitRequest,
-  TransactionSubmitResponse,
-  TransactionWaitResultRequest,
-  TransactionWaitResultResponse,
-  WebRtcStartRequest,
-  WebRtcStartResponse,
-  Arg,
-  FinalizeResult,
-  TemplateDef,
-  FunctionDef,
-  Type,
-  ArgDef,
-  Instruction,
-  SubstateType,
-  TransactionStatus,
-  SubstateId,
-};
 
 export class IndexerProviderClient {
   private token: string | null;
@@ -195,7 +66,6 @@ export class IndexerProviderClient {
   }
 
   public async authRequest(permissions: string[]): Promise<string> {
-    // TODO: Exchange some secret credentials for a JWT
     let resp = await this.__invokeRpc("auth.request", { permissions });
     return resp.auth_token;
   }
@@ -210,124 +80,56 @@ export class IndexerProviderClient {
     return this.__invokeRpc("auth.revoke", params);
   }
 
-  public accountsCreate(params: AccountsCreateRequest): Promise<AccountsCreateResponse> {
-    return this.__invokeRpc("accounts.create", params);
+  public submitTransaction(params: IndexerSubmitTransactionRequest): Promise<IndexerSubmitTransactionResponse> {
+    return this.__invokeRpc("submit_transaction", params);
   }
 
-  public accountsClaimBurn(params: ClaimBurnRequest): Promise<ClaimBurnResponse> {
-    return this.__invokeRpc("accounts.claim_burn", params);
+  public inspectSubstate(params: InspectSubstateRequest): Promise<InspectSubstateResponse> {
+    return this.__invokeRpc("inspect_substate", params);
   }
 
-  public accountsRevealFunds(params: RevealFundsRequest): Promise<RevealFundsResponse> {
-    return this.__invokeRpc("accounts.reveal_funds", params);
+  public getSubstate(params: IndexerGetSubstateRequest): Promise<IndexerGetSubstateResponse> {
+    return this.__invokeRpc("get_substate", params);
   }
 
-  public accountsGetBalances(params: AccountsGetBalancesRequest): Promise<AccountsGetBalancesResponse> {
-    return this.__invokeRpc("accounts.get_balances", params);
-  }
-
-  public accountsList(params: AccountsListRequest): Promise<AccountsListResponse> {
-    return this.__invokeRpc("accounts.list", params);
-  }
-
-  public accountsGet(params: AccountGetRequest): Promise<AccountGetResponse> {
-    return this.__invokeRpc("accounts.get", params);
-  }
-
-  public accountsTransfer(params: AccountsTransferRequest): Promise<AccountsTransferResponse> {
-    return this.__invokeRpc("accounts.transfer", params);
-  }
-
-  public confidentialTransfer(params: ConfidentialTransferRequest): Promise<ConfidentialTransferResponse> {
-    return this.__invokeRpc("accounts.confidential_transfer", params);
-  }
-
-  public accountsGetDefault(params: AccountGetDefaultRequest): Promise<AccountGetResponse> {
-    return this.__invokeRpc("accounts.get_default", params);
-  }
-
-  public accountsSetDefault(params: AccountSetDefaultRequest): Promise<AccountSetDefaultResponse> {
-    return this.__invokeRpc("accounts.set_default", params);
-  }
-
-  public submitTransaction(params: TransactionSubmitRequest): Promise<TransactionSubmitResponse> {
-    return this.__invokeRpc("transactions.submit", params);
-  }
-
-  public publishTemplate(params: PublishTemplateRequest): Promise<PublishTemplateResponse> {
-    return this.__invokeRpc("transactions.publish_template", params);
-  }
-
-  public substatesGet(params: SubstatesGetRequest): Promise<SubstatesGetResponse> {
-    return this.__invokeRpc("substates.get", params);
-  }
-
-  public substatesList(params: SubstatesListRequest): Promise<SubstatesListResponse> {
+  public listSubstates(params: SubstatesListRequest): Promise<SubstatesListResponse> {
     return this.__invokeRpc("list_substates", params);
   }
 
-  public transactionsList(params: TransactionGetAllRequest): Promise<TransactionGetAllResponse> {
-    return this.__invokeRpc("transactions.get_all", params);
+  public listTemplates(params: ListTemplatesRequest): Promise<ListTemplatesResponse> {
+    return this.__invokeRpc("list_templates", params);
   }
 
-  public transactionsGet(params: TransactionGetRequest): Promise<TransactionGetResponse> {
-    return this.__invokeRpc("transactions.get", params);
+  public getTemplateDefinition(params: GetTemplateDefinitionRequest): Promise<GetTemplateDefinitionResponse> {
+    return this.__invokeRpc("get_template_definition", params);
   }
 
   public getTransactionResult(params: TransactionGetResultRequest): Promise<TransactionGetResultResponse> {
-    return this.__invokeRpc("transactions.get_result", params);
+    return this.__invokeRpc("get_transaction_result", params);
+  }
+
+  public getSubstateTransactions(params: GetRelatedTransactionsRequest): Promise<GetRelatedTransactionsResponse> {
+    return this.__invokeRpc("get_substate_transactions", params);
+  }
+
+  public getNonFungibles(params: GetNonFungiblesRequest): Promise<GetNonFungiblesResponse> {
+    return this.__invokeRpc("get_non_fungibles", params);
+  }
+
+  public getNonFungibleCollections(): Promise<GetNonFungibleCollectionsResponse> {
+    return this.__invokeRpc("get_non_fungible_collections");
+  }
+
+  public getNonFungibleCount(params: GetNonFungibleCountRequest): Promise<GetNonFungibleCountResponse> {
+    return this.__invokeRpc("get_non_fungible_count", params);
+  }
+
+  public getEpochManagerStats(): Promise<GetEpochManagerStatsResponse> {
+    return this.__invokeRpc("get_epoch_manager_stats");
   }
 
   public waitForTransactionResult(params: TransactionWaitResultRequest): Promise<TransactionWaitResultResponse> {
     return this.__invokeRpc("transactions.wait_result", params);
-  }
-
-  public templatesGet(params: TemplatesGetRequest): Promise<TemplatesGetResponse> {
-    return this.__invokeRpc("templates.get", params);
-  }
-
-  public createFreeTestCoins(params: AccountsCreateFreeTestCoinsRequest): Promise<AccountsCreateFreeTestCoinsResponse> {
-    return this.__invokeRpc("accounts.create_free_test_coins", params);
-  }
-
-  public createKey(params: KeysCreateRequest): Promise<KeysCreateResponse> {
-    return this.__invokeRpc("keys.create", params);
-  }
-
-  public keysSetActive(params: KeysSetActiveRequest): Promise<KeysSetActiveResponse> {
-    return this.__invokeRpc("keys.set_active", params);
-  }
-
-  public listKeys(params: KeysListRequest): Promise<KeysListResponse> {
-    return this.__invokeRpc("keys.list", params);
-  }
-
-  public viewVaultBalance(params: ConfidentialViewVaultBalanceRequest): Promise<ConfidentialViewVaultBalanceResponse> {
-    return this.__invokeRpc("confidential.view_vault_balance", params);
-  }
-
-  public nftsList(params: ListAccountNftRequest): Promise<ListAccountNftResponse> {
-    return this.__invokeRpc("nfts.list", params);
-  }
-
-  public validatorsClaimFees(params: ClaimValidatorFeesRequest): Promise<ClaimValidatorFeesResponse> {
-    return this.__invokeRpc("validators.claim_fees", params);
-  }
-
-  public rpcDiscover(): Promise<string> {
-    return this.__invokeRpc("rpc.discover", {});
-  }
-
-  public webrtcStart(params: WebRtcStartRequest): Promise<WebRtcStartResponse> {
-    return this.__invokeRpc("webrtc.start", params);
-  }
-
-  public settingsGet(): Promise<SettingsGetResponse> {
-    return this.__invokeRpc("settings.get");
-  }
-
-  public settingsSet(params: SettingsSetRequest): Promise<SettingsSetResponse> {
-    return this.__invokeRpc("settings.set", params);
   }
 
   async __invokeRpc(method: string, params: object | null = null) {

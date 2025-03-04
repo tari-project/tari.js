@@ -1,5 +1,5 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { transports } from "@tari-project/wallet_jrpc_client";
+import { RpcRequest } from "./rpc";
 
 class SignaligServer {
   private _token?: string;
@@ -119,8 +119,8 @@ export class TariConnection {
       // This should be removed before the release, but it's good for debugging.
       console.log("Data channel is open!");
 
-      this.sendMessage({ id: 0, jsonrpc: "2.0", method: "get.token", params: {} }, this._signalingServer.token)
-        .then((walletToken: unknown) => {
+      this.sendMessage({ id: 0, jsonrpc: "2.0", method: "get.token", params: {} }, this._signalingServer.token).then(
+        (walletToken: unknown) => {
           if (typeof walletToken !== "string") {
             throw Error("Received invalid JWT from wallet daemon");
           }
@@ -131,7 +131,8 @@ export class TariConnection {
           if (this.onConnection) {
             this.onConnection(this);
           }
-        });
+        },
+      );
     };
     this._peerConnection.onicecandidate = (event) => {
       console.log("event", event);
@@ -199,7 +200,7 @@ export class TariConnection {
   }
 
   // If the last parameter has timeout property e.g. {timeout:1000}, it set the timeout for this call.
-  async sendMessage<T>(request: transports.RpcRequest, token: string | undefined, timeout_secs: number | null = null): Promise<T> {
+  async sendMessage<T>(request: RpcRequest, token: string | undefined, timeout_secs: number | null = null): Promise<T> {
     if (!this.isConnected) {
       throw new Error("WALLET_DAEMON_NOT_CONNECTED");
     }
