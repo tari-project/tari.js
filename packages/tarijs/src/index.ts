@@ -32,8 +32,8 @@ import {
 import * as templates from "./templates";
 import {
   IndexerProvider,
-  IndexerProviderFetchParameters,
   IndexerProviderParameters,
+  convertStringToTransactionStatus,
 } from "@tari-project/indexer-provider";
 
 export * from "@tari-project/tarijs-types";
@@ -64,7 +64,7 @@ export {
   TransactionRequest,
   IndexerProvider,
   IndexerProviderParameters,
-  IndexerProviderFetchParameters,
+  convertStringToTransactionStatus,
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,

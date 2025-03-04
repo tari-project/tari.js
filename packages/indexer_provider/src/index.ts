@@ -1,2 +1,3 @@
-export * from "./provider";
-export { TariConnection } from "./transports/webrtc";
+export { IndexerProvider, IndexerProviderParameters } from "./provider";
+export * from "./transports";
+export * from "./utils";

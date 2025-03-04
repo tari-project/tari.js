@@ -1,99 +1,56 @@
 import {
+  GetSubstateRequest,
+  ListSubstatesRequest,
   ListSubstatesResponse,
   Substate,
   TariProvider,
-  TemplateDefinition,
   TransactionResult,
 } from "@tari-project/tari-provider";
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { TariConnection } from "./transports/webrtc";
-import { WebRtcRpcTransport } from "./transports/webrtc_transport";
 import { convertStringToTransactionStatus } from "./utils";
 import { IndexerProviderClient } from "./transports";
 import {
   GetTemplateDefinitionResponse,
-  IndexerGetSubstateRequest,
-  IndexerGetSubstateResponse,
-  IndexerSubmitTransactionRequest,
-  IndexerSubmitTransactionResponse,
   ListTemplatesResponse,
   stringToSubstateId,
-  SubstateId,
   substateIdToString,
   SubstatesListRequest,
-  SubstateType,
 } from "@tari-project/typescript-bindings";
-import { SubmitTransactionResponse } from "../../tarijs_types/src";
 
-export interface IndexerProviderBaseParameters {
+export interface IndexerProviderParameters {
+  indexerJrpcUrl: string;
   permissions: TariPermissions;
   optionalPermissions?: TariPermissions;
   onConnection?: () => void;
 }
 
-export interface IndexerProviderParameters extends IndexerProviderBaseParameters {
-  signalingServerUrl?: string;
-  webRtcConfig?: RTCConfiguration;
-  name?: string;
-}
-
-export interface IndexerProviderFetchParameters extends IndexerProviderBaseParameters {
-  serverUrl: string;
-}
-
 export class IndexerProvider implements TariProvider {
   public providerName = "IndexerProvider";
-  params: IndexerProviderParameters;
   client: IndexerProviderClient;
+  params: IndexerProviderParameters;
 
   private constructor(params: IndexerProviderParameters, connection: IndexerProviderClient) {
     this.params = params;
     this.client = connection;
   }
-  private static buildPermissions(params: IndexerProviderParameters): TariPermissions {
-    const allPermissions = new TariPermissions();
-    allPermissions.addPermissions(params.permissions);
-    if (params.optionalPermissions) {
-      allPermissions.addPermissions(params.optionalPermissions);
-    }
-    return allPermissions;
-  }
 
-  static async build(params: IndexerProviderParameters): Promise<IndexerProvider> {
-    const allPermissions = this.buildPermissions(params);
-    let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
-    const client = IndexerProviderClient.new(WebRtcRpcTransport.new(connection));
-    await connection.init(allPermissions, (conn) => {
-      params.onConnection?.();
-      if (conn.token) {
-        client.setToken(conn.token);
-      }
-    });
-    return new IndexerProvider(params, client);
-  }
-
-  static async buildFetchSigner(params: IndexerProviderFetchParameters) {
-    const client = IndexerProviderClient.usingFetchTransport(params.serverUrl);
-
-    // const allPermissions = this.buildPermissions(params);
-    // const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
-    // const authResponse = await client.authRequest(plainPermissions);
-    // await client.authAccept(authResponse, "WalletDaemon");
-
+  static async build(params: IndexerProviderParameters) {
+    const client = IndexerProviderClient.usingFetchTransport(params.indexerJrpcUrl);
+    await client.getIdentity();
     params.onConnection?.();
     return new IndexerProvider(params, client);
   }
 
   public isConnected(): boolean {
-    return this.getWebRtcTransport()?.isConnected() || true;
+    return this.client.isConnected();
   }
 
-  public async listSubstates(
-    filter_by_template: string | null,
-    filter_by_type: SubstateType | null,
-    limit: number | null,
-    offset: number | null,
-  ): Promise<ListSubstatesResponse> {
+  public async listSubstates({
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.listSubstates({
       filter_by_template,
       filter_by_type,
@@ -111,22 +68,19 @@ export class IndexerProvider implements TariProvider {
     return { substates };
   }
 
-  public async submitTransaction({
-    transaction,
-    required_substates,
-    is_dry_run,
-  }: IndexerSubmitTransactionRequest): Promise<IndexerSubmitTransactionResponse> {
-    const resp = await this.client.submitTransaction({ transaction, required_substates, is_dry_run });
-    return resp;
-  }
-
-  public async getSubstate({
-    address,
-    local_search_only,
-    version,
-  }: IndexerGetSubstateRequest): Promise<IndexerGetSubstateResponse> {
-    const resp = await this.client.getSubstate({ address, version, local_search_only });
-    return resp;
+  public async getSubstate({ substate_address, version }: GetSubstateRequest): Promise<Substate> {
+    const resp = await this.client.getSubstate({
+      address: stringToSubstateId(substate_address),
+      version: version ?? null,
+      local_search_only: false,
+    });
+    return {
+      address: {
+        substate_id: substateIdToString(resp.address),
+        version: resp.version,
+      },
+      value: resp.substate,
+    };
   }
 
   public async listTemplates(limit: number = 0): Promise<ListTemplatesResponse> {
@@ -147,10 +101,5 @@ export class IndexerProvider implements TariProvider {
   public async getTemplateDefinition(template_address: string): Promise<GetTemplateDefinitionResponse> {
     let resp = await this.client.getTemplateDefinition({ template_address });
     return resp;
-  }
-
-  private getWebRtcTransport(): WebRtcRpcTransport | undefined {
-    const transport = this.client.getTransport();
-    return transport instanceof WebRtcRpcTransport ? transport : undefined;
   }
 }

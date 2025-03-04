@@ -1,8 +1,4 @@
 import {
-  AuthGetAllJwtRequest,
-  AuthGetAllJwtResponse,
-  AuthRevokeTokenRequest,
-  AuthRevokeTokenResponse,
   GetEpochManagerStatsResponse,
   GetNonFungibleCollectionsResponse,
   GetNonFungibleCountRequest,
@@ -13,6 +9,7 @@ import {
   GetRelatedTransactionsResponse,
   GetTemplateDefinitionRequest,
   GetTemplateDefinitionResponse,
+  IndexerGetIdentityResponse,
   IndexerGetSubstateRequest,
   IndexerGetSubstateResponse,
   IndexerSubmitTransactionRequest,
@@ -34,11 +31,13 @@ export class IndexerProviderClient {
   private token: string | null;
   private transport: RpcTransport;
   private id: number;
+  private _isConnected: boolean;
 
   constructor(transport: RpcTransport) {
     this.token = null;
     this.transport = transport;
     this.id = 0;
+    this._isConnected = false;
   }
 
   public static new(transport: RpcTransport): IndexerProviderClient {
@@ -57,27 +56,12 @@ export class IndexerProviderClient {
     return this.token !== null;
   }
 
+  public isConnected() {
+    return this._isConnected;
+  }
+
   public setToken(token: string) {
     this.token = token;
-  }
-
-  public authGetAllJwt(params: AuthGetAllJwtRequest): Promise<AuthGetAllJwtResponse> {
-    return this.__invokeRpc("auth.get_all_jwt", params);
-  }
-
-  public async authRequest(permissions: string[]): Promise<string> {
-    let resp = await this.__invokeRpc("auth.request", { permissions });
-    return resp.auth_token;
-  }
-
-  public async authAccept(adminToken: string, name: string): Promise<string | null> {
-    let resp = await this.__invokeRpc("auth.accept", { auth_token: adminToken, name });
-    this.token = resp.permissions_token;
-    return this.token;
-  }
-
-  public authRevoke(params: AuthRevokeTokenRequest): Promise<AuthRevokeTokenResponse> {
-    return this.__invokeRpc("auth.revoke", params);
   }
 
   public submitTransaction(params: IndexerSubmitTransactionRequest): Promise<IndexerSubmitTransactionResponse> {
@@ -130,6 +114,17 @@ export class IndexerProviderClient {
 
   public waitForTransactionResult(params: TransactionWaitResultRequest): Promise<TransactionWaitResultResponse> {
     return this.__invokeRpc("transactions.wait_result", params);
+  }
+
+  public async getIdentity(): Promise<IndexerGetIdentityResponse | undefined> {
+    try {
+      const res: IndexerGetIdentityResponse = await this.__invokeRpc("get_identity");
+      this._isConnected = res.public_key != "";
+      return res;
+    } catch (e) {
+      console.error("Failed to get Indexer identity:", e);
+      this._isConnected = false;
+    }
   }
 
   async __invokeRpc(method: string, params: object | null = null) {
