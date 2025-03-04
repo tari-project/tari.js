@@ -1,2 +1,2 @@
 export * from "./provider";
-export { TariConnection } from "./webrtc";
+export { TariConnection } from "./transports/webrtc";

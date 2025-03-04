@@ -1,13 +1,4 @@
 import {
-  AccountsGetBalancesResponse,
-  stringToSubstateId,
-  SubstateId,
-  substateIdToString,
-  SubstatesListRequest,
-  SubstateType,
-  WalletDaemonClient,
-} from "@tari-project/wallet_jrpc_client";
-import {
   ListSubstatesResponse,
   Substate,
   TariProvider,
@@ -15,9 +6,16 @@ import {
   TransactionResult,
 } from "@tari-project/tari-provider";
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { TariConnection } from "./webrtc";
-import { WebRtcRpcTransport } from "./webrtc_transport";
+import { TariConnection } from "./transports/webrtc";
+import { WebRtcRpcTransport } from "./transports/webrtc_transport";
 import { convertStringToTransactionStatus } from "./utils";
+import { IndexerProviderClient } from "./transports";
+import {
+  stringToSubstateId,
+  substateIdToString,
+  SubstatesListRequest,
+  SubstateType,
+} from "@tari-project/typescript-bindings";
 
 export interface IndexerProviderBaseParameters {
   permissions: TariPermissions;
@@ -38,9 +36,9 @@ export interface IndexerProviderFetchParameters extends IndexerProviderBaseParam
 export class IndexerProvider implements TariProvider {
   public providerName = "IndexerProvider";
   params: IndexerProviderParameters;
-  client: WalletDaemonClient;
+  client: IndexerProviderClient;
 
-  private constructor(params: IndexerProviderParameters, connection: WalletDaemonClient) {
+  private constructor(params: IndexerProviderParameters, connection: IndexerProviderClient) {
     this.params = params;
     this.client = connection;
   }
@@ -56,7 +54,7 @@ export class IndexerProvider implements TariProvider {
   static async build(params: IndexerProviderParameters): Promise<IndexerProvider> {
     const allPermissions = this.buildPermissions(params);
     let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
-    const client = WalletDaemonClient.new(WebRtcRpcTransport.new(connection));
+    const client = IndexerProviderClient.new(WebRtcRpcTransport.new(connection));
     await connection.init(allPermissions, (conn) => {
       params.onConnection?.();
       if (conn.token) {
@@ -65,13 +63,14 @@ export class IndexerProvider implements TariProvider {
     });
     return new IndexerProvider(params, client);
   }
+
   static async buildFetchSigner(params: IndexerProviderFetchParameters) {
     const allPermissions = this.buildPermissions(params);
-    const client = WalletDaemonClient.usingFetchTransport(params.serverUrl);
+    const client = IndexerProviderClient.usingFetchTransport(params.serverUrl);
 
-    const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
-    const authResponse = await client.authRequest(plainPermissions);
-    await client.authAccept(authResponse, "WalletDaemon");
+    // const plainPermissions = allPermissions.toJSON().flatMap((p) => (typeof p === "string" ? [p] : []));
+    // const authResponse = await client.authRequest(plainPermissions);
+    // await client.authAccept(authResponse, "WalletDaemon");
 
     params.onConnection?.();
     return new IndexerProvider(params, client);
