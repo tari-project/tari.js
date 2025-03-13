@@ -9,7 +9,11 @@ export { ConfidentialStatement } from "./ConfidentialStatement";
 export { ConfidentialWithdrawProof } from "./ConfidentialWithdrawProof";
 export { Epoch } from "./Epoch";
 export {
-  FinalizeResult, FinalizeResultStatus, TxResultAccept, TxResultAcceptFeeRejectRest, TxResultReject,
+  FinalizeResult,
+  FinalizeResultStatus,
+  TxResultAccept,
+  TxResultAcceptFeeRejectRest,
+  TxResultReject,
 } from "./FinalizeResult";
 export { ResourceAddress } from "./ResourceAddress";
 export { Instruction } from "./Instruction";
@@ -23,3 +27,10 @@ export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
 export { ViewableBalanceProof } from "./ViewableBalanceProof";
 export { WorkspaceArg } from "./Workspace";
+export {
+  convertHexStringToU256Array,
+  convertStringToTransactionStatus,
+  convertU256ToHexString,
+  createNftAddressFromResource,
+  createNftAddressFromToken,
+} from "./helpers";

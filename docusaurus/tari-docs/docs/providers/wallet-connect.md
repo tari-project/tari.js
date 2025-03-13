@@ -2,7 +2,6 @@
 sidebar_position: 1
 ---
 
-
 # WalletConnect provider
 
 [WalletConnect](https://walletconnect.network/) is an open-source protocol that lets users connect their cryptocurrency wallets to decentralized applications (dApps) in a secure way. It uses QR codes or deep linking to establish a connection between the wallet and the dApp, allowing users to interact with dApps without exposing their private keys.
@@ -24,10 +23,10 @@ Obtain a WalletConnect Project ID by registering your project on the WalletConne
 ## Request a connection and display wallet connect dialog
 
 ```js
-import { WalletConnectTariProvider } from "@tari-project/wallet-connect-provider";
+import { WalletConnectTariSigner } from "@tari-project/wallet-connect-provider";
 
 const projectId = "1825b9dd9c17b5a33063ae91cbc48a6e";
-const provider = new WalletConnectTariProvider(projectId);
+const provider = new WalletConnectTariSigner(projectId);
 await provider.connect();
 ```
 

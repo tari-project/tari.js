@@ -7,7 +7,7 @@ sidebar_position: 3
 In the Tari network, substates are discrete units of state within the Tari Digital Assets Network. Each substate encapsulates a specific piece of data—such as ownership records, smart contract states, or asset balances.  
 Substates follow a create-spend lifecycle, meaning they are created, referenced, and eventually consumed or modified according to network rules.
 
-You can query substates using the `listSubstates` method of a `TariProvider`.
+You can query substates using the `listSubstates` method of a `TariSigner`.
 
 ```ts
 listSubstates(
@@ -17,7 +17,6 @@ listSubstates(
   offset: number | null
 ): Promise<ListSubstatesResponse>;
 ```
-
 
 ## List by template
 

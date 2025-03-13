@@ -1,5 +1,5 @@
 {
-  "name": "@tari-project/tari-universe-signer",
+  "name": "@tari-project/tari-signer",
   "version": "0.5.0",
   "description": "",
   "type": "module",
@@ -13,11 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tari-project/tari-permissions": "workspace:^",
-    "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
-    "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet_jrpc_client": "catalog:"
+    "@tari-project/typescript-bindings": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

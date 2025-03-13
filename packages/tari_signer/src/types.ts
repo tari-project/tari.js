@@ -1,4 +1,4 @@
-import { FinalizeResult, SubstateType } from "@tari-project/typescript-bindings";
+import { FinalizeResult } from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
@@ -10,6 +10,25 @@ export type SubstateMetadata = {
 export type SubstateRequirement = {
   substate_id: string;
   version?: number | null;
+};
+
+export type SubmitTransactionRequest = {
+  network: number;
+  account_id: number;
+  instructions: object[];
+  fee_instructions: object[];
+  inputs: object[];
+  input_refs: object[];
+  required_substates: SubstateRequirement[];
+  is_dry_run: boolean;
+  min_epoch: number | null;
+  max_epoch: number | null;
+  is_seal_signer_authorized: boolean;
+  detect_inputs_use_unversioned: boolean;
+};
+
+export type SubmitTransactionResponse = {
+  transaction_id: string;
 };
 
 export type TransactionResult = {
@@ -52,41 +71,6 @@ export interface TemplateDefinition {
   [key: string]: any;
 }
 
-export type SubmitTransactionRequest = {
-  network: number;
-  account_id: number;
-  instructions: object[];
-  fee_instructions: object[];
-  inputs: object[];
-  input_refs: object[];
-  required_substates: SubstateRequirement[];
-  is_dry_run: boolean;
-  min_epoch: number | null;
-  max_epoch: number | null;
-  is_seal_signer_authorized: boolean;
-  detect_inputs_use_unversioned: boolean;
-};
-
-export type SubmitTransactionResponse = {
-  transaction_id: string;
-};
-
-export type ListSubstatesRequest = {
-  filter_by_template: string | null;
-  filter_by_type: SubstateType | null;
-  limit: number | null;
-  offset: number | null;
-};
-
-export type ListSubstatesResponse = {
-  substates: Array<SubstateMetadata>;
-};
-
-export type GetSubstateRequest = {
-  substate_address: string;
-  version: number | null;
-};
-
 export interface Substate {
   value: any;
   address: {
@@ -94,3 +78,7 @@ export interface Substate {
     version: number;
   };
 }
+
+export type ListSubstatesResponse = {
+  substates: Array<SubstateMetadata>;
+};

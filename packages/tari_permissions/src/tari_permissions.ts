@@ -26,10 +26,9 @@ export class Tagged {
     this.value = value;
   }
   toJSON() {
-    return { "@@TAGGED@@": [this.tag, this.value] }
+    return { "@@TAGGED@@": [this.tag, this.value] };
   }
 }
-
 
 export class ResourceAddress {
   private tagged: Tagged;
@@ -72,12 +71,12 @@ export class NonFungibleId {
   }
   toJSON() {
     switch (typeof this.value) {
-      case 'string':
-        return { 'string': this.value };
-      case 'number':
-        return { 'Uint64': this.value };
+      case "string":
+        return { string: this.value };
+      case "number":
+        return { Uint64: this.value };
     }
-    return { 'U256': this.value };
+    return { U256: this.value };
   }
 }
 
@@ -89,14 +88,14 @@ export class NonFungibleAddressContents {
     this.id = id;
   }
   toJSON() {
-    return { "resource_address": this.resource_address, "id": this.id }
+    return { resource_address: this.resource_address, id: this.id };
   }
 }
 
 export class NonFungibleAddress {
   private tagged: Tagged;
   constructor(value: NonFungibleAddressContents) {
-    this.tagged = new Tagged(TAG.NonFungibleAddress, value)
+    this.tagged = new Tagged(TAG.NonFungibleAddress, value);
   }
   toJSON() {
     return this.tagged.toJSON();
@@ -111,7 +110,7 @@ export class NonFungibleIndexAddress {
     this.index = index;
   }
   toJSON() {
-    return { "resource_address": this.resource_address, "index": this.index }
+    return { resource_address: this.resource_address, index: this.index };
   }
 }
 
@@ -121,7 +120,7 @@ export class ComponentAddress {
     this.tagged = new Tagged(TAG.ComponentAddress, hash);
   }
   toJSON() {
-    return this.tagged.toJSON()
+    return this.tagged.toJSON();
   }
 }
 
@@ -131,12 +130,17 @@ export class VaultId {
     this.tagged = new Tagged(TAG.VaultId, hash);
   }
   toJSON() {
-    return this.tagged.toJSON()
+    return this.tagged.toJSON();
   }
 }
 
-export type SubstateAddressType = ResourceAddress | ComponentAddress | VaultId | UnclaimedConfidentialOutputAddress | NonFungibleAddress | NonFungibleIndexAddress;
-
+export type SubstateAddressType =
+  | ResourceAddress
+  | ComponentAddress
+  | VaultId
+  | UnclaimedConfidentialOutputAddress
+  | NonFungibleAddress
+  | NonFungibleIndexAddress;
 
 export class SubstateAddress {
   private value: SubstateAddressType;
@@ -145,19 +149,19 @@ export class SubstateAddress {
   }
   toJSON() {
     if (this.value instanceof ComponentAddress) {
-      return { "Component": this.value }
+      return { Component: this.value };
     } else if (this.value instanceof ResourceAddress) {
-      return { "Resource": this.value }
+      return { Resource: this.value };
     } else if (this.value instanceof VaultId) {
-      return { "Vault": this.value }
+      return { Vault: this.value };
     } else if (this.value instanceof UnclaimedConfidentialOutputAddress) {
-      return { "UnclaimedConfidentialOutput": this.value }
+      return { UnclaimedConfidentialOutput: this.value };
     } else if (this.value instanceof NonFungibleAddress) {
-      return { "NonFungible": this.value }
+      return { NonFungible: this.value };
     } else if (this.value instanceof NonFungibleIndexAddress) {
-      return { "NonFungibleIndex": this.value }
+      return { NonFungibleIndex: this.value };
     }
-    throw "Unknown type"
+    throw "Unknown type";
   }
 }
 
@@ -167,15 +171,15 @@ export class TariPermissionAccountBalance {
     this.value = value;
   }
   toJSON() {
-    console.log("stringify", this.value)
-    return { "AccountBalance": this.value }
+    console.log("stringify", this.value);
+    return { AccountBalance: this.value };
   }
 }
 
 export class TariPermissionAccountInfo {
   constructor() {}
   toJSON() {
-    return "AccountInfo"
+    return "AccountInfo";
   }
 }
 
@@ -189,11 +193,11 @@ export class TariPermissionAccountList {
     }
   }
   toJSON() {
-    console.log('JSON TariPermissionAccountList', this.value)
+    console.log("JSON TariPermissionAccountList", this.value);
     if (this.value === undefined) {
-      return { "AccountList": null }
+      return { AccountList: null };
     } else {
-      return { "AccountList": this.value }
+      return { AccountList: this.value };
     }
   }
 }
@@ -201,14 +205,14 @@ export class TariPermissionAccountList {
 export class TariPermissionKeyList {
   constructor() {}
   toJSON() {
-    return "KeyList"
+    return "KeyList";
   }
 }
 
 export class TariPermissionTransactionGet {
   constructor() {}
   toJSON() {
-    return "TransactionGet"
+    return "TransactionGet";
   }
 }
 export class TariPermissionTransactionSend {
@@ -217,11 +221,11 @@ export class TariPermissionTransactionSend {
     this.value = value;
   }
   toJSON() {
-    console.log('JSON TariPermissionTransactionSend', this.value)
+    console.log("JSON TariPermissionTransactionSend", this.value);
     if (this.value === undefined) {
-      return { "TransactionSend": null }
+      return { TransactionSend: null };
     } else {
-      return { "TransactionSend": this.value }
+      return { TransactionSend: this.value };
     }
   }
 }
@@ -234,7 +238,7 @@ export class TariPermissionGetNft {
     this.value1 = value1;
   }
   toJSON() {
-    return { "GetNft": [this.value0, this.value1] }
+    return { GetNft: [this.value0, this.value1] };
   }
 }
 
@@ -244,32 +248,44 @@ export class TariPermissionNftGetOwnershipProof {
     this.value = value;
   }
   toJSON() {
-    return { "NftGetOwnershipProof": this.value }
+    return { NftGetOwnershipProof: this.value };
   }
 }
 
 export class TariPermissionTransactionsGet {
   constructor() {}
   toJSON() {
-    return "TransactionGet"
+    return "TransactionGet";
   }
 }
 
 export class TariPermissionSubstatesRead {
   constructor() {}
   toJSON() {
-    return "SubstatesRead"
+    return "SubstatesRead";
   }
 }
 
 export class TariPermissionTemplatesRead {
   constructor() {}
   toJSON() {
-    return "TemplatesRead"
+    return "TemplatesRead";
   }
 }
 
-export type TariPermission = TariPermissionNftGetOwnershipProof | TariPermissionAccountBalance | TariPermissionAccountInfo | TariPermissionAccountList | TariPermissionKeyList | TariPermissionTransactionGet | TariPermissionTransactionSend | TariPermissionGetNft | TariPermissionTransactionsGet | TariPermissionSubstatesRead | TariPermissionTemplatesRead | string;
+export type TariPermission =
+  | TariPermissionNftGetOwnershipProof
+  | TariPermissionAccountBalance
+  | TariPermissionAccountInfo
+  | TariPermissionAccountList
+  | TariPermissionKeyList
+  | TariPermissionTransactionGet
+  | TariPermissionTransactionSend
+  | TariPermissionGetNft
+  | TariPermissionTransactionsGet
+  | TariPermissionSubstatesRead
+  | TariPermissionTemplatesRead
+  | string;
 
 // export enum TariPermission {
 //   AccountBalance = "AccountBalance",
@@ -289,7 +305,7 @@ export class TariPermissions {
   private permissions: TariPermission[];
 
   constructor() {
-    this.permissions = []
+    this.permissions = [];
   }
 
   addPermission(permission: TariPermission): this {
@@ -307,6 +323,7 @@ export class TariPermissions {
   }
 }
 
-// TariPermissionType.prototype.toString = function () {
-//   return "wtf"
-// }
+export type TappletPermissions = {
+  requiredPermissions: TariPermission[];
+  optionalPermissions: TariPermission[];
+};
