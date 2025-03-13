@@ -1,5 +1,6 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariUniverseSigner } from "./signer";
+import { BalanceEntry } from "@tari-project/typescript-bindings";
 
 export type TariUniverseSignerParameters = {
   permissions: TariPermissions;
@@ -31,3 +32,7 @@ export type SignerResponse<T extends SignerMethodNames> = {
   result: SignerReturnType<T>;
   resultError?: string;
 };
+
+export interface ListAccountNftFromBalancesRequest {
+  balances: Array<BalanceEntry>;
+}

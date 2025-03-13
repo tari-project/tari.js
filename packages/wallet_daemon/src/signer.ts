@@ -1,15 +1,14 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariConnection } from "./webrtc";
-import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
   TransactionResult,
-  TransactionStatus,
   SubmitTransactionResponse,
   VaultBalances,
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
+  TariSigner,
 } from "@tari-project/tari-signer";
 import { Account } from "@tari-project/tari-signer";
 import {
@@ -22,6 +21,7 @@ import {
   SubstateId,
 } from "@tari-project/wallet_jrpc_client";
 import { WebRtcRpcTransport } from "./webrtc_transport";
+import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
 
 export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
 export const Unsupported = "UNSUPPORTED";
@@ -251,26 +251,5 @@ export class WalletDaemonTariSigner implements TariSigner {
     }));
 
     return { substates };
-  }
-}
-
-function convertStringToTransactionStatus(status: string): TransactionStatus {
-  switch (status) {
-    case "New":
-      return TransactionStatus.New;
-    case "DryRun":
-      return TransactionStatus.DryRun;
-    case "Pending":
-      return TransactionStatus.Pending;
-    case "Accepted":
-      return TransactionStatus.Accepted;
-    case "Rejected":
-      return TransactionStatus.Rejected;
-    case "InvalidTransaction":
-      return TransactionStatus.InvalidTransaction;
-    case "OnlyFeeAccepted":
-      return TransactionStatus.OnlyFeeAccepted;
-    default:
-      throw new Error(`Unknown status: ${status}`);
   }
 }

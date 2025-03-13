@@ -9,17 +9,19 @@ import {
   Account,
   ListSubstatesResponse,
 } from "@tari-project/tari-signer";
-import { TransactionStatus } from "@tari-project/tarijs-builders";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import {
   Instruction,
   KeyBranch,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
   stringToSubstateId,
   substateIdToString,
   SubstateType,
   TransactionSubmitRequest,
 } from "@tari-project/wallet_jrpc_client";
+import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
 
 const walletConnectParams = {
   requiredNamespaces: {
@@ -35,6 +37,7 @@ const walletConnectParams = {
         "tari_viewConfidentialVaultBalance",
         "tari_createFreeTestCoins",
         "tari_listSubstates",
+        "tari_getNftsList",
       ],
       chains: ["tari:devnet"],
       events: ['chainChanged", "accountsChanged'],
@@ -256,25 +259,15 @@ export class WalletConnectTariSigner implements TariSigner {
     const res = await this.sendRequest(method, params);
     return { balances: res.balances as unknown as Map<string, number | null> };
   }
-}
 
-function convertStringToTransactionStatus(status: string): TransactionStatus {
-  switch (status) {
-    case "New":
-      return TransactionStatus.New;
-    case "DryRun":
-      return TransactionStatus.DryRun;
-    case "Pending":
-      return TransactionStatus.Pending;
-    case "Accepted":
-      return TransactionStatus.Accepted;
-    case "Rejected":
-      return TransactionStatus.Rejected;
-    case "InvalidTransaction":
-      return TransactionStatus.InvalidTransaction;
-    case "OnlyFeeAccepted":
-      return TransactionStatus.OnlyFeeAccepted;
-    default:
-      throw new Error(`Unknown status: ${status}`);
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    const method = "tari_getNftsList";
+    const params = {
+      account: req.account,
+      limit: req.limit,
+      offset: req.offset,
+    };
+    const res = await this.sendRequest(method, params);
+    return res as ListAccountNftResponse;
   }
 }

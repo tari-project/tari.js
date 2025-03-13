@@ -30,11 +30,14 @@ import {
   toWorkspace,
 } from "@tari-project/tarijs-builders";
 import * as templates from "./templates";
+import { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
 import {
-  IndexerProvider,
-  IndexerProviderParameters,
   convertStringToTransactionStatus,
-} from "@tari-project/indexer-provider";
+  convertHexStringToU256Array,
+  convertU256ToHexString,
+  createNftAddressFromResource,
+  createNftAddressFromToken,
+} from "@tari-project/tarijs-types";
 
 export * from "@tari-project/tarijs-types";
 export {
@@ -70,6 +73,10 @@ export {
   waitForTransactionResult,
   fromWorkspace,
   toWorkspace,
+  convertHexStringToU256Array,
+  convertU256ToHexString,
+  createNftAddressFromResource,
+  createNftAddressFromToken,
   permissions,
   templates,
 };

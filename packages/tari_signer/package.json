@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:"
   },
   "devDependencies": {

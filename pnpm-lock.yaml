@@ -178,6 +178,9 @@ importers:
 
   packages/tari_signer:
     dependencies:
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.5.1
@@ -287,6 +290,9 @@ importers:
       '@tari-project/tari-signer':
         specifier: workspace:^
         version: link:../tari_signer
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
@@ -306,6 +312,9 @@ importers:
       '@tari-project/tarijs-builders':
         specifier: workspace:^
         version: link:../builders
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.5.1

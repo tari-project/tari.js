@@ -7,7 +7,6 @@ import {
   TransactionResult,
 } from "@tari-project/tari-provider";
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { convertStringToTransactionStatus } from "./utils";
 import { IndexerProviderClient } from "./transports";
 import {
   GetTemplateDefinitionResponse,
@@ -16,6 +15,7 @@ import {
   substateIdToString,
   SubstatesListRequest,
 } from "@tari-project/typescript-bindings";
+import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
 
 export interface IndexerProviderParameters {
   indexerJrpcUrl: string;

@@ -15,6 +15,7 @@
   "dependencies": {
     "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tarijs-builders": "workspace:^",
+    "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet_jrpc_client": "catalog:",
     "@walletconnect/modal": "catalog:",

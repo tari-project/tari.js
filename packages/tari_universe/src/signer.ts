@@ -9,8 +9,20 @@ import {
   TariSigner,
   TransactionResult,
 } from "@tari-project/tari-signer";
-import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
-import { AccountsGetBalancesResponse, SubstateType } from "@tari-project/wallet_jrpc_client";
+import {
+  SignerRequest,
+  SignerMethodNames,
+  SignerReturnType,
+  TariUniverseSignerParameters,
+  WindowSize,
+  ListAccountNftFromBalancesRequest,
+} from "./types";
+import {
+  AccountsGetBalancesResponse,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
+  SubstateType,
+} from "@tari-project/wallet_jrpc_client";
 import { sendSignerCall } from "./utils";
 
 export class TariUniverseSigner implements TariSigner {
@@ -110,5 +122,13 @@ export class TariUniverseSigner implements TariSigner {
 
   public async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
     return this.sendRequest({ methodName: "getTemplateDefinition", args: [template_address] });
+  }
+
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    return this.sendRequest({ methodName: "getNftsList", args: [req] });
+  }
+
+  public async getNftsFromAccountBalances(req: ListAccountNftFromBalancesRequest): Promise<ListAccountNftResponse> {
+    return this.sendRequest({ methodName: "getNftsFromAccountBalances", args: [req] });
   }
 }
