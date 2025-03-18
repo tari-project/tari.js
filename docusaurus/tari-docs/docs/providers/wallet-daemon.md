@@ -16,11 +16,11 @@ npm install @tari-project/wallet-daemon-provider @tari-project/tari-permissions
 
 ```js
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { WalletDaemonTariProvider } from "@tari-project/wallet-daemon-provider";
+import { WalletDaemonTariSigner } from "@tari-project/wallet-daemon-provider";
 
 const permissions = new TariPermissions().addPermission("Admin");
 const serverUrl = "http://127.0.0.1:12010/json_rpc";
-const provider = await WalletDaemonTariProvider.buildFetchProvider({
+const provider = await WalletDaemonTariSigner.buildFetchProvider({
   permissions,
   serverUrl,
 });

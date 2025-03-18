@@ -10,8 +10,8 @@ catalogs:
       specifier: ^18.2.0
       version: 18.3.1
     '@tari-project/typescript-bindings':
-      specifier: ^1.4.0
-      version: 1.4.0
+      specifier: ^1.5.1
+      version: 1.5.1
     '@tari-project/wallet_jrpc_client':
       specifier: ^1.4.0
       version: 1.4.0
@@ -87,16 +87,41 @@ importers:
 
   packages/builders:
     dependencies:
-      '@tari-project/tari-provider':
+      '@tari-project/tari-signer':
         specifier: workspace:^
-        version: link:../tari_provider
-      '@tari-project/tari-universe-provider':
+        version: link:../tari_signer
+      '@tari-project/tari-universe-signer':
         specifier: workspace:^
         version: link:../tari_universe
       '@tari-project/tarijs-types':
         specifier: workspace:^
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.5.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/indexer_provider:
+    dependencies:
+      '@tari-project/tari-permissions':
+        specifier: workspace:^
+        version: link:../tari_permissions
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
+      '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.5.1
+      '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
     devDependencies:
@@ -107,20 +132,20 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
-  packages/metamask_provider:
+  packages/metamask_signer:
     dependencies:
       '@metamask/providers':
         specifier: 'catalog:'
         version: 18.3.1(webextension-polyfill@0.12.0)
-      '@tari-project/tari-provider':
+      '@tari-project/tari-signer':
         specifier: workspace:^
-        version: link:../tari_provider
+        version: link:../tari_signer
       '@tari-project/tarijs-types':
         specifier: workspace:^
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -142,7 +167,23 @@ importers:
     dependencies:
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/tari_signer:
+    dependencies:
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
+      '@tari-project/typescript-bindings':
+        specifier: 'catalog:'
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -156,15 +197,15 @@ importers:
       '@tari-project/tari-permissions':
         specifier: workspace:^
         version: link:../tari_permissions
-      '@tari-project/tari-provider':
+      '@tari-project/tari-signer':
         specifier: workspace:^
-        version: link:../tari_provider
+        version: link:../tari_signer
       '@tari-project/tarijs-types':
         specifier: workspace:^
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
@@ -181,16 +222,22 @@ importers:
       '@metamask/providers':
         specifier: 'catalog:'
         version: 18.3.1(webextension-polyfill@0.12.0)
-      '@tari-project/metamask-provider':
+      '@tari-project/indexer-provider':
         specifier: workspace:^
-        version: link:../metamask_provider
+        version: link:../indexer_provider
+      '@tari-project/metamask-signer':
+        specifier: workspace:^
+        version: link:../metamask_signer
       '@tari-project/tari-permissions':
         specifier: workspace:^
         version: link:../tari_permissions
       '@tari-project/tari-provider':
         specifier: workspace:^
         version: link:../tari_provider
-      '@tari-project/tari-universe-provider':
+      '@tari-project/tari-signer':
+        specifier: workspace:^
+        version: link:../tari_signer
+      '@tari-project/tari-universe-signer':
         specifier: workspace:^
         version: link:../tari_universe
       '@tari-project/tarijs-builders':
@@ -201,11 +248,11 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
-      '@tari-project/wallet-connect-provider':
+        version: 1.5.1
+      '@tari-project/wallet-connect-signer':
         specifier: workspace:^
         version: link:../walletconnect
-      '@tari-project/wallet-daemon-provider':
+      '@tari-project/wallet-daemon-signer':
         specifier: workspace:^
         version: link:../wallet_daemon
     devDependencies:
@@ -226,7 +273,7 @@ importers:
     dependencies:
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -240,9 +287,12 @@ importers:
       '@tari-project/tari-permissions':
         specifier: workspace:^
         version: link:../tari_permissions
-      '@tari-project/tari-provider':
+      '@tari-project/tari-signer':
         specifier: workspace:^
-        version: link:../tari_provider
+        version: link:../tari_signer
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
@@ -256,15 +306,18 @@ importers:
 
   packages/walletconnect:
     dependencies:
-      '@tari-project/tari-provider':
+      '@tari-project/tari-signer':
         specifier: workspace:^
-        version: link:../tari_provider
+        version: link:../tari_signer
       '@tari-project/tarijs-builders':
         specifier: workspace:^
         version: link:../builders
+      '@tari-project/tarijs-types':
+        specifier: workspace:^
+        version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
         version: 1.4.0
@@ -1992,8 +2045,8 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@tari-project/typescript-bindings@1.4.0':
-    resolution: {integrity: sha512-Dk5rX2NKs00BpH4tp3TdKREzo12NqAEKB88j7DYn46LwrLwN2I2Oa9/ernTF3Q/Uwz/zoT7p1B7RZRdvKqBuGw==}
+  '@tari-project/typescript-bindings@1.5.1':
+    resolution: {integrity: sha512-WRmkF0aAOaPQt9orouATYBCHqvx7m0zsOfqZi2PzriWWwyLNH0jHKKzFGJbcV1NWr8q87kA7v4e1+rY004HWMg==}
 
   '@tari-project/wallet_jrpc_client@1.4.0':
     resolution: {integrity: sha512-o+4TMa2tMN+0mLSdV+Vl69yfdq9yCwxKkJu53Cx5HEaj/TZxjK+MhqJiLq0he+UTdWlQsIzG/JeKYT4+qSXiBQ==}
@@ -8815,11 +8868,11 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tari-project/typescript-bindings@1.4.0': {}
+  '@tari-project/typescript-bindings@1.5.1': {}
 
   '@tari-project/wallet_jrpc_client@1.4.0':
     dependencies:
-      '@tari-project/typescript-bindings': 1.4.0
+      '@tari-project/typescript-bindings': 1.5.1
 
   '@trysound/sax@0.2.0': {}
 

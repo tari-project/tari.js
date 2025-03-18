@@ -1,4 +1,4 @@
-import { TariProvider } from "@tari-project/tari-provider";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
   TransactionResult,
@@ -8,11 +8,11 @@ import {
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
-  Account
-} from "@tari-project/tari-provider";
+  Account,
+} from "@tari-project/tari-signer";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
-import { SubstateType } from "@tari-project/typescript-bindings";
+import { ListAccountNftRequest, ListAccountNftResponse, SubstateType } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = "METAMASK_NOT_INSTALLED";
 export const MetamaskIsNotFlask = "METAMASK_IS_NOT_FLASK";
@@ -20,8 +20,8 @@ export const TariSnapNotInstalled = "TARI_SNAP_NOT_INSTALLED";
 
 type Maybe<T> = T | null | undefined;
 
-export class MetamaskTariProvider implements TariProvider {
-  public providerName = "Metamask";
+export class MetamaskTariSigner implements TariSigner {
+  public signerName = "Metamask";
   snapId: string;
   snapVersion: string | undefined;
   metamask: MetaMaskInpageProvider;
@@ -211,6 +211,11 @@ export class MetamaskTariProvider implements TariProvider {
     }
 
     return resp as T;
+  }
+
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    const resp = (await this.metamaskRequest("getNftsList", req)) as ListAccountNftResponse;
+    return resp;
   }
 }
 

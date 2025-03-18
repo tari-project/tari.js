@@ -1,8 +1,10 @@
 {
   // This file is not used in compilation. It is here just for a nice editor experience.
+  // "composite" added to resolve the ts error: "Referenced project '/docusaurus/tari-docs' must have setting "composite": true
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "composite": true
   },
   "exclude": [".docusaurus", "build"]
 }

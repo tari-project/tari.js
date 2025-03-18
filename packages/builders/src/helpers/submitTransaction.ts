@@ -1,5 +1,5 @@
-import { TariUniverseProvider } from "@tari-project/tari-universe-provider";
-import { TariProvider, SubmitTransactionRequest, SubstateRequirement } from "@tari-project/tari-provider";
+import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
+import { TariSigner, SubmitTransactionRequest, SubstateRequirement } from "@tari-project/tari-signer";
 import {
   Transaction,
   TransactionResult,
@@ -8,7 +8,7 @@ import {
   UpSubstates,
   FinalizeResultStatus,
   TxResultAccept,
-  SubmitTxResult
+  SubmitTxResult,
 } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
@@ -40,12 +40,12 @@ export function buildTransactionRequest(
 }
 
 export async function submitAndWaitForTransaction(
-  provider: TariProvider,
+  signer: TariSigner,
   req: SubmitTransactionRequest,
 ): Promise<SubmitTxResult> {
   try {
-    const response = await provider.submitTransaction(req);
-    const result = await waitForTransactionResult(provider, response.transaction_id);
+    const response = await signer.submitTransaction(req);
+    const result = await waitForTransactionResult(signer, response.transaction_id);
 
     return {
       response,
@@ -57,12 +57,12 @@ export async function submitAndWaitForTransaction(
 }
 
 export async function waitForTransactionResult(
-  provider: TariProvider | TariUniverseProvider,
+  signer: TariSigner | TariUniverseSigner,
   transactionId: string,
 ): Promise<TransactionResult> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const resp = await provider.getTransactionResult(transactionId);
+    const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
       TransactionStatus.Accepted,
       TransactionStatus.Rejected,

@@ -15,13 +15,19 @@
       "path": "../builders"
     },
     {
-      "path": "../metamask_provider"
+      "path": "../indexer_provider"
+    },
+    {
+      "path": "../metamask_signer"
     },
     {
       "path": "../tari_permissions"
     },
     {
       "path": "../tari_provider"
+    },
+    {
+      "path": "../tari_signer"
     },
     {
       "path": "../tari_universe"

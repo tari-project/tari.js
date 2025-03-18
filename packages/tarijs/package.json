@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -16,15 +16,17 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "catalog:",
-    "@tari-project/metamask-provider": "workspace:^",
+    "@tari-project/metamask-signer": "workspace:^",
     "@tari-project/tari-permissions": "workspace:^",
-    "@tari-project/tari-provider": "workspace:^",
-    "@tari-project/tari-universe-provider": "workspace:^",
+    "@tari-project/tari-signer": "workspace:^",
+    "@tari-project/tari-universe-signer": "workspace:^",
     "@tari-project/tarijs-builders": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet-connect-provider": "workspace:^",
-    "@tari-project/wallet-daemon-provider": "workspace:^"
+    "@tari-project/wallet-connect-signer": "workspace:^",
+    "@tari-project/wallet-daemon-signer": "workspace:^",
+    "@tari-project/tari-provider": "workspace:^",
+    "@tari-project/indexer-provider": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:",

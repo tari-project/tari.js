@@ -1,24 +1,27 @@
 import {
-  TariProvider, SubmitTransactionRequest,
+  TariSigner,
+  SubmitTransactionRequest,
   TransactionResult,
   SubmitTransactionResponse,
-  VaultBalances, TemplateDefinition, Substate,
+  VaultBalances,
+  TemplateDefinition,
+  Substate,
   Account,
   ListSubstatesResponse,
-} from "@tari-project/tari-provider";
-import {
-  TransactionStatus,
-} from "@tari-project/tarijs-builders";
+} from "@tari-project/tari-signer";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import {
   Instruction,
   KeyBranch,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
   stringToSubstateId,
   substateIdToString,
   SubstateType,
   TransactionSubmitRequest,
 } from "@tari-project/wallet_jrpc_client";
+import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
 
 const walletConnectParams = {
   requiredNamespaces: {
@@ -34,17 +37,16 @@ const walletConnectParams = {
         "tari_viewConfidentialVaultBalance",
         "tari_createFreeTestCoins",
         "tari_listSubstates",
+        "tari_getNftsList",
       ],
-      chains: [
-        "tari:devnet",
-      ],
-      events: ["chainChanged\", \"accountsChanged"],
+      chains: ["tari:devnet"],
+      events: ['chainChanged", "accountsChanged'],
     },
   },
 };
 
-export class WalletConnectTariProvider implements TariProvider {
-  public providerName = "WalletConnect";
+export class WalletConnectTariSigner implements TariSigner {
+  public signerName = "WalletConnect";
   projectId: string;
   wcProvider: UniversalProvider | null;
   wcSession: any | null;
@@ -56,8 +58,7 @@ export class WalletConnectTariProvider implements TariProvider {
   }
 
   async connect(): Promise<void> {
-    if (this.wcProvider && this.wcSession)
-      return;
+    if (this.wcProvider && this.wcSession) return;
 
     // initialize WalletConnect
     const projectId = this.projectId;
@@ -109,7 +110,6 @@ export class WalletConnectTariProvider implements TariProvider {
     return requestResult;
   }
 
-
   isConnected(): boolean {
     // TODO: check status in the session
     return this.wcSession !== null;
@@ -117,11 +117,10 @@ export class WalletConnectTariProvider implements TariProvider {
 
   async getAccount(): Promise<Account> {
     const { account, public_key } = await this.sendRequest("tari_getDefaultAccount", {});
-    const { balances } = await this.sendRequest(
-      "tari_getAccountBalances",
-      {
-        account: { ComponentAddress: account.address }, refresh: false,
-      });
+    const { balances } = await this.sendRequest("tari_getAccountBalances", {
+      account: { ComponentAddress: account.address },
+      refresh: false,
+    });
 
     return {
       account_id: account.key_index,
@@ -132,7 +131,8 @@ export class WalletConnectTariProvider implements TariProvider {
         type: b.resource_type,
         resource_address: b.resource_address,
         balance: b.balance + b.confidential_balance,
-        vault_id: (typeof (b.vault_address) === "object" && "Vault" in b.vault_address) ? b.vault_address.Vault : b.vault_address,
+        vault_id:
+          typeof b.vault_address === "object" && "Vault" in b.vault_address ? b.vault_address.Vault : b.vault_address,
         token_symbol: b.token_symbol,
       })),
     };
@@ -151,7 +151,12 @@ export class WalletConnectTariProvider implements TariProvider {
     };
   }
 
-  public async listSubstates(filter_by_template: string | null, filter_by_type: SubstateType | null, limit: number | null, offset: number | null): Promise<ListSubstatesResponse> {
+  public async listSubstates(
+    filter_by_template: string | null,
+    filter_by_type: SubstateType | null,
+    limit: number | null,
+    offset: number | null,
+  ): Promise<ListSubstatesResponse> {
     const method = "tari_listSubstates";
     const params = {
       filter_by_template,
@@ -237,7 +242,12 @@ export class WalletConnectTariProvider implements TariProvider {
     return res.public_key;
   }
 
-  async getConfidentialVaultBalances(viewKeyId: number, vaultId: string, min: number | null, max: number | null): Promise<VaultBalances> {
+  async getConfidentialVaultBalances(
+    viewKeyId: number,
+    vaultId: string,
+    min: number | null,
+    max: number | null,
+  ): Promise<VaultBalances> {
     const method = "tari_viewConfidentialVaultBalance";
     const params = {
       view_key_id: viewKeyId,
@@ -250,25 +260,14 @@ export class WalletConnectTariProvider implements TariProvider {
     return { balances: res.balances as unknown as Map<string, number | null> };
   }
 
-}
-
-function convertStringToTransactionStatus(status: string): TransactionStatus {
-  switch (status) {
-    case "New":
-      return TransactionStatus.New;
-    case "DryRun":
-      return TransactionStatus.DryRun;
-    case "Pending":
-      return TransactionStatus.Pending;
-    case "Accepted":
-      return TransactionStatus.Accepted;
-    case "Rejected":
-      return TransactionStatus.Rejected;
-    case "InvalidTransaction":
-      return TransactionStatus.InvalidTransaction;
-    case "OnlyFeeAccepted":
-      return TransactionStatus.OnlyFeeAccepted;
-    default:
-      throw new Error(`Unknown status: ${status}`);
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    const method = "tari_getNftsList";
+    const params = {
+      account: req.account,
+      limit: req.limit,
+      offset: req.offset,
+    };
+    const res = await this.sendRequest(method, params);
+    return res as ListAccountNftResponse;
   }
 }
