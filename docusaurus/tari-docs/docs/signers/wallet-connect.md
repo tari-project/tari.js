@@ -2,17 +2,17 @@
 sidebar_position: 1
 ---
 
-# WalletConnect provider
+# WalletConnect signer
 
 [WalletConnect](https://walletconnect.network/) is an open-source protocol that lets users connect their cryptocurrency wallets to decentralized applications (dApps) in a secure way. It uses QR codes or deep linking to establish a connection between the wallet and the dApp, allowing users to interact with dApps without exposing their private keys.
 
 ## Install required dependencies
 
 ```bash npm2yarn
-npm install @tari-project/wallet-connect-provider
+npm install @tari-project/wallet-connect-signer
 ```
 
-`WalletConnect` provider is browser only. This means it requires user interaction.
+`WalletConnect` signer is browser only. This means it requires user interaction.
 
 Establishing connection requires multiple steps.
 
@@ -23,11 +23,11 @@ Obtain a WalletConnect Project ID by registering your project on the WalletConne
 ## Request a connection and display wallet connect dialog
 
 ```js
-import { WalletConnectTariSigner } from "@tari-project/wallet-connect-provider";
+import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
 
 const projectId = "1825b9dd9c17b5a33063ae91cbc48a6e";
-const provider = new WalletConnectTariSigner(projectId);
-await provider.connect();
+const signer = new WalletConnectTariSigner(projectId);
+await signer.connect();
 ```
 
 You should see `WalletConnect` dialog:

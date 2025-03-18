@@ -2,9 +2,9 @@
 sidebar_position: 2
 ---
 
-# Tari Universe provider
+# Tari Universe signer
 
-This provider is designed for building Tari Universe apps.
+This signer is designed for building Tari Universe apps.
 
 ## Install required dependencies
 
@@ -20,7 +20,7 @@ import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 
 const permissions = new TariPermissions().addPermission("Admin");
 const optionalPermissions = new TariPermissions();
-const provider = new TariUniverseSigner({
+const signer = new TariUniverseSigner({
   permissions,
   optionalPermissions,
 });

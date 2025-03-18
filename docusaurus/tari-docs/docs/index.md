@@ -7,9 +7,15 @@ slug: /
 
 This is the documentation of `tari.js` library, which enables interaction with Tari L2 (Ootle) wallet using TypeScript or JavaScript.
 
-At its core, `TariSigner` is an abstract interface implemented by multiple concrete providers. To access a wallet, you need to create an instance of one of these providers:
+### Note
 
-- [Tari WalletConnect provider](./providers/wallet-connect.md)
-- [Tari Universe provider](./providers/tari-universe.md)
-- [Tari Wallet Daemon provider](./providers/wallet-daemon.md)
-- Tari Metamask provider
+> This documentation covers version **v0.5.0**.
+>
+> The biggest difference between version 0.4.0 and 0.5.0 is the _Signer_ and _Provider_ split. Learn more in the [Tari Provider](./providers/indexer-provider.md) and [Tari Signer](./signers/wallet-connect.md) sections.
+
+At its core, `TariSigner` is an abstract interface implemented by multiple concrete signers. To access a wallet, you need to create an instance of one of these signers:
+
+- [Tari WalletConnect signer](./signers/wallet-connect.md)
+- [Tari Universe signer](./signers/tari-universe.md)
+- [Tari Wallet Daemon signer](./signers/wallet-daemon.md)
+- Tari Metamask signer
