@@ -1,8 +1,8 @@
 {
   "label": "Providers",
-  "position": 3,
+  "position": 1,
   "link": {
     "type": "generated-index",
-    "description": "List of all available providers."
+    "description": "A Provider provides a connection to the blockchain, whch can be used to query its current state, but only the public one."
   }
 }

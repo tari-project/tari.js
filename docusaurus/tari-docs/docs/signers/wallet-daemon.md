@@ -2,31 +2,31 @@
 sidebar_position: 3
 ---
 
-# Wallet daemon provider
+# Wallet daemon signer
 
-This is the only provider that works in both Node.js and browser environments. It enables a direct connection to a wallet via JSON-RPC.
+This is the only signer that works in both Node.js and browser environments. It enables a direct connection to a wallet via JSON-RPC.
 
 ## Install required dependencies
 
 ```bash npm2yarn
-npm install @tari-project/wallet-daemon-provider @tari-project/tari-permissions
+npm install @tari-project/wallet-daemon-signer @tari-project/tari-permissions
 ```
 
 ## Establish and test the connection
 
 ```js
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { WalletDaemonTariSigner } from "@tari-project/wallet-daemon-provider";
+import { WalletDaemonTariSigner } from "@tari-project/wallet-daemon-signer";
 
 const permissions = new TariPermissions().addPermission("Admin");
 const serverUrl = "http://127.0.0.1:12010/json_rpc";
-const provider = await WalletDaemonTariSigner.buildFetchProvider({
+const signer = await WalletDaemonTariSigner.buildFetchProvider({
   permissions,
   serverUrl,
 });
 
 // Test connection
-const account = await provider.getAccount();
+const account = await signer.getAccount();
 console.log(`Account address: ${account.address}`);
 ```
 
