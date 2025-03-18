@@ -19,6 +19,8 @@ import {
   SubstatesListRequest,
   KeyBranch,
   SubstateId,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
 } from "@tari-project/wallet_jrpc_client";
 import { WebRtcRpcTransport } from "./webrtc_transport";
 import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
@@ -251,5 +253,9 @@ export class WalletDaemonTariSigner implements TariSigner {
     }));
 
     return { substates };
+  }
+
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    return await this.client.nftsList(req);
   }
 }
