@@ -30,6 +30,7 @@ import {
   toWorkspace,
 } from "@tari-project/tarijs-builders";
 import * as templates from "./templates";
+import { parseCbor, getCborValueByPath } from "./cbor";
 import { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
 import {
   convertStringToTransactionStatus,
@@ -79,4 +80,6 @@ export {
   createNftAddressFromToken,
   permissions,
   templates,
+  parseCbor,
+  getCborValueByPath,
 };
