@@ -1,4 +1,4 @@
-import type { SubstateType } from "@tari-project/typescript-bindings";
+import type { ListAccountNftRequest, ListAccountNftResponse, SubstateType } from "@tari-project/typescript-bindings";
 import {
   Account,
   SubmitTransactionRequest,
@@ -31,4 +31,5 @@ export interface TariSigner {
     limit: number | null,
     offset: number | null,
   ): Promise<ListSubstatesResponse>;
+  getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse>;
 }

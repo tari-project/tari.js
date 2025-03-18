@@ -12,7 +12,7 @@ import {
 } from "@tari-project/tari-signer";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
-import { SubstateType } from "@tari-project/typescript-bindings";
+import { ListAccountNftRequest, ListAccountNftResponse, SubstateType } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = "METAMASK_NOT_INSTALLED";
 export const MetamaskIsNotFlask = "METAMASK_IS_NOT_FLASK";
@@ -211,6 +211,11 @@ export class MetamaskTariSigner implements TariSigner {
     }
 
     return resp as T;
+  }
+
+  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+    const resp = (await this.metamaskRequest("getNftsList", req)) as ListAccountNftResponse;
+    return resp;
   }
 }
 
