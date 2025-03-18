@@ -13,8 +13,8 @@ catalogs:
       specifier: ^1.5.1
       version: 1.5.1
     '@tari-project/wallet_jrpc_client':
-      specifier: ^1.4.0
-      version: 1.4.0
+      specifier: ^1.5.1
+      version: 1.5.1
     '@types/node':
       specifier: ^22.13.1
       version: 22.13.1
@@ -123,7 +123,7 @@ importers:
         version: 1.5.1
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -208,7 +208,7 @@ importers:
         version: 1.5.1
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -295,7 +295,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -320,7 +320,7 @@ importers:
         version: 1.5.1
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.4.0
+        version: 1.5.1
       '@walletconnect/modal':
         specifier: 'catalog:'
         version: 2.7.0(@types/react@19.0.10)(react@19.0.0)
@@ -2048,8 +2048,8 @@ packages:
   '@tari-project/typescript-bindings@1.5.1':
     resolution: {integrity: sha512-WRmkF0aAOaPQt9orouATYBCHqvx7m0zsOfqZi2PzriWWwyLNH0jHKKzFGJbcV1NWr8q87kA7v4e1+rY004HWMg==}
 
-  '@tari-project/wallet_jrpc_client@1.4.0':
-    resolution: {integrity: sha512-o+4TMa2tMN+0mLSdV+Vl69yfdq9yCwxKkJu53Cx5HEaj/TZxjK+MhqJiLq0he+UTdWlQsIzG/JeKYT4+qSXiBQ==}
+  '@tari-project/wallet_jrpc_client@1.5.1':
+    resolution: {integrity: sha512-nVVMMVL2DodXM9O6BwV8hdsyBcBK3Ww0D1WJ11WEZxMzzcu4AOVYbKzxOLVegHY/chiY3h6s1zTNcH0McA7DXw==}
 
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -8870,7 +8870,7 @@ snapshots:
 
   '@tari-project/typescript-bindings@1.5.1': {}
 
-  '@tari-project/wallet_jrpc_client@1.4.0':
+  '@tari-project/wallet_jrpc_client@1.5.1':
     dependencies:
       '@tari-project/typescript-bindings': 1.5.1
 
