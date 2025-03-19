@@ -1,18 +1,24 @@
 import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
-  TransactionResult,
+  GetTransactionResultResponse,
   TransactionStatus,
   SubmitTransactionResponse,
   VaultBalances,
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
-  Account,
-} from "@tari-project/tari-signer";
+  AccountData,
+  ListSubstatesRequest,
+} from "@tari-project/tarijs-types";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
-import { ListAccountNftRequest, ListAccountNftResponse, SubstateType } from "@tari-project/typescript-bindings";
+import {
+  ConfidentialViewVaultBalanceRequest,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
+  SubstateType,
+} from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = "METAMASK_NOT_INSTALLED";
 export const MetamaskIsNotFlask = "METAMASK_IS_NOT_FLASK";
@@ -64,7 +70,7 @@ export class MetamaskTariSigner implements TariSigner {
     return this.metamaskConnected;
   }
 
-  public async createFreeTestCoins(account_id: number): Promise<Account> {
+  public async createFreeTestCoins(account_id: number): Promise<AccountData> {
     const res = (await this.metamaskRequest("getFreeTestCoins", {
       amount: 1000000,
       account_id,
@@ -78,7 +84,7 @@ export class MetamaskTariSigner implements TariSigner {
     };
   }
 
-  async getAccount(): Promise<Account> {
+  async getAccount(): Promise<AccountData> {
     return (await this.metamaskRequest("getAccountData", { account_id: 0 })) as any;
   }
 
@@ -91,12 +97,12 @@ export class MetamaskTariSigner implements TariSigner {
     return { value: substate, address: { substate_id, version } };
   }
 
-  async listSubstates(
-    filter_by_template: string | null,
-    filter_by_type: SubstateType | null,
-    limit: number | null,
-    offset: number | null,
-  ): Promise<ListSubstatesResponse> {
+  async listSubstates({
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const res = (await this.metamaskRequest("listSubstates", {
       filter_by_template,
       filter_by_type,
@@ -126,7 +132,7 @@ export class MetamaskTariSigner implements TariSigner {
     return { transaction_id: resp.transaction_id };
   }
 
-  public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+  public async getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse> {
     // This request returns the response from the indexer get_transaction_result request
     const resp: Maybe<any> = await this.metamaskRequest("getTransactionResult", { transaction_id: transactionId });
 
@@ -139,7 +145,7 @@ export class MetamaskTariSigner implements TariSigner {
         transaction_id: transactionId,
         status: TransactionStatus.Pending,
         result: null,
-      } as TransactionResult;
+      } as GetTransactionResultResponse;
     }
 
     if (!resp?.result?.Finalized) {
@@ -152,7 +158,7 @@ export class MetamaskTariSigner implements TariSigner {
       transaction_id: transactionId,
       status: newStatus,
       result: resp.result.Finalized.execution_result.finalize,
-    } as TransactionResult;
+    } as GetTransactionResultResponse;
   }
 
   public async getPublicKey(_branch: string, index: number): Promise<string> {
@@ -165,17 +171,17 @@ export class MetamaskTariSigner implements TariSigner {
     return resp.public_key;
   }
 
-  public async getConfidentialVaultBalances(
-    viewKeyId: number,
-    vaultId: string,
-    min: number | null = null,
-    max: number | null = null,
-  ): Promise<VaultBalances> {
+  public async getConfidentialVaultBalances({
+    vault_id,
+    maximum_expected_value,
+    minimum_expected_value,
+    view_key_id,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const res = (await this.metamaskRequest("getConfidentialVaultBalances", {
-      view_key_id: viewKeyId,
-      vault_id: vaultId,
-      minimum_expected_value: min,
-      maximum_expected_value: max,
+      view_key_id,
+      vault_id,
+      minimum_expected_value,
+      maximum_expected_value,
     })) as any;
 
     return { balances: res as unknown as Map<string, number | null> };

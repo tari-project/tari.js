@@ -1,29 +1,30 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariConnection } from "./webrtc";
-import {
-  SubmitTransactionRequest,
-  TransactionResult,
-  SubmitTransactionResponse,
-  VaultBalances,
-  TemplateDefinition,
-  Substate,
-  ListSubstatesResponse,
-  TariSigner,
-} from "@tari-project/tari-signer";
-import { Account } from "@tari-project/tari-signer";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   WalletDaemonClient,
   substateIdToString,
   Instruction,
-  SubstateType,
   SubstatesListRequest,
   KeyBranch,
   SubstateId,
   ListAccountNftRequest,
   ListAccountNftResponse,
+  ConfidentialViewVaultBalanceRequest,
 } from "@tari-project/wallet_jrpc_client";
 import { WebRtcRpcTransport } from "./webrtc_transport";
-import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
+import {
+  AccountData,
+  convertStringToTransactionStatus,
+  GetTransactionResultResponse,
+  SubmitTransactionRequest,
+  SubmitTransactionResponse,
+  VaultBalances,
+  TemplateDefinition,
+  Substate,
+  ListSubstatesResponse,
+  ListSubstatesRequest,
+} from "@tari-project/tarijs-types";
 
 export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
 export const Unsupported = "UNSUPPORTED";
@@ -114,7 +115,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     return this.getWebRtcTransport()?.isConnected() || true;
   }
 
-  public async createFreeTestCoins(): Promise<Account> {
+  public async createFreeTestCoins(): Promise<AccountData> {
     const res = await this.client.createFreeTestCoins({
       account: { Name: "template_web" },
       amount: 1000000,
@@ -129,7 +130,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     };
   }
 
-  public async getAccount(): Promise<Account> {
+  public async getAccount(): Promise<AccountData> {
     const { account, public_key } = (await this.client.accountsGetDefault({})) as any;
     const address = typeof account.address === "object" ? account.address.Component : account.address;
     const { balances } = await this.client.accountsGetBalances({
@@ -197,7 +198,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     return { transaction_id: res.transaction_id };
   }
 
-  public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+  public async getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse> {
     const res = await this.client.getTransactionResult({ transaction_id: transactionId });
 
     return {
@@ -217,27 +218,27 @@ export class WalletDaemonTariSigner implements TariSigner {
     return resp.template_definition as TemplateDefinition;
   }
 
-  public async getConfidentialVaultBalances(
-    viewKeyId: number,
-    vaultId: string,
-    min: number | null = null,
-    max: number | null = null,
-  ): Promise<VaultBalances> {
+  public async getConfidentialVaultBalances({
+    vault_id,
+    view_key_id,
+    maximum_expected_value = null,
+    minimum_expected_value = null,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const res = await this.client.viewVaultBalance({
-      view_key_id: viewKeyId,
-      vault_id: vaultId,
-      minimum_expected_value: min,
-      maximum_expected_value: max,
+      view_key_id,
+      vault_id,
+      minimum_expected_value,
+      maximum_expected_value,
     });
     return { balances: res.balances as unknown as Map<string, number | null> };
   }
 
-  public async listSubstates(
-    filter_by_template: string | null,
-    filter_by_type: SubstateType | null,
-    limit: number | null,
-    offset: number | null,
-  ): Promise<ListSubstatesResponse> {
+  public async listSubstates({
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.substatesList({
       filter_by_template,
       filter_by_type,

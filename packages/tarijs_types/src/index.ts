@@ -15,14 +15,16 @@ export {
   TxResultAcceptFeeRejectRest,
   TxResultReject,
 } from "./FinalizeResult";
+export { GetTransactionResultResponse } from "./GetTransactionResultResponse";
 export { ResourceAddress } from "./ResourceAddress";
 export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateRequirement } from "./SubstateRequirement";
 export { TransactionId } from "./TransactionId";
-export { TransactionResult, TransactionStatus, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
+export { TransactionResult, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
+export { TransactionStatus } from "./TransactionStatus";
 export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
 export { ViewableBalanceProof } from "./ViewableBalanceProof";
@@ -34,3 +36,16 @@ export {
   createNftAddressFromResource,
   createNftAddressFromToken,
 } from "./helpers";
+export {
+  AccountData,
+  ListSubstatesRequest,
+  ListSubstatesResponse,
+  SubmitTransactionRequest,
+  Substate,
+  SubstateMetadata,
+  ReqSubstate,
+  TemplateDefinition,
+  VaultBalances,
+  VaultData,
+  GetSubstateRequest,
+} from "./signer";

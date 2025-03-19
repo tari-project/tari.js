@@ -1,5 +1,5 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
-import { TariSigner, SubmitTransactionRequest, SubstateRequirement } from "@tari-project/tari-signer";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   Transaction,
   TransactionResult,
@@ -9,12 +9,14 @@ import {
   FinalizeResultStatus,
   TxResultAccept,
   SubmitTxResult,
+  ReqSubstate,
+  SubmitTransactionRequest,
 } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
   transaction: Transaction,
   accountId: number,
-  requiredSubstates: SubstateRequirement[],
+  requiredSubstates: ReqSubstate[],
   inputRefs = [],
   isDryRun = false,
   network = 0,

@@ -1,3 +1,4 @@
+import { TransactionStatus } from "./TransactionStatus";
 import { FinalizeResult } from "./FinalizeResult";
 
 export type SubmitTransactionResponse = {
@@ -7,16 +8,6 @@ export type SubmitTransactionResponse = {
 export interface SubmitTxResult {
   response: SubmitTransactionResponse;
   result: TransactionResult;
-}
-
-export enum TransactionStatus {
-  New,
-  DryRun,
-  Pending,
-  Accepted,
-  Rejected,
-  InvalidTransaction,
-  OnlyFeeAccepted,
 }
 
 export type TransactionResult = {

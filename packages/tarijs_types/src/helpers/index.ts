@@ -1,5 +1,5 @@
 import { NonFungibleId, NonFungibleToken, ResourceAddress } from "@tari-project/typescript-bindings";
-import { TransactionStatus } from "../TransactionResult";
+import { TransactionStatus } from "../TransactionStatus";
 
 export function convertStringToTransactionStatus(status: string): TransactionStatus {
   switch (status) {
