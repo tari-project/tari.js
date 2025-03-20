@@ -14,7 +14,9 @@ Please read the [TODO](TODO.md) file for upcoming features.
 
 You must have the [tari-dan](https://github.com/tari-project/tari-dan) repo cloned at the same folder level as this repo.
 
-To build the library:
+### Option 1: Local Build
+
+To build the library locally:
 First you must install [proto](https://moonrepo.dev/proto) to manage node and pnpm versions 
 ```shell
 proto use
@@ -23,6 +25,22 @@ moon tarijs:build
 ```
 
 The bundled files for deployment or publication will be located under the `dist` folder.
+
+### Option 2: Docker Build
+
+Alternatively, you can build the library using Docker:
+
+```shell
+# Build the Docker image
+docker build -t tarijs .
+
+# Run the container and copy the built files
+docker create --name tarijs-build tarijs
+docker cp tarijs-build:/app/packages/tarijs/dist ./dist
+docker rm tarijs-build
+```
+
+This will create the build artifacts in your local `dist` directory. The Docker build automatically handles all dependencies and build requirements.
 
 ## Running the example site
 
