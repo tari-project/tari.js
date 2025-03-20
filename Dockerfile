@@ -40,8 +40,7 @@ RUN mkdir -p /app/combined_dist && \
             pkg_name=$(basename $pkg); \
             mkdir -p "/app/combined_dist/${pkg_name}/dist"; \
             cp -r "${pkg}dist/"* "/app/combined_dist/${pkg_name}/dist/"; \
-            cp -r "${pkg}package.json" "/app/combined_dist/${pkg_name}/package.json"; \
-            cp -r "${pkg}README.md" "/app/combined_dist/${pkg_name}/README.md"; \
+            cp "${pkg}package.json" "/app/combined_dist/${pkg_name}/package.json"; \
         fi \
     done && \
     find /app/packages -name "node_modules" -type d -exec rm -rf {} +
