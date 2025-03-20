@@ -1,12 +1,9 @@
-export { ComponentAddress, ResourceAddress, PublishedTemplateAddress } from "@tari-project/typescript-bindings";
+export { ComponentAddress, ResourceAddress, PublishedTemplateAddress, Epoch } from "@tari-project/typescript-bindings";
 export { Amount } from "./Amount";
 export { TransactionArg } from "./TransactionArg";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
-export { ConfidentialOutputStatement } from "./ConfidentialOutputStatement";
-export { ConfidentialStatement } from "./ConfidentialStatement";
 export { ConfidentialWithdrawProof } from "./ConfidentialWithdrawProof";
-export { Epoch } from "./Epoch";
 export {
   FinalizeResult,
   FinalizeResultStatus,
@@ -24,7 +21,6 @@ export { TransactionSignature } from "./TransactionSignature";
 export { TransactionStatus } from "./TransactionStatus";
 export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
-export { ViewableBalanceProof } from "./ViewableBalanceProof";
 export { WorkspaceArg } from "./Workspace";
 export {
   AccountData,

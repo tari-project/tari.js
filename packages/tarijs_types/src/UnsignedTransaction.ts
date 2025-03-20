@@ -1,5 +1,5 @@
+import { Epoch } from "@tari-project/typescript-bindings";
 import { Instruction } from "./Instruction";
-import { Epoch } from "./Epoch";
 import { SubstateRequirement } from "./SubstateRequirement";
 import { VersionedSubstateId } from "./VersionedSubstateId";
 

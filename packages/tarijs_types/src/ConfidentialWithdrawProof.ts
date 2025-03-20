@@ -1,4 +1,4 @@
-import type { ConfidentialOutputStatement } from "./ConfidentialOutputStatement";
+import { ConfidentialOutputStatement } from "@tari-project/typescript-bindings";
 
 export interface ConfidentialWithdrawProof {
   inputs: Array<Uint8Array>;
