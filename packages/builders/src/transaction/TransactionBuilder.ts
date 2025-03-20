@@ -13,7 +13,7 @@ import {
   Transaction,
   TransactionSignature,
   UnsignedTransaction,
-  TemplateAddress,
+  PublishedTemplateAddress,
   TransactionArg,
 } from "@tari-project/tarijs-types";
 
@@ -24,7 +24,7 @@ export interface TransactionConstructor {
 export interface TariFunctionDefinition {
   functionName: string;
   args?: TransactionArg[];
-  templateAddress: TemplateAddress;
+  templateAddress: PublishedTemplateAddress;
 }
 
 export interface TariMethodDefinition {

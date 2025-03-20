@@ -15,8 +15,7 @@
   "dependencies": {
     "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tari-universe-signer": "workspace:^",
-    "@tari-project/tarijs-types": "workspace:^",
-    "@tari-project/typescript-bindings": "catalog:"
+    "@tari-project/tarijs-types": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:",

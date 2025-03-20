@@ -1,7 +1,6 @@
-export { TemplateAddress } from "./TemplateAddress";
+export { ComponentAddress, ResourceAddress, PublishedTemplateAddress } from "@tari-project/typescript-bindings";
 export { Amount } from "./Amount";
 export { TransactionArg } from "./TransactionArg";
-export { ComponentAddress } from "./ComponentAddress";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
 export { ConfidentialOutputStatement } from "./ConfidentialOutputStatement";
@@ -16,12 +15,10 @@ export {
   TxResultReject,
 } from "./FinalizeResult";
 export { GetTransactionResultResponse } from "./GetTransactionResultResponse";
-export { ResourceAddress } from "./ResourceAddress";
 export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateRequirement } from "./SubstateRequirement";
-export { TransactionId } from "./TransactionId";
 export { TransactionResult, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
 export { TransactionStatus } from "./TransactionStatus";
