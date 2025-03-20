@@ -22,6 +22,7 @@ export { TransactionStatus } from "./TransactionStatus";
 export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
 export { WorkspaceArg } from "./Workspace";
+export { ListAccountNftFromBalancesRequest } from "./ListAccountNftFromBalancesRequest";
 export {
   AccountData,
   ListSubstatesRequest,

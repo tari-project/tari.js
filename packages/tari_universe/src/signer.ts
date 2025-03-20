@@ -8,15 +8,9 @@ import {
   SubmitTransactionRequest,
   ListSubstatesRequest,
   GetTransactionResultResponse,
-} from "@tari-project/tarijs-types";
-import {
-  SignerRequest,
-  SignerMethodNames,
-  SignerReturnType,
-  TariUniverseSignerParameters,
-  WindowSize,
   ListAccountNftFromBalancesRequest,
-} from "./types";
+} from "@tari-project/tarijs-types";
+import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
 import {
   AccountsGetBalancesResponse,
   ConfidentialViewVaultBalanceRequest,
