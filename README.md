@@ -36,7 +36,7 @@ docker build -t tarijs .
 
 # Run the container and copy the built files
 docker create --name tarijs-build tarijs
-docker cp tarijs-build:/app/packages/tarijs/dist ./dist
+docker cp tarijs-build:/app/packages/tarijs/ ./dist
 docker rm tarijs-build
 ```
 
