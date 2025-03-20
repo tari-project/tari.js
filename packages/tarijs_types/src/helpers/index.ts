@@ -1,5 +1,15 @@
 import { NonFungibleId, NonFungibleToken, ResourceAddress } from "@tari-project/typescript-bindings";
 import { TransactionStatus } from "../TransactionStatus";
+export {
+  substateIdToString,
+  stringToSubstateId,
+  shortenSubstateId,
+  shortenString,
+  rejectReasonToString,
+  getSubstateDiffFromTransactionResult,
+  getRejectReasonFromTransactionResult,
+  jrpcPermissionToString,
+} from "@tari-project/typescript-bindings";
 
 export function convertStringToTransactionStatus(status: string): TransactionStatus {
   switch (status) {
@@ -49,12 +59,9 @@ export function convertHexStringToU256Array(hexString: string): number[] {
 
 export function createNftAddressFromResource(address: ResourceAddress, tokenId: NonFungibleId): string {
   let nftAddress = "nft_";
-
   const resourceAddress = address.replace(/^resource_/, "");
   nftAddress += resourceAddress;
-
   nftAddress += "_uuid_";
-
   const nftIdHexString = convertU256ToHexString(tokenId);
   nftAddress += nftIdHexString;
 

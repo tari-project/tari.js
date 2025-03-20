@@ -27,13 +27,6 @@ export { VersionedSubstateId } from "./VersionedSubstateId";
 export { ViewableBalanceProof } from "./ViewableBalanceProof";
 export { WorkspaceArg } from "./Workspace";
 export {
-  convertHexStringToU256Array,
-  convertStringToTransactionStatus,
-  convertU256ToHexString,
-  createNftAddressFromResource,
-  createNftAddressFromToken,
-} from "./helpers";
-export {
   AccountData,
   ListSubstatesRequest,
   ListSubstatesResponse,
@@ -46,3 +39,19 @@ export {
   VaultData,
   GetSubstateRequest,
 } from "./signer";
+
+export {
+  convertHexStringToU256Array,
+  convertStringToTransactionStatus,
+  convertU256ToHexString,
+  createNftAddressFromResource,
+  createNftAddressFromToken,
+  getRejectReasonFromTransactionResult,
+  getSubstateDiffFromTransactionResult,
+  jrpcPermissionToString,
+  rejectReasonToString,
+  shortenString,
+  shortenSubstateId,
+  stringToSubstateId,
+  substateIdToString,
+} from "./helpers";
