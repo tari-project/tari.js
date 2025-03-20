@@ -24,8 +24,6 @@ export function buildTransactionRequest(
   detectInputsUseUnversioned = true,
 ): SubmitTransactionRequest {
   return {
-    //TODO refactor SubTxReq type to not use 'object[]' and types match
-    // https://github.com/tari-project/tari.js/issues/25
     network,
     account_id: accountId,
     instructions: transaction.instructions as object[],
@@ -77,7 +75,7 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp as any as TransactionResult; //TODO fix: type mismatch (https://github.com/tari-project/tari.js/issues/29)
+      return resp as TransactionResult;
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }

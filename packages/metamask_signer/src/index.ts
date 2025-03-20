@@ -1,7 +1,7 @@
 import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
-  GetTransactionResultResponse,
+  TransactionResult,
   TransactionStatus,
   SubmitTransactionResponse,
   VaultBalances,
@@ -10,6 +10,7 @@ import {
   ListSubstatesResponse,
   AccountData,
   ListSubstatesRequest,
+  GetTransactionResultResponse,
 } from "@tari-project/tarijs-types";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
@@ -177,14 +178,14 @@ export class MetamaskTariSigner implements TariSigner {
     minimum_expected_value,
     view_key_id,
   }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
-    const res = (await this.metamaskRequest("getConfidentialVaultBalances", {
+    const resp = await this.metamaskRequest("getConfidentialVaultBalances", {
       view_key_id,
       vault_id,
       minimum_expected_value,
       maximum_expected_value,
-    })) as any;
+    });
 
-    return { balances: res as unknown as Map<string, number | null> };
+    return { balances: resp as Map<string, number | null> };
   }
 
   getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {

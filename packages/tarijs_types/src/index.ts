@@ -1,6 +1,6 @@
 export { TemplateAddress } from "./TemplateAddress";
 export { Amount } from "./Amount";
-export { Arg } from "./Arg";
+export { TransactionArg } from "./TransactionArg";
 export { ComponentAddress } from "./ComponentAddress";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
