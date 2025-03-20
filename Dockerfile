@@ -38,8 +38,10 @@ RUN mkdir -p /app/combined_dist && \
     for pkg in /app/packages/*/; do \
         if [ -d "${pkg}dist" ]; then \
             pkg_name=$(basename $pkg); \
-            mkdir -p "/app/combined_dist/${pkg_name}"; \
-            cp -r "${pkg}dist/"* "/app/combined_dist/${pkg_name}/"; \
+            mkdir -p "/app/combined_dist/${pkg_name}/dist"; \
+            cp -r "${pkg}dist/"* "/app/combined_dist/${pkg_name}/dist/"; \
+            cp -r "${pkg}package.json" "/app/combined_dist/${pkg_name}/package.json"; \
+            cp -r "${pkg}README.md" "/app/combined_dist/${pkg_name}/README.md"; \
         fi \
     done && \
     find /app/packages -name "node_modules" -type d -exec rm -rf {} +
