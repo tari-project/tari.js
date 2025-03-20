@@ -1,19 +1,19 @@
-import type { ListTemplatesResponse } from "@tari-project/typescript-bindings";
+import type { GetTemplateDefinitionResponse, ListTemplatesResponse } from "@tari-project/typescript-bindings";
 import {
-  TransactionResult,
+  GetTransactionResultResponse,
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
   GetSubstateRequest,
   ListSubstatesRequest,
-} from "./types";
+} from "@tari-project/tarijs-types";
 
 export interface TariProvider {
   providerName: string;
   isConnected(): boolean;
   getSubstate(req: GetSubstateRequest): Promise<Substate>;
-  getTransactionResult(transactionId: string): Promise<TransactionResult>;
-  getTemplateDefinition(template_address: string): Promise<TemplateDefinition>;
+  getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse>;
+  getTemplateDefinition(template_address: string): Promise<GetTemplateDefinitionResponse>;
   listSubstates(req: ListSubstatesRequest): Promise<ListSubstatesResponse>;
   listTemplates(limit?: number): Promise<ListTemplatesResponse>;
 }

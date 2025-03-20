@@ -2,18 +2,6 @@ import { TariSigner } from "@tari-project/tari-signer";
 import { TariProvider } from "@tari-project/tari-provider";
 import * as utils from "./utils";
 import { Network } from "./network";
-import {
-  Account,
-  TransactionStatus,
-  TransactionResult,
-  SubmitTransactionResponse,
-  SubmitTransactionRequest,
-  VaultBalances,
-  VaultData,
-  TemplateDefinition,
-  SubstateRequirement,
-  Substate,
-} from "@tari-project/tari-signer";
 import { MetamaskTariSigner } from "@tari-project/metamask-signer";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { WalletDaemonTariSigner, WalletDaemonParameters, TariPermissions } from "@tari-project/wallet-daemon-signer";
@@ -38,6 +26,16 @@ import {
   convertU256ToHexString,
   createNftAddressFromResource,
   createNftAddressFromToken,
+  TransactionStatus,
+  GetTransactionResultResponse,
+  AccountData,
+  SubmitTransactionResponse,
+  SubmitTransactionRequest,
+  VaultBalances,
+  VaultData,
+  TemplateDefinition,
+  SubstateRequirement,
+  Substate,
 } from "@tari-project/tarijs-types";
 
 export * from "@tari-project/tarijs-types";
@@ -46,9 +44,9 @@ export {
   Network,
   TariSigner,
   TariProvider,
-  Account,
+  AccountData,
   TransactionStatus,
-  TransactionResult,
+  GetTransactionResultResponse,
   SubmitTransactionResponse,
   SubmitTransactionRequest,
   VaultBalances,

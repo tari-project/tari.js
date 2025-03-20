@@ -3,7 +3,6 @@ import {
   Instruction,
   SubstateRequirement,
   Transaction,
-  TransactionId,
   TransactionSignature,
   UnsignedTransaction,
   VersionedSubstateId,
@@ -12,7 +11,7 @@ import {
 ///TODO this implementation is not fully done, see:
 /// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
 export class TransactionRequest implements Transaction {
-  id: TransactionId;
+  id: string;
   feeInstructions: Array<Instruction>;
   instructions: Array<Instruction>;
   inputs: Array<SubstateRequirement>;
@@ -23,7 +22,7 @@ export class TransactionRequest implements Transaction {
   filledInputs: VersionedSubstateId[];
 
   constructor(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]) {
-    this.id = this.calculateHash();
+    this.id = "";
     this.feeInstructions = unsignedTransaction.feeInstructions;
     this.instructions = unsignedTransaction.instructions;
     this.inputs = unsignedTransaction.inputs;
@@ -34,21 +33,8 @@ export class TransactionRequest implements Transaction {
     this.filledInputs = [];
   }
 
-  private calculateHash(): TransactionId {
-    return "";
-  }
-
   withFilledInputs(filled_inputs: Array<VersionedSubstateId>): this {
     return { ...this, filled_inputs };
-  }
-
-  getId(): TransactionId {
-    return this.id;
-  }
-
-  checkId(): boolean {
-    const id = this.calculateHash();
-    return id === this.id;
   }
 
   getUnsignedTransaction(): UnsignedTransaction {
@@ -65,10 +51,6 @@ export class TransactionRequest implements Transaction {
 
   getSignatures(): TransactionSignature[] {
     return this.signatures;
-  }
-
-  getHash(): string {
-    return this.id;
   }
 
   getInputs(): SubstateRequirement[] {
@@ -89,5 +71,13 @@ export class TransactionRequest implements Transaction {
 
   getMaxEpoch(): Epoch | undefined {
     return this.maxEpoch;
+  }
+
+  setId(id: string): void {
+    this.id = id;
+  }
+
+  getId(): string {
+    return this.id;
   }
 }

@@ -1,29 +1,24 @@
 import {
   SubmitTransactionResponse,
-  Account,
+  AccountData,
   Substate,
   TemplateDefinition,
   VaultBalances,
   ListSubstatesResponse,
   SubmitTransactionRequest,
-  TariSigner,
-  TransactionResult,
-} from "@tari-project/tari-signer";
-import {
-  SignerRequest,
-  SignerMethodNames,
-  SignerReturnType,
-  TariUniverseSignerParameters,
-  WindowSize,
+  ListSubstatesRequest,
+  GetTransactionResultResponse,
   ListAccountNftFromBalancesRequest,
-} from "./types";
+} from "@tari-project/tarijs-types";
+import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
 import {
   AccountsGetBalancesResponse,
+  ConfidentialViewVaultBalanceRequest,
   ListAccountNftRequest,
   ListAccountNftResponse,
-  SubstateType,
 } from "@tari-project/wallet_jrpc_client";
 import { sendSignerCall } from "./utils";
+import { TariSigner } from "@tari-project/tari-signer";
 
 export class TariUniverseSigner implements TariSigner {
   public signerName = "TariUniverse";
@@ -56,27 +51,27 @@ export class TariUniverseSigner implements TariSigner {
     return this.sendRequest<"getPublicKey">({ methodName: "getPublicKey", args: [] });
   }
 
-  public async listSubstates(
-    filter_by_template: string | null,
-    filter_by_type: SubstateType | null,
-    limit: number | null,
-    offset: number | null,
-  ): Promise<ListSubstatesResponse> {
+  public async listSubstates({
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     return this.sendRequest<"listSubstates">({
       methodName: "listSubstates",
-      args: [filter_by_template, filter_by_type, limit, offset],
+      args: [{ filter_by_template, filter_by_type, limit, offset }],
     });
   }
 
-  public getConfidentialVaultBalances(
-    viewKeyId: number,
-    vaultId: string,
-    min: number | null,
-    max: number | null,
-  ): Promise<VaultBalances> {
+  public getConfidentialVaultBalances({
+    vault_id,
+    maximum_expected_value,
+    minimum_expected_value,
+    view_key_id,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     return this.sendRequest({
       methodName: "getConfidentialVaultBalances",
-      args: [viewKeyId, vaultId, min, max],
+      args: [{ view_key_id, vault_id, minimum_expected_value, maximum_expected_value }],
     });
   }
 
@@ -88,7 +83,7 @@ export class TariUniverseSigner implements TariSigner {
     return this.sendRequest({ methodName: "requestParentSize", args: [] });
   }
 
-  public async getAccount(): Promise<Account> {
+  public async getAccount(): Promise<AccountData> {
     return this.sendRequest({ methodName: "getAccount", args: [] });
   }
 
@@ -113,7 +108,7 @@ export class TariUniverseSigner implements TariSigner {
     });
   }
 
-  public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+  public async getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse> {
     return this.sendRequest({
       methodName: "getTransactionResult",
       args: [transactionId],

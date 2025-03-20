@@ -9,18 +9,18 @@ This provider is designed to provide connection to the blockchain, whch can be u
 ## Install required dependencies
 
 ```bash npm2yarn
-npm install @tari-project/tari-universe-signer @tari-project/tari-permissions
+npm install @tari-project/indexer-provider @tari-project/tari-permissions
 ```
 
 ## Establish the connection
 
 ```js
+import { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
 import { TariPermissions } from "@tari-project/tari-permissions";
-import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 
 const permissions = new TariPermissions().addPermission("Admin");
 const optionalPermissions = new TariPermissions();
-const indexerJrpcUrl = "http://127.0.0.1:12006/json_rpc";
+const indexerJrpcUrl = "http://127.0.0.1:12006/json_rpc"; // example url
 
 const params: IndexerProviderParameters = {
   indexerJrpcUrl: indexerJrpcUrl,

@@ -1,9 +1,8 @@
-import { ComponentAddress, LogLevel } from "@tari-project/typescript-bindings";
-import { Arg } from "./Arg";
+import { ComponentAddress, LogLevel, PublishedTemplateAddress } from "@tari-project/typescript-bindings";
+import { TransactionArg } from "./TransactionArg";
 import { ConfidentialClaim } from "./ConfidentialClaim";
 import { Amount } from "./Amount";
 import { ConfidentialOutput } from "./ConfidentialOutput";
-import { TemplateAddress } from "./TemplateAddress";
 
 export type Instruction =
   | CreateAccount
@@ -17,8 +16,12 @@ export type Instruction =
   | CreateFreeTestCoins;
 
 export type CreateAccount = { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } };
-export type CallFunction = { CallFunction: { template_address: TemplateAddress; function: string; args: Array<Arg> } };
-export type CallMethod = { CallMethod: { component_address: ComponentAddress; method: string; args: Array<Arg> } };
+export type CallFunction = {
+  CallFunction: { template_address: PublishedTemplateAddress; function: string; args: Array<TransactionArg> };
+};
+export type CallMethod = {
+  CallMethod: { component_address: ComponentAddress; method: string; args: Array<TransactionArg> };
+};
 export type PutLastInstructionOutputOnWorkspace = { PutLastInstructionOutputOnWorkspace: { key: number[] } };
 export type EmitLog = { EmitLog: { level: LogLevel; message: string } };
 export type ClaimBurn = { ClaimBurn: { claim: ConfidentialClaim } };

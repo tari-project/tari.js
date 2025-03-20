@@ -1,4 +1,4 @@
-import { FinalizeResult } from "@tari-project/typescript-bindings";
+import { SubstateType, TemplateDef } from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
@@ -7,7 +7,7 @@ export type SubstateMetadata = {
   template_address: string | null;
 };
 
-export type SubstateRequirement = {
+export type ReqSubstate = {
   substate_id: string;
   version?: number | null;
 };
@@ -19,7 +19,7 @@ export type SubmitTransactionRequest = {
   fee_instructions: object[];
   inputs: object[];
   input_refs: object[];
-  required_substates: SubstateRequirement[];
+  required_substates: ReqSubstate[];
   is_dry_run: boolean;
   min_epoch: number | null;
   max_epoch: number | null;
@@ -27,27 +27,7 @@ export type SubmitTransactionRequest = {
   detect_inputs_use_unversioned: boolean;
 };
 
-export type SubmitTransactionResponse = {
-  transaction_id: string;
-};
-
-export type TransactionResult = {
-  transaction_id: string;
-  status: TransactionStatus;
-  result: FinalizeResult | null;
-};
-
-export enum TransactionStatus {
-  New,
-  DryRun,
-  Pending,
-  Accepted,
-  Rejected,
-  InvalidTransaction,
-  OnlyFeeAccepted,
-}
-
-export interface Account {
+export interface AccountData {
   account_id: number;
   address: string;
   public_key: string;
@@ -66,10 +46,7 @@ export interface VaultBalances {
   balances: Map<string, number | null>;
 }
 
-export interface TemplateDefinition {
-  // TODO: Define this type
-  [key: string]: any;
-}
+export type TemplateDefinition = TemplateDef;
 
 export interface Substate {
   value: any;
@@ -81,4 +58,16 @@ export interface Substate {
 
 export type ListSubstatesResponse = {
   substates: Array<SubstateMetadata>;
+};
+
+export type ListSubstatesRequest = {
+  filter_by_template: string | null;
+  filter_by_type: SubstateType | null;
+  limit: number | null;
+  offset: number | null;
+};
+
+export type GetSubstateRequest = {
+  substate_address: string;
+  version: number | null;
 };

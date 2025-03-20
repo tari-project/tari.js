@@ -1,4 +1,4 @@
-import type { ElgamalVerifiableBalance } from "./ElgamalVerifiableBalance";
+import { ElgamalVerifiableBalance } from "@tari-project/typescript-bindings";
 
 export interface ConfidentialOutput {
   commitment: string;

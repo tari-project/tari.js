@@ -13,24 +13,23 @@ import {
   Transaction,
   TransactionSignature,
   UnsignedTransaction,
-  TemplateAddress,
-  Arg,
+  PublishedTemplateAddress,
+  TransactionArg,
 } from "@tari-project/tarijs-types";
 
-
 export interface TransactionConstructor {
-  new(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
+  new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
 }
 
 export interface TariFunctionDefinition {
   functionName: string;
-  args?: Arg[];
-  templateAddress: TemplateAddress;
+  args?: TransactionArg[];
+  templateAddress: PublishedTemplateAddress;
 }
 
 export interface TariMethodDefinition {
   methodName: string;
-  args?: Arg[];
+  args?: TransactionArg[];
   componentAddress: ComponentAddress;
 }
 

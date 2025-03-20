@@ -1,11 +1,4 @@
-import {
-  GetSubstateRequest,
-  ListSubstatesRequest,
-  ListSubstatesResponse,
-  Substate,
-  TariProvider,
-  TransactionResult,
-} from "@tari-project/tari-provider";
+import { TariProvider } from "@tari-project/tari-provider";
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { IndexerProviderClient } from "./transports";
 import {
@@ -15,7 +8,14 @@ import {
   substateIdToString,
   SubstatesListRequest,
 } from "@tari-project/typescript-bindings";
-import { convertStringToTransactionStatus } from "@tari-project/tarijs-types";
+import {
+  convertStringToTransactionStatus,
+  GetSubstateRequest,
+  GetTransactionResultResponse,
+  ListSubstatesRequest,
+  ListSubstatesResponse,
+  Substate,
+} from "@tari-project/tarijs-types";
 
 export interface IndexerProviderParameters {
   indexerJrpcUrl: string;
@@ -88,7 +88,7 @@ export class IndexerProvider implements TariProvider {
     return resp;
   }
 
-  public async getTransactionResult(transactionId: string): Promise<TransactionResult> {
+  public async getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse> {
     const resp = await this.client.getTransactionResult({ transaction_id: transactionId });
 
     return {

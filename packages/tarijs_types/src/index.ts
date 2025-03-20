@@ -1,13 +1,9 @@
-export { TemplateAddress } from "./TemplateAddress";
+export { ComponentAddress, ResourceAddress, PublishedTemplateAddress, Epoch } from "@tari-project/typescript-bindings";
 export { Amount } from "./Amount";
-export { Arg } from "./Arg";
-export { ComponentAddress } from "./ComponentAddress";
+export { TransactionArg } from "./TransactionArg";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
-export { ConfidentialOutputStatement } from "./ConfidentialOutputStatement";
-export { ConfidentialStatement } from "./ConfidentialStatement";
 export { ConfidentialWithdrawProof } from "./ConfidentialWithdrawProof";
-export { Epoch } from "./Epoch";
 export {
   FinalizeResult,
   FinalizeResultStatus,
@@ -15,22 +11,44 @@ export {
   TxResultAcceptFeeRejectRest,
   TxResultReject,
 } from "./FinalizeResult";
-export { ResourceAddress } from "./ResourceAddress";
+export { GetTransactionResultResponse } from "./GetTransactionResultResponse";
 export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateRequirement } from "./SubstateRequirement";
-export { TransactionId } from "./TransactionId";
-export { TransactionResult, TransactionStatus, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
+export { TransactionResult, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
+export { TransactionStatus } from "./TransactionStatus";
 export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
-export { ViewableBalanceProof } from "./ViewableBalanceProof";
 export { WorkspaceArg } from "./Workspace";
+export { ListAccountNftFromBalancesRequest } from "./ListAccountNftFromBalancesRequest";
+export {
+  AccountData,
+  ListSubstatesRequest,
+  ListSubstatesResponse,
+  SubmitTransactionRequest,
+  Substate,
+  SubstateMetadata,
+  ReqSubstate,
+  TemplateDefinition,
+  VaultBalances,
+  VaultData,
+  GetSubstateRequest,
+} from "./signer";
+
 export {
   convertHexStringToU256Array,
   convertStringToTransactionStatus,
   convertU256ToHexString,
   createNftAddressFromResource,
   createNftAddressFromToken,
+  getRejectReasonFromTransactionResult,
+  getSubstateDiffFromTransactionResult,
+  jrpcPermissionToString,
+  rejectReasonToString,
+  shortenString,
+  shortenSubstateId,
+  stringToSubstateId,
+  substateIdToString,
 } from "./helpers";

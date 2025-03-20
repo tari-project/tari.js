@@ -1,5 +1,5 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
-import { TariSigner, SubmitTransactionRequest, SubstateRequirement } from "@tari-project/tari-signer";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   Transaction,
   TransactionResult,
@@ -9,12 +9,14 @@ import {
   FinalizeResultStatus,
   TxResultAccept,
   SubmitTxResult,
+  ReqSubstate,
+  SubmitTransactionRequest,
 } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
   transaction: Transaction,
   accountId: number,
-  requiredSubstates: SubstateRequirement[],
+  requiredSubstates: ReqSubstate[],
   inputRefs = [],
   isDryRun = false,
   network = 0,
@@ -22,8 +24,6 @@ export function buildTransactionRequest(
   detectInputsUseUnversioned = true,
 ): SubmitTransactionRequest {
   return {
-    //TODO refactor SubTxReq type to not use 'object[]' and types match
-    // https://github.com/tari-project/tari.js/issues/25
     network,
     account_id: accountId,
     instructions: transaction.instructions as object[],
@@ -75,7 +75,7 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp as any as TransactionResult; //TODO fix: type mismatch (https://github.com/tari-project/tari.js/issues/29)
+      return resp as TransactionResult;
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
