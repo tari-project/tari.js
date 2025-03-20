@@ -16,7 +16,6 @@ import {
   ConfidentialViewVaultBalanceRequest,
   ListAccountNftRequest,
   ListAccountNftResponse,
-  SubstateType,
 } from "@tari-project/wallet_jrpc_client";
 import { sendSignerCall } from "./utils";
 import { TariSigner } from "@tari-project/tari-signer";
