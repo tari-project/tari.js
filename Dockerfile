@@ -33,9 +33,19 @@ RUN proto use \
     && pnpm install \
     && moon tarijs:build
 
-# The built files will be in the dist folder
-WORKDIR /app/packages/tarijs
-RUN rm -rf node_modules
+# Create combined dist directory and copy all dist folders while excluding node_modules
+RUN mkdir -p /app/combined_dist && \
+    for pkg in /app/packages/*/; do \
+        if [ -d "${pkg}dist" ]; then \
+            pkg_name=$(basename $pkg); \
+            mkdir -p "/app/combined_dist/${pkg_name}"; \
+            cp -r "${pkg}dist/"* "/app/combined_dist/${pkg_name}/"; \
+        fi \
+    done && \
+    find /app/packages -name "node_modules" -type d -exec rm -rf {} +
+
+# Set working directory to the combined dist
+WORKDIR /app/combined_dist
 
 # Set default command
 CMD ["bash"] 

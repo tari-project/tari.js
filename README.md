@@ -24,7 +24,7 @@ pnpm install
 moon tarijs:build
 ```
 
-The bundled files for deployment or publication will be located under the `dist` folder.
+The bundled files for deployment or publication will be located under the `dist` folder of each package.
 
 ### Option 2: Docker Build
 
@@ -34,13 +34,30 @@ Alternatively, you can build the library using Docker:
 # Build the Docker image
 docker build -t tarijs .
 
-# Run the container and copy the built files
+# Run the container and copy the combined dist files
 docker create --name tarijs-build tarijs
-docker cp tarijs-build:/app/packages/tarijs/ ./dist
+docker cp tarijs-build:/app/combined_dist/ ./dist
 docker rm tarijs-build
 ```
 
-This will create the build artifacts in your local `dist` directory. The Docker build automatically handles all dependencies and build requirements.
+This will create a combined build output in your local `dist` directory, containing all package distributions organized by package name, with the following structure:
+
+```
+dist/
+├── tarijs/
+├── tari_provider/
+├── tari_permissions/
+├── wallet_daemon/
+├── tari_signer/
+├── builders/
+├── metamask_signer/
+├── tari_universe/
+├── tarijs_types/
+├── indexer_provider/
+└── walletconnect/
+```
+
+Each package's dist folder contains its compiled JavaScript files, type definitions, and other build artifacts, excluding node_modules.
 
 ## Running the example site
 
