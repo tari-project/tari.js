@@ -14,7 +14,9 @@ Please read the [TODO](TODO.md) file for upcoming features.
 
 You must have the [tari-dan](https://github.com/tari-project/tari-dan) repo cloned at the same folder level as this repo.
 
-To build the library:
+### Option 1: Local Build
+
+To build the library locally:
 First you must install [proto](https://moonrepo.dev/proto) to manage node and pnpm versions 
 ```shell
 proto use
@@ -22,7 +24,40 @@ pnpm install
 moon tarijs:build
 ```
 
-The bundled files for deployment or publication will be located under the `dist` folder.
+The bundled files for deployment or publication will be located under the `dist` folder of each package.
+
+### Option 2: Docker Build
+
+Alternatively, you can build the library using Docker:
+
+```shell
+# Build the Docker image
+docker build -t tarijs .
+
+# Run the container and copy the combined dist files
+docker create --name tarijs-build tarijs
+docker cp tarijs-build:/app/combined_dist/ ./dist
+docker rm tarijs-build
+```
+
+This will create a combined build output in your local `dist` directory, containing all package distributions organized by package name, with the following structure:
+
+```
+dist/
+├── tarijs/
+├── tari_provider/
+├── tari_permissions/
+├── wallet_daemon/
+├── tari_signer/
+├── builders/
+├── metamask_signer/
+├── tari_universe/
+├── tarijs_types/
+├── indexer_provider/
+└── walletconnect/
+```
+
+Each package's dist folder contains its compiled JavaScript files, type definitions, and other build artifacts, excluding node_modules.
 
 ## Running the example site
 
