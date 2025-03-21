@@ -96,9 +96,6 @@ importers:
       '@tari-project/tarijs-types':
         specifier: workspace:^
         version: link:../tarijs_types
-      '@tari-project/typescript-bindings':
-        specifier: 'catalog:'
-        version: 1.5.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
