@@ -23,6 +23,7 @@ export { UnsignedTransaction } from "./UnsignedTransaction";
 export { VersionedSubstateId } from "./VersionedSubstateId";
 export { WorkspaceArg } from "./Workspace";
 export { ListAccountNftFromBalancesRequest } from "./ListAccountNftFromBalancesRequest";
+export { Network } from "./network";
 export {
   AccountData,
   ListSubstatesRequest,
@@ -51,4 +52,11 @@ export {
   shortenSubstateId,
   stringToSubstateId,
   substateIdToString,
+  fromHexString,
+  toHexString,
+  convertTaggedValue,
+  getCborValueByPath,
+  parseCbor,
+  BinaryTag,
+  CborValue,
 } from "./helpers";
