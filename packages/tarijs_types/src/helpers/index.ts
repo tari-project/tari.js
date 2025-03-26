@@ -1,6 +1,7 @@
 import { NonFungibleId, NonFungibleToken, ResourceAddress } from "@tari-project/typescript-bindings";
 import { TransactionStatus } from "../TransactionStatus";
 export { fromHexString, toHexString } from "./hexString";
+export { txResultCheck, getSubstateValueFromUpSubstates, getComponentsForTemplate } from "./txResult";
 export { BinaryTag, CborValue, convertTaggedValue, getCborValueByPath, parseCbor } from "./cbor";
 export {
   substateIdToString,
