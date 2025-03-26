@@ -33,9 +33,10 @@ import {
   Network,
   fromHexString,
   toHexString,
+  parseCbor,
+  getCborValueByPath,
 } from "@tari-project/tarijs-types";
 import { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
-import { parseCbor, getCborValueByPath } from "./cbor";
 import * as templates from "./templates";
 import * as permissions from "@tari-project/tari-permissions";
 

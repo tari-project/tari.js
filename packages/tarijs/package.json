@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "test": "vitest run src",
+    "unit-tests": "vitest run unit-tests",
     "integration-tests": "vitest run integration-tests"
   },
   "keywords": [],

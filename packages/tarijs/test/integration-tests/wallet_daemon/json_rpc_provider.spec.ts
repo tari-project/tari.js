@@ -1,6 +1,6 @@
 import { assert, describe, expect, it } from "vitest";
 
-import { Network, SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../src";
+import { Network, SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../../src";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
