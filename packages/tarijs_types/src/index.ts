@@ -16,7 +16,12 @@ export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateRequirement } from "./SubstateRequirement";
-export { TransactionResult, SubmitTxResult, SubmitTransactionResponse } from "./TransactionResult";
+export {
+  TransactionResult,
+  SubmitTxResult,
+  SubmitTransactionResponse,
+  TransactionResultResponse,
+} from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
 export { TransactionStatus } from "./TransactionStatus";
 export { UnsignedTransaction } from "./UnsignedTransaction";
@@ -57,6 +62,9 @@ export {
   convertTaggedValue,
   getCborValueByPath,
   parseCbor,
+  getSubstateValueFromUpSubstates,
+  getComponentsForTemplate,
+  txResultCheck,
   BinaryTag,
   CborValue,
 } from "./helpers";
