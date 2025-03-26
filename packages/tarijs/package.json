@@ -1,6 +1,6 @@
 {
-  "name": "@tari-project/tarijs",
-  "version": "0.5.2",
+  "name": "@tari-project/tarijs-all",
+  "version": "0.5.3",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "test": "vitest run src",
+    "test": "vitest run unit-tests",
     "integration-tests": "vitest run integration-tests"
   },
   "keywords": [],

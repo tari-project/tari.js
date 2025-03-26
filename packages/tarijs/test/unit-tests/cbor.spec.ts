@@ -1,5 +1,5 @@
-import { assert, describe, expect, it, vi } from "vitest";
-import { BinaryTag, CborValue, convertTaggedValue, getCborValueByPath, parseCbor } from "./cbor";
+import { describe, expect, it } from "vitest";
+import { BinaryTag, CborValue, convertTaggedValue, getCborValueByPath, parseCbor } from "@tari-project/tarijs-types";
 
 describe("convertTaggedValue", () => {
   it.each([
@@ -201,7 +201,7 @@ describe("parseCbor", () => {
       expect(parseCbor(value as CborValue)).toEqual(expected);
     });
   });
-  
+
   it.each([{}, { Unknown: 2 }])("throws, when data in unknown format is found", (value: unknown) => {
     expect(() => parseCbor(value as CborValue)).toThrow();
   });

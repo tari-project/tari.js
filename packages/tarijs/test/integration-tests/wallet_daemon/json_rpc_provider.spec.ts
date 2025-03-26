@@ -1,10 +1,11 @@
 import { assert, describe, expect, it } from "vitest";
 
-import { SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../src";
+import { Network, SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../../src";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
   const serverUrl = process.env.WALLET_DAEMON_JSON_RPC_URL;
+
   assert(serverUrl, "WALLET_DAEMON_JSON_RPC_URL must be set");
   return WalletDaemonTariSigner.buildFetchSigner({
     permissions,
@@ -43,8 +44,14 @@ describe("WalletDaemonTariSigner", () => {
   describe("getSubstate", () => {
     it("returns substate details", async () => {
       const signer = await buildSigner();
-      const listedSubstates = await signer.listSubstates(null, null, 1, 0);
+      const listedSubstates = await signer.listSubstates({
+        filter_by_template: null,
+        filter_by_type: null,
+        limit: 1,
+        offset: 0,
+      });
       const firstSubstate = listedSubstates.substates[0];
+      console.log(firstSubstate);
       const substate = await signer.getSubstate(firstSubstate.substate_id);
 
       expect(substate).toMatchObject({
@@ -87,7 +94,7 @@ describe("WalletDaemonTariSigner", () => {
       ];
 
       const request: SubmitTransactionRequest = {
-        network: 0x10, // LocalNet
+        network: Network.LocalNet,
         account_id: account.account_id,
         fee_instructions,
         instructions: [],
@@ -163,27 +170,47 @@ describe("WalletDaemonTariSigner", () => {
   describe("listSubstates", () => {
     it("returns substates", async () => {
       const signer = await buildSigner();
-      const { substates } = await signer.listSubstates(null, null, 10, 0);
+      const { substates } = await signer.listSubstates({
+        filter_by_template: null,
+        filter_by_type: null,
+        limit: 10,
+        offset: 0,
+      });
 
       expect(substates.length).toBeGreaterThan(0);
     });
 
     it("filters substates by template address", async () => {
       const signer = await buildSigner();
-      const { substates } = await signer.listSubstates(null, null, 10, 0);
+      const { substates } = await signer.listSubstates({
+        filter_by_template: null,
+        filter_by_type: null,
+        limit: 10,
+        offset: 0,
+      });
 
       const substateWithTemplate = substates.find((substate) => substate.template_address);
       assert(substateWithTemplate, "No substate with template found");
 
       const templateAddress = substateWithTemplate.template_address;
-      const { substates: filteredSubstates } = await signer.listSubstates(templateAddress, null, 10, 0);
+      const { substates: filteredSubstates } = await signer.listSubstates({
+        filter_by_template: templateAddress,
+        filter_by_type: null,
+        limit: 10,
+        offset: 0,
+      });
 
       expect(filteredSubstates.every((substate) => substate.template_address === templateAddress)).toBe(true);
     });
 
     it("filters substates by type", async () => {
       const signer = await buildSigner();
-      const { substates } = await signer.listSubstates(null, "Component", 10, 0);
+      const { substates } = await signer.listSubstates({
+        filter_by_template: null,
+        filter_by_type: "Component",
+        limit: 1,
+        offset: 0,
+      });
 
       expect(substates.every((substate) => substate.module_name)).toBe(true);
     });
