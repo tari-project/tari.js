@@ -16,10 +16,6 @@ npm install @tari-project/wallet-connect-signer
 
 Establishing connection requires multiple steps.
 
-## Obtain WalletConnect Project ID
-
-Obtain a WalletConnect Project ID by registering your project on the WalletConnect Cloud. This ID is then used to connect your dApp to the WalletConnect infrastructure, facilitating communication between the dApp and user wallets.
-
 ## Request a connection and display wallet connect dialog
 
 ```js
