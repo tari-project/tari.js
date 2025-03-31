@@ -34,13 +34,13 @@ create-vite@6.3.1
 Ok to proceed? (y)
 ```
 
-You'll be asked to enter a project name. You can call it what you like but to make it easy to follow along, let's call it the `'helloootle-app`. 
+You'll be asked to enter a project name. You can call it what you like but to make it easy to follow along, let's call it the `'base-app`. 
 
 ```bash
 > npx
 > create-vite
 
-✔ Project name: … helloootle-app
+✔ Project name: … base-app
 ```
 Next, select `React` from the list of options:
 
