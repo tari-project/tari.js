@@ -44,10 +44,16 @@ export async function submitAndWaitForTransaction(
   req: SubmitTransactionRequest,
 ): Promise<SubmitTxResult> {
   try {
+    console.warn("🌟🌟🌟 [tarijs][submitAndWait] signer, req", signer, req);
     const response = await signer.submitTransaction(req);
+    console.warn("🌟🌟🌟 [tarijs][submitAndWait] response", response);
     const result = await waitForTransactionResult(signer, response.transaction_id);
+    console.warn("🌟🌟🌟 [tarijs][submitAndWait] tx result", result);
     const { upSubstates, downSubstates } = getAcceptResultSubstates(result);
+    console.warn("🌟🌟🌟 [tarijs][submitAndWait] substates", upSubstates, downSubstates);
     const newComponents = getSubstateValueFromUpSubstates("Component", upSubstates);
+    console.warn("🌟🌟🌟 [tarijs][submitAndWait] components", newComponents);
+
     function getComponentForTemplate(templateAddress: string): ComponentAddress | null {
       const templateAddressBytes = new TextEncoder().encode(templateAddress);
       for (const [substateId, substate] of upSubstates) {
@@ -105,6 +111,12 @@ export function getAcceptResultSubstates(txResult: TransactionResult): {
 } {
   const result = txResult.result?.result;
 
+  if (result && txResultCheck.isAcceptFeeRejectRest(result)) {
+    return {
+      upSubstates: result.AcceptFeeRejectRest[0].up_substates,
+      downSubstates: result.AcceptFeeRejectRest[0].down_substates,
+    };
+  }
   if (result && txResultCheck.isAccept(result)) {
     return { upSubstates: result.Accept.up_substates, downSubstates: result.Accept.down_substates };
   }
