@@ -44,22 +44,16 @@ export async function submitAndWaitForTransaction(
   req: SubmitTransactionRequest,
 ): Promise<SubmitTxResult> {
   try {
-    console.warn("🌟🌟🌟 [tarijs][submitAndWait] signer, req", signer, req);
     const response = await signer.submitTransaction(req);
-    console.warn("🌟🌟🌟 [tarijs][submitAndWait] response", response);
     const result = await waitForTransactionResult(signer, response.transaction_id);
-    console.warn("🌟🌟🌟 [tarijs][submitAndWait] tx result", result);
     const { upSubstates, downSubstates } = getAcceptResultSubstates(result);
-    console.warn("🌟🌟🌟 [tarijs][submitAndWait] substates", upSubstates, downSubstates);
     const newComponents = getSubstateValueFromUpSubstates("Component", upSubstates);
-    console.warn("🌟🌟🌟 [tarijs][submitAndWait] components", newComponents);
 
     function getComponentForTemplate(templateAddress: string): ComponentAddress | null {
-      const templateAddressBytes = new TextEncoder().encode(templateAddress);
       for (const [substateId, substate] of upSubstates) {
         if ("Component" in substate.substate) {
-          const componentHeader = substate.substate.Component;
-          if (componentHeader.template_address === templateAddressBytes) {
+          const componentTemplate = substate.substate.Component.template_address as any;
+          if (templateAddress === componentTemplate) {
             return substateIdToString(substateId);
           }
         }
