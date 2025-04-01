@@ -52,8 +52,10 @@ export async function submitAndWaitForTransaction(
     function getComponentForTemplate(templateAddress: string): ComponentAddress | null {
       for (const [substateId, substate] of upSubstates) {
         if ("Component" in substate.substate) {
-          const componentTemplate = substate.substate.Component.template_address as any;
-          if (templateAddress === componentTemplate) {
+          const templateAddr = substate.substate.Component.template_address;
+          const templateString =
+            typeof templateAddr === "string" ? templateAddr : new TextDecoder().decode(templateAddr);
+          if (templateAddress === templateString) {
             return substateIdToString(substateId);
           }
         }
