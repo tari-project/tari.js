@@ -75,7 +75,7 @@ export class TariUniverseSigner implements TariSigner {
     });
   }
 
-  public async createFreeTestCoins(): Promise<void> {
+  public async createFreeTestCoins(): Promise<AccountData> {
     return this.sendRequest({ methodName: "createFreeTestCoins", args: [] });
   }
 

@@ -6,12 +6,12 @@ import {
   TransactionStatus,
   DownSubstates,
   UpSubstates,
-  FinalizeResultStatus,
-  TxResultAccept,
   SubmitTxResult,
   ReqSubstate,
   SubmitTransactionRequest,
+  ComponentAddress,
 } from "@tari-project/tarijs-types";
+import { getSubstateValueFromUpSubstates, substateIdToString, txResultCheck } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
   transaction: Transaction,
@@ -46,10 +46,30 @@ export async function submitAndWaitForTransaction(
   try {
     const response = await signer.submitTransaction(req);
     const result = await waitForTransactionResult(signer, response.transaction_id);
+    const { upSubstates, downSubstates } = getAcceptResultSubstates(result);
+    const newComponents = getSubstateValueFromUpSubstates("Component", upSubstates);
+
+    function getComponentForTemplate(templateAddress: string): ComponentAddress | null {
+      for (const [substateId, substate] of upSubstates) {
+        if ("Component" in substate.substate) {
+          const templateAddr = substate.substate.Component.template_address;
+          const templateString =
+            typeof templateAddr === "string" ? templateAddr : new TextDecoder().decode(templateAddr);
+          if (templateAddress === templateString) {
+            return substateIdToString(substateId);
+          }
+        }
+      }
+      return null;
+    }
 
     return {
       response,
       result,
+      upSubstates,
+      downSubstates,
+      newComponents,
+      getComponentForTemplate,
     };
   } catch (e) {
     throw new Error(`Transaction failed: ${e}`);
@@ -81,17 +101,20 @@ export async function waitForTransactionResult(
   }
 }
 
-export function getAcceptResultSubstates(
-  txResult: TransactionResult,
-): { upSubstates: UpSubstates; downSubstates: DownSubstates } | undefined {
+export function getAcceptResultSubstates(txResult: TransactionResult): {
+  upSubstates: UpSubstates;
+  downSubstates: DownSubstates;
+} {
   const result = txResult.result?.result;
 
-  if (result && isAccept(result)) {
+  if (result && txResultCheck.isAcceptFeeRejectRest(result)) {
+    return {
+      upSubstates: result.AcceptFeeRejectRest[0].up_substates,
+      downSubstates: result.AcceptFeeRejectRest[0].down_substates,
+    };
+  }
+  if (result && txResultCheck.isAccept(result)) {
     return { upSubstates: result.Accept.up_substates, downSubstates: result.Accept.down_substates };
   }
-  return undefined;
-}
-
-function isAccept(result: FinalizeResultStatus): result is TxResultAccept {
-  return "Accept" in result;
+  return { upSubstates: [], downSubstates: [] };
 }
