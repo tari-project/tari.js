@@ -45,7 +45,7 @@ importers:
   docusaurus/tari-docs:
     dependencies:
       '@docusaurus/core':
-        specifier: 3.7.0
+        specifier: ^3.7.0
         version: 3.7.0(@mdx-js/react@3.1.0(@types/react@19.0.10)(react@19.0.0))(acorn@8.14.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.6.3)
       '@docusaurus/preset-classic':
         specifier: 3.7.0
