@@ -103,11 +103,6 @@ npm install @tari-project/tarijs
 
 ## Install a provider or signer.
 
-For this documentation, we will use the `Wallet Daemon Provider`, which allows direct connection to the wallet if you are hosting it locally.
-However, you are free to install any other available provider.
-
-```bash npm2yarn
-npm install @tari-project/wallet-daemon-provider
-```
-
-We will review all providers on their dedicated pages.
+In order to use the wallet, you will need to connect either to an Ootle indexer or a signer that allows you to interact with the Ootle via several clients. We explain more about providers and signers in the following section, but in short:
+- You will use an indexer when you simply want to obtain information from the Ootle.
+- A signer is used when you wish to modify, interact with or create on the Ootle.
