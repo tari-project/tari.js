@@ -2,15 +2,6 @@ import { TariSigner } from "@tari-project/tari-signer";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import {
-  ConfidentialViewVaultBalanceRequest,
-  Instruction,
-  KeyBranch,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
-  substateIdToString,
-  TransactionSubmitRequest,
-} from "@tari-project/wallet_jrpc_client";
-import {
   convertStringToTransactionStatus,
   GetTransactionResultResponse,
   SubmitTransactionRequest,
@@ -22,6 +13,15 @@ import {
   ListSubstatesResponse,
   ListSubstatesRequest,
 } from "@tari-project/tarijs-types";
+import {
+  ConfidentialViewVaultBalanceRequest,
+  Instruction,
+  KeyBranch,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
+  substateIdToString,
+  TransactionSubmitRequest,
+} from "@tari-project/typescript-bindings";
 
 const walletConnectParams = {
   requiredNamespaces: {
@@ -193,7 +193,7 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-    const method = "tari_submitTransaction";
+    const method = req.is_dry_run ? "tari_submitTransactionDryRun" : "tari_submitTransaction";
     const params: TransactionSubmitRequest = {
       transaction: {
         V1: {
