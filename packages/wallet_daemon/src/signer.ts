@@ -1,17 +1,7 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariConnection } from "./webrtc";
 import { TariSigner } from "@tari-project/tari-signer";
-import {
-  WalletDaemonClient,
-  substateIdToString,
-  Instruction,
-  SubstatesListRequest,
-  KeyBranch,
-  SubstateId,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
-  ConfidentialViewVaultBalanceRequest,
-} from "@tari-project/wallet_jrpc_client";
+import { WalletDaemonClient } from "@tari-project/wallet_jrpc_client";
 import { WebRtcRpcTransport } from "./webrtc_transport";
 import {
   AccountData,
@@ -25,6 +15,16 @@ import {
   ListSubstatesResponse,
   ListSubstatesRequest,
 } from "@tari-project/tarijs-types";
+import {
+  ConfidentialViewVaultBalanceRequest,
+  Instruction,
+  KeyBranch,
+  ListAccountNftRequest,
+  ListAccountNftResponse,
+  SubstateId,
+  substateIdToString,
+  SubstatesListRequest,
+} from "@tari-project/typescript-bindings";
 
 export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
 export const Unsupported = "UNSUPPORTED";
@@ -194,7 +194,9 @@ export class WalletDaemonTariSigner implements TariSigner {
       detect_inputs_use_unversioned: req.detect_inputs_use_unversioned,
     };
 
-    const res = await this.client.submitTransaction(params);
+    const res = req.is_dry_run
+      ? await this.client.submitTransactionDryRun(params)
+      : await this.client.submitTransaction(params);
     return { transaction_id: res.transaction_id };
   }
 

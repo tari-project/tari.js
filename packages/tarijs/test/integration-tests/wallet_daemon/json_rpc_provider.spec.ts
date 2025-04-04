@@ -1,6 +1,14 @@
 import { assert, describe, expect, it } from "vitest";
 
-import { Network, SubmitTransactionRequest, TariPermissions, WalletDaemonTariSigner } from "../../../src";
+import {
+  Network,
+  SubmitTransactionRequest,
+  TariPermissions,
+  TransactionStatus,
+  waitForTransactionResult,
+  WalletDaemonTariSigner,
+} from "../../../src";
+import { inspect } from "util";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
@@ -112,6 +120,37 @@ describe("WalletDaemonTariSigner", () => {
       expect(result).toMatchObject({
         transaction_id: expect.any(String),
       });
+    });
+
+    it("submits a dry run transaction", async () => {
+      const signer = await buildSigner();
+      const account = await signer.getAccount();
+
+      const request: SubmitTransactionRequest = {
+        network: Network.LocalNet,
+        account_id: account.account_id,
+        fee_instructions: [],
+        instructions: [
+          {
+            EmitLog: {
+              level: "Info",
+              message: "From Integration Test",
+            },
+          },
+        ],
+        inputs: [],
+        input_refs: [],
+        required_substates: [],
+        is_dry_run: true,
+        min_epoch: null,
+        max_epoch: null,
+        is_seal_signer_authorized: true,
+        detect_inputs_use_unversioned: true,
+      };
+      const result = await signer.submitTransaction(request);
+      const txResult = await waitForTransactionResult(signer, result.transaction_id);
+
+      expect(txResult.status).toEqual(TransactionStatus.DryRun);
     });
   });
 

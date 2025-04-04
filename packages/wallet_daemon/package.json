@@ -16,6 +16,7 @@
     "@tari-project/tari-permissions": "workspace:^",
     "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tarijs-types": "workspace:^",
+    "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet_jrpc_client": "catalog:"
   },
   "devDependencies": {

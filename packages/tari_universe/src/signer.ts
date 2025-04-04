@@ -11,14 +11,14 @@ import {
   ListAccountNftFromBalancesRequest,
 } from "@tari-project/tarijs-types";
 import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
+import { sendSignerCall } from "./utils";
+import { TariSigner } from "@tari-project/tari-signer";
 import {
   AccountsGetBalancesResponse,
   ConfidentialViewVaultBalanceRequest,
   ListAccountNftRequest,
   ListAccountNftResponse,
-} from "@tari-project/wallet_jrpc_client";
-import { sendSignerCall } from "./utils";
-import { TariSigner } from "@tari-project/tari-signer";
+} from "@tari-project/typescript-bindings";
 
 export class TariUniverseSigner implements TariSigner {
   public signerName = "TariUniverse";

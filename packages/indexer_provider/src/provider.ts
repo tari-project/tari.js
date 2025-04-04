@@ -70,7 +70,7 @@ export class IndexerProvider implements TariProvider {
 
   public async getSubstate({ substate_address, version }: GetSubstateRequest): Promise<Substate> {
     const resp = await this.client.getSubstate({
-      address: stringToSubstateId(substate_address),
+      address: substate_address,
       version: version ?? null,
       local_search_only: false,
     });
