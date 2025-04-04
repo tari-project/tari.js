@@ -193,7 +193,7 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-    const method = "tari_submitTransaction";
+    const method = req.is_dry_run ? "tari_submitTransactionDryRun" : "tari_submitTransaction";
     const params: TransactionSubmitRequest = {
       transaction: {
         V1: {
