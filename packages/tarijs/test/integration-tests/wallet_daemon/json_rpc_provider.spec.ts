@@ -1,9 +1,13 @@
 import { assert, describe, expect, it } from "vitest";
 
 import {
+  Amount,
+  buildTransactionRequest,
   Network,
+  submitAndWaitForTransaction,
   SubmitTransactionRequest,
   TariPermissions,
+  TransactionBuilder,
   TransactionStatus,
   waitForTransactionResult,
   WalletDaemonTariSigner,
@@ -252,6 +256,42 @@ describe("WalletDaemonTariSigner", () => {
       });
 
       expect(substates.every((substate) => substate.module_name)).toBe(true);
+    });
+  });
+
+  describe("allocateAddress", () => {
+    it("allocates component address", async () => {
+      const signer = await buildSigner();
+      const account = await signer.getAccount();
+
+      const fee = new Amount(2000);
+      const builder = new TransactionBuilder();
+      builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
+      builder.allocateAddress("Component", "id-1");
+      const transaction = builder.build();
+
+      const isDryRun = false;
+      const inputRefs = undefined;
+      const network = Network.LocalNet;
+      const requiredSubstates = [{ substate_id: account.address }];
+      const submitTransactionRequest = buildTransactionRequest(
+        transaction,
+        account.account_id,
+        requiredSubstates,
+        inputRefs,
+        isDryRun,
+        network,
+      );
+
+      const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
+
+      expect(txResult.result.status).toBe(TransactionStatus.OnlyFeeAccepted);
+
+      const executionResult = txResult.result.result?.result;
+      const reason =
+        executionResult && "AcceptFeeRejectRest" in executionResult && executionResult.AcceptFeeRejectRest[1];
+      const failure = reason && typeof reason === "object" && "ExecutionFailure" in reason && reason.ExecutionFailure;
+      expect(failure).toEqual("1 dangling address allocations remain after transaction execution");
     });
   });
 });
