@@ -14,6 +14,7 @@ import {
   TransactionSignature,
   UnsignedTransaction,
   PublishedTemplateAddress,
+  SubstateType,
   TransactionArg,
 } from "@tari-project/tarijs-types";
 
@@ -147,6 +148,15 @@ export class TransactionBuilder implements Builder {
     return this.addInstruction({
       ClaimBurn: {
         claim,
+      },
+    });
+  }
+
+  public allocateAddress(substateType: SubstateType, workspaceId: string): this {
+    return this.addInstruction({
+      AllocateAddress: {
+        substate_type: substateType,
+        workspace_id: workspaceId,
       },
     });
   }

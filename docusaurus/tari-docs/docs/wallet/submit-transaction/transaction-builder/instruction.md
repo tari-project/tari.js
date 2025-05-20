@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Instructions
 
-There are nine types of instructions. In most cases, you will not need to create raw instructions yourself but will instead use one of the methods provided by the Transaction Builder.
+There are ten types of instructions. In most cases, you will not need to create raw instructions yourself but will instead use one of the methods provided by the Transaction Builder.
 
 ## CreateAccount
 
@@ -103,6 +103,17 @@ DropAllProofsInWorkspace
   "CreateFreeTestCoins": {
     "revealed_amount": string,
     "output": ConfidentialOutput | null
+  }
+}
+```
+
+## AllocateAddress
+
+```json
+{
+  "AllocateAddress": {
+    "substate_type": string,
+    "workspace_id": string
   }
 }
 ```
