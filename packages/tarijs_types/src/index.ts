@@ -16,6 +16,7 @@ export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateRequirement } from "./SubstateRequirement";
+export { SubstateType } from "./SubstateType";
 export {
   TransactionResult,
   SubmitTxResult,
