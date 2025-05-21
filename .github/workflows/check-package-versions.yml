@@ -1,0 +1,22 @@
+# Check package versions
+name: Check Package Versions
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  check_versions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check package.json versions
+        run: ./scripts/check_versions.sh
