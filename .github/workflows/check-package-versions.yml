@@ -1,4 +1,4 @@
-#
+# Check package versions
 name: Check Package Versions
 
 on:
