@@ -23,7 +23,7 @@ export type CallFunction = {
 export type CallMethod = {
   CallMethod: { component_address: ComponentAddress; method: string; args: Array<TransactionArg> };
 };
-export type PutLastInstructionOutputOnWorkspace = { PutLastInstructionOutputOnWorkspace: { key: number[] } };
+export type PutLastInstructionOutputOnWorkspace = { PutLastInstructionOutputOnWorkspace: { key: string } };
 export type EmitLog = { EmitLog: { level: LogLevel; message: string } };
 export type ClaimBurn = { ClaimBurn: { claim: ConfidentialClaim } };
 export type ClaimValidatorFees = { ClaimValidatorFees: { epoch: number; validator_public_key: string } };

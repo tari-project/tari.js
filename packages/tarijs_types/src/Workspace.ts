@@ -1,3 +1,3 @@
 export interface WorkspaceArg {
-  Workspace: number[];
+  Workspace: string;
 }
