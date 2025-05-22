@@ -3,6 +3,7 @@ import { assert, describe, expect, it } from "vitest";
 import {
   Amount,
   buildTransactionRequest,
+  fromWorkspace,
   Network,
   submitAndWaitForTransaction,
   SubmitTransactionRequest,
@@ -12,7 +13,6 @@ import {
   waitForTransactionResult,
   WalletDaemonTariSigner,
 } from "../../../src";
-import { inspect } from "util";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
@@ -155,6 +155,50 @@ describe("WalletDaemonTariSigner", () => {
       const txResult = await waitForTransactionResult(signer, result.transaction_id);
 
       expect(txResult.status).toEqual(TransactionStatus.DryRun);
+    });
+
+    it("submits a transaction, that uses workspaces", async () => {
+      const workspaceId = "bucket";
+      const signer = await buildSigner();
+      const account = await signer.getAccount();
+      const xtrAddress = account.resources[0].resource_address;
+
+      const fee = new Amount(2000);
+      const builder = new TransactionBuilder();
+      builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
+
+      builder.callMethod(
+        {
+          componentAddress: account.address,
+          methodName: "withdraw",
+        },
+        [xtrAddress, 10],
+      );
+      builder.saveVar(workspaceId);
+      builder.callMethod(
+        {
+          componentAddress: account.address,
+          methodName: "deposit",
+        },
+        [fromWorkspace(workspaceId)],
+      );
+      const transaction = builder.build();
+
+      const isDryRun = false;
+      const inputRefs = undefined;
+      const network = Network.LocalNet;
+      const requiredSubstates = [{ substate_id: account.address }];
+      const submitTransactionRequest = buildTransactionRequest(
+        transaction,
+        account.account_id,
+        requiredSubstates,
+        inputRefs,
+        isDryRun,
+        network,
+      );
+
+      const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
+      expect(txResult.result.status).toBe(TransactionStatus.Accepted);
     });
   });
 
