@@ -8,7 +8,7 @@ import { TransactionArg, WorkspaceArg } from "@tari-project/tarijs-types";
  */
 export interface ParsedBuildersWorkspaceKey {
   name: string;
-  offset?: number;
+  offset: number | null;
 }
 
 /**
@@ -26,7 +26,7 @@ export function parseWorkspaceStringKey(key: string): ParsedBuildersWorkspaceKey
     throw new Error("Invalid workspace key format. Only one dot is allowed.");
   }
   const name = parts[0];
-  const offset = parts[1] ? parseInt(parts[1], 10) : undefined;
+  const offset = parts[1] ? parseInt(parts[1], 10) : null;
 
   return {
     name,
