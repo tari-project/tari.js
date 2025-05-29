@@ -1,6 +1,5 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
-import { toWorkspace } from "../helpers";
 
 import { TransactionRequest } from "./TransactionRequest";
 import {
@@ -16,7 +15,11 @@ import {
   PublishedTemplateAddress,
   SubstateType,
   TransactionArg,
+  WorkspaceOffsetId,
+  Amount,
 } from "@tari-project/tarijs-types";
+import { parseWorkspaceStringKey } from "../helpers";
+import { NamedArg } from "../helpers/workspace";
 
 export interface TransactionConstructor {
   new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
@@ -24,14 +27,16 @@ export interface TransactionConstructor {
 
 export interface TariFunctionDefinition {
   functionName: string;
-  args?: TransactionArg[];
+  args?: NamedArg[];
   templateAddress: PublishedTemplateAddress;
 }
 
 export interface TariMethodDefinition {
   methodName: string;
   args?: TransactionArg[];
-  componentAddress: ComponentAddress;
+  // These are mutually exclusive (TODO: define this properly in typescript)
+  componentAddress?: ComponentAddress;
+  callFromWorkspace?: string,
 }
 
 export interface TariCreateAccountDefinition {
@@ -92,6 +97,8 @@ export interface Builder {
 export class TransactionBuilder implements Builder {
   private unsignedTransaction: UnsignedTransaction;
   private signatures: TransactionSignature[];
+  private allocatedIds: Map<string, number>;
+  private current_id: number;
 
   constructor() {
     this.unsignedTransaction = {
@@ -103,33 +110,45 @@ export class TransactionBuilder implements Builder {
       maxEpoch: undefined,
     };
     this.signatures = [];
+    this.allocatedIds = new Map();
+    this.current_id = 0;
   }
 
   public callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this {
+    const resolvedArgs = this.resolveArgs(args);
     return this.addInstruction({
       CallFunction: {
         template_address: func.templateAddress,
         function: func.functionName,
-        args,
+        args: resolvedArgs,
       },
     });
   }
 
   public callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this {
+    const call = method.componentAddress ?
+      { ComponentAddress: method.componentAddress } :
+      // NOTE: offset IDs are not supported for method calls
+      { Workspace: this.getNamedId(method.callFromWorkspace!) };
+    const resolvedArgs = this.resolveArgs(args);
     return this.addInstruction({
       CallMethod: {
-        component_address: method.componentAddress,
+        call,
         method: method.methodName,
-        args,
+        args: resolvedArgs,
       },
     });
   }
 
   public createAccount(ownerPublicKey: string, workspaceBucket?: string): this {
+    const workspace_id = workspaceBucket ?
+      this.getOffsetIdFromWorkspaceName(workspaceBucket) :
+      undefined;
+
     return this.addInstruction({
       CreateAccount: {
         owner_public_key: ownerPublicKey,
-        workspace_bucket: workspaceBucket ?? null,
+        workspace_id,
       },
     });
   }
@@ -153,10 +172,22 @@ export class TransactionBuilder implements Builder {
   }
 
   public allocateAddress(substateType: SubstateType, workspaceId: string): this {
+    const workspace_id = this.addNamedId(workspaceId);
     return this.addInstruction({
       AllocateAddress: {
         substate_type: substateType,
-        workspace_id: workspaceId,
+        workspace_id,
+      },
+    });
+  }
+
+  public assertBucketContains(workspaceName: string, resource_address: ResourceAddress, min_amount: Amount): this {
+    const key = this.getOffsetIdFromWorkspaceName(workspaceName);
+    return this.addInstruction({
+      AssertBucketContains: {
+        key,
+        resource_address,
+        min_amount,
       },
     });
   }
@@ -166,10 +197,11 @@ export class TransactionBuilder implements Builder {
    * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
    * to make saving variables easier.
    */
-  public saveVar(key: string): this {
+  public saveVar(name: string): this {
+    let key = this.addNamedId(name);
     return this.addInstruction({
       PutLastInstructionOutputOnWorkspace: {
-        key: toWorkspace(key),
+        key,
       },
     });
   }
@@ -282,4 +314,35 @@ export class TransactionBuilder implements Builder {
   public build(): Transaction {
     return new TransactionRequest(this.unsignedTransaction, this.signatures);
   }
+
+  private addNamedId(name: string): number {
+    const id = this.current_id;
+    this.allocatedIds.set(name, id);
+    this.current_id += 1;
+    return id;
+  }
+
+  private getNamedId(name: string): number | undefined {
+    return this.allocatedIds.get(name);
+  }
+
+  private getOffsetIdFromWorkspaceName( name: string ) : WorkspaceOffsetId {
+    const parsed = parseWorkspaceStringKey(name);
+    const id = this.getNamedId(parsed.name);
+    if (id === undefined) {
+      throw new Error(`No workspace with name ${parsed.name} found`);
+    }
+    return { id, offset: parsed.offset };
+  }
+
+  private resolveArgs(args: NamedArg[]): TransactionArg[] {
+    return args.map((arg) => {
+      if (typeof arg === "object" && "Workspace" in arg) {
+        const workspaceId = this.getOffsetIdFromWorkspaceName(arg.Workspace);
+        return { Workspace: workspaceId };
+      }
+      return arg;
+    });
+  }
+  
 }

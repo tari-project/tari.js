@@ -11,8 +11,6 @@ import {
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,
-  fromWorkspace,
-  toWorkspace,
 } from "@tari-project/tarijs-builders";
 import {
   convertStringToTransactionStatus,
@@ -73,8 +71,6 @@ export {
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,
-  fromWorkspace,
-  toWorkspace,
   convertHexStringToU256Array,
   convertU256ToHexString,
   createNftAddressFromResource,
