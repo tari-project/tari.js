@@ -10,7 +10,7 @@ catalogs:
       specifier: ^18.2.0
       version: 18.3.1
     '@tari-project/typescript-bindings':
-      specifier: '=1.8.2'
+      specifier: '>=1.8.2'
       version: 1.8.2
     '@tari-project/wallet_jrpc_client':
       specifier: ^1.6.0
