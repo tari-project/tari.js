@@ -184,6 +184,7 @@ export class WalletDaemonTariSigner implements TariSigner {
           })),
           min_epoch: null,
           max_epoch: null,
+          dry_run: req.is_dry_run,
           is_seal_signer_authorized: req.is_seal_signer_authorized,
         },
       },

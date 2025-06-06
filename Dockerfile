@@ -19,9 +19,9 @@ RUN apt-get update && apt-get install -y \
     && /bin/bash -c "source ~/.bashrc && source ~/.profile"
 
 
-# Clone tari-dan repo at the same level (required for building)
+# Clone tari-ootle repo at the same level (required for building)
 WORKDIR /
-RUN git clone https://github.com/tari-project/tari-dan.git
+RUN git clone https://github.com/tari-project/tari-ootle.git
 
 # Set up project
 WORKDIR /app

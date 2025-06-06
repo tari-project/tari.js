@@ -35,8 +35,8 @@ for version in "${versions[@]}"; do
 done
 
 if [ "$all_same" = false ]; then
-    echo "::error::All package.json versions are NOT the same. Please unify them."
+    echo "❌ ::error::All package.json versions are NOT the same. Please unify them."
     exit 1
 else
-    echo "All package.json versions are consistent: $reference_version"
+    echo "✅ All package.json versions are consistent: $reference_version"
 fi

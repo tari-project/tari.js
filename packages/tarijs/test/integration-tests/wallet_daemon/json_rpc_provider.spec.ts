@@ -3,7 +3,6 @@ import { assert, describe, expect, it } from "vitest";
 import {
   Amount,
   buildTransactionRequest,
-  fromWorkspace,
   Network,
   submitAndWaitForTransaction,
   SubmitTransactionRequest,
@@ -180,7 +179,7 @@ describe("WalletDaemonTariSigner", () => {
           componentAddress: account.address,
           methodName: "deposit",
         },
-        [fromWorkspace(workspaceId)],
+        [workspaceId],
       );
       const transaction = builder.build();
 
@@ -336,6 +335,42 @@ describe("WalletDaemonTariSigner", () => {
         executionResult && "AcceptFeeRejectRest" in executionResult && executionResult.AcceptFeeRejectRest[1];
       const failure = reason && typeof reason === "object" && "ExecutionFailure" in reason && reason.ExecutionFailure;
       expect(failure).toEqual("1 dangling address allocations remain after transaction execution");
+    });
+  });
+
+  describe("assertBucketContains", () => {
+    it("fails if bucket does not exist", async () => {
+      const signer = await buildSigner();
+      const account = await signer.getAccount();
+
+      const fee = new Amount(2000);
+      const builder = new TransactionBuilder();
+      builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
+      builder.assertBucketContains("not_exist", "resource_0000000000000000000000000000000000000000000000000000000000000000", Amount.newAmount(1));
+      const transaction = builder.build();
+
+      const isDryRun = false;
+      const inputRefs = undefined;
+      const network = Network.LocalNet;
+      const requiredSubstates = [{ substate_id: account.address }];
+      const submitTransactionRequest = buildTransactionRequest(
+        transaction,
+        account.account_id,
+        requiredSubstates,
+        inputRefs,
+        isDryRun,
+        network,
+      );
+
+      const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
+
+      expect(txResult.result.status).toBe(TransactionStatus.OnlyFeeAccepted);
+
+      const executionResult = txResult.result.result?.result;
+      const reason =
+        executionResult && "AcceptFeeRejectRest" in executionResult && executionResult.AcceptFeeRejectRest[1];
+      const failure = reason && typeof reason === "object" && "ExecutionFailure" in reason && reason.ExecutionFailure;
+      expect(failure).toContain("Item at id 0 does not exist on the workspace");
     });
   });
 });
