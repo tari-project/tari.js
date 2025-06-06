@@ -227,7 +227,7 @@ export class MetamaskTariSigner implements TariSigner {
 }
 
 function convertToStatus(result: any): TransactionStatus {
-  // Ref: https://github.com/tari-project/tari-dan/blob/bb0b31139b770aacd7bb49af865543aa4a9e2de4/dan_layer/wallet/sdk/src/apis/transaction.rs
+  // Ref: https://github.com/tari-project/tari-ootle/blob/bb0b31139b770aacd7bb49af865543aa4a9e2de4/dan_layer/wallet/sdk/src/apis/transaction.rs
   if (result.final_decision !== "Commit") {
     return TransactionStatus.Rejected;
   }
