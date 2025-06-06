@@ -12,7 +12,7 @@ import {
 
 
 ///TODO this implementation is not fully done, see:
-/// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
+/// https://github.com/tari-project/tari-ootle/blob/development/dan_layer/transaction/src/transaction.rs
 export class TransactionRequest implements Transaction {
   id: string;
   V1: TransactionV1;

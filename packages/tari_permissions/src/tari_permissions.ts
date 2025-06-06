@@ -102,17 +102,6 @@ export class NonFungibleAddress {
   }
 }
 
-export class NonFungibleIndexAddress {
-  private resource_address: ResourceAddress;
-  private index: number;
-  constructor(resource_address: ResourceAddress, index: number) {
-    this.resource_address = resource_address;
-    this.index = index;
-  }
-  toJSON() {
-    return { resource_address: this.resource_address, index: this.index };
-  }
-}
 
 export class ComponentAddress {
   private tagged: Tagged;
@@ -139,8 +128,7 @@ export type SubstateAddressType =
   | ComponentAddress
   | VaultId
   | UnclaimedConfidentialOutputAddress
-  | NonFungibleAddress
-  | NonFungibleIndexAddress;
+  | NonFungibleAddress;
 
 export class SubstateAddress {
   private value: SubstateAddressType;
@@ -156,10 +144,6 @@ export class SubstateAddress {
       return { Vault: this.value };
     } else if (this.value instanceof UnclaimedConfidentialOutputAddress) {
       return { UnclaimedConfidentialOutput: this.value };
-    } else if (this.value instanceof NonFungibleAddress) {
-      return { NonFungible: this.value };
-    } else if (this.value instanceof NonFungibleIndexAddress) {
-      return { NonFungibleIndex: this.value };
     }
     throw "Unknown type";
   }
