@@ -15,7 +15,6 @@ export { GetTransactionResultResponse } from "./GetTransactionResultResponse";
 export { Instruction } from "./Instruction";
 export { Transaction } from "./Transaction";
 export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
-export { SubstateRequirement } from "./SubstateRequirement";
 export { SubstateType } from "./SubstateType";
 export {
   TransactionResult,
@@ -25,8 +24,6 @@ export {
 } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
 export { TransactionStatus } from "./TransactionStatus";
-export { UnsignedTransaction } from "./UnsignedTransaction";
-export { VersionedSubstateId } from "./VersionedSubstateId";
 export { WorkspaceArg } from "./Workspace";
 export { ListAccountNftFromBalancesRequest } from "./ListAccountNftFromBalancesRequest";
 export { Network } from "./network";

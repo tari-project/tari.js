@@ -200,11 +200,7 @@ export class WalletConnectTariSigner implements TariSigner {
           network: req.network,
           fee_instructions: req.fee_instructions as Instruction[],
           instructions: req.instructions as Instruction[],
-          inputs: req.required_substates.map((s) => ({
-            // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-            substate_id: s.substate_id as any,
-            version: s.version ?? null,
-          })),
+          inputs: req.inputs,
           min_epoch: null,
           max_epoch: null,
           dry_run: req.is_dry_run,

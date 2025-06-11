@@ -20,11 +20,9 @@ The transaction request has additional parameters. Therefore, you build it using
 const isDryRun = false;
 const inputRefs = undefined; // Obsolete
 const network = Network.LocalNet;
-const requiredSubstates = []; // Soon to be retired. Use `builder.withInputs()` instead.
 const submitTransactionRequest = buildTransactionRequest(
   transaction,
   account.account_id,
-  requiredSubstates,
   inputRefs,
   isDryRun,
   network

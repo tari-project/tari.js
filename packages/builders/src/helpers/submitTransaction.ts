@@ -16,8 +16,6 @@ import { getSubstateValueFromUpSubstates, substateIdToString, txResultCheck } fr
 export function buildTransactionRequest(
   transaction: Transaction,
   accountId: number,
-  requiredSubstates: ReqSubstate[],
-  inputRefs = [],
   isDryRun = false,
   network = 0,
   isSealSignerAuthorized = true,
@@ -29,8 +27,6 @@ export function buildTransactionRequest(
     instructions: transaction.instructions as object[],
     fee_instructions: transaction.feeInstructions as object[],
     inputs: transaction.inputs,
-    input_refs: inputRefs as object[],
-    required_substates: requiredSubstates,
     is_dry_run: isDryRun,
     min_epoch: transaction.minEpoch ?? null,
     max_epoch: transaction.maxEpoch ?? null,

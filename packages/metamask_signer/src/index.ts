@@ -118,8 +118,6 @@ export class MetamaskTariSigner implements TariSigner {
     const params = {
       instructions: req.instructions,
       fee_instructions: req.fee_instructions,
-      input_refs: req.input_refs,
-      required_substates: req.required_substates || [],
       is_dry_run: req.is_dry_run,
     };
 
