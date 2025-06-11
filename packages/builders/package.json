@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs-builders",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -15,7 +15,8 @@
   "dependencies": {
     "@tari-project/tari-signer": "workspace:^",
     "@tari-project/tari-universe-signer": "workspace:^",
-    "@tari-project/tarijs-types": "workspace:^"
+    "@tari-project/tarijs-types": "workspace:^",
+    "@tari-project/typescript-bindings": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

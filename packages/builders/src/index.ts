@@ -4,6 +4,5 @@ export {
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,
-  fromWorkspace,
-  toWorkspace,
+  parseWorkspaceStringKey,
 } from "./helpers";

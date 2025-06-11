@@ -3,74 +3,77 @@ import {
   Instruction,
   SubstateRequirement,
   Transaction,
+  UnsignedTransactionV1,
   TransactionSignature,
-  UnsignedTransaction,
   VersionedSubstateId,
-} from "@tari-project/tarijs-types";
+  TransactionV1,
+} from "@tari-project/typescript-bindings";
+
+
 
 ///TODO this implementation is not fully done, see:
-/// https://github.com/tari-project/tari-dan/blob/development/dan_layer/transaction/src/transaction.rs
+/// https://github.com/tari-project/tari-ootle/blob/development/dan_layer/transaction/src/transaction.rs
 export class TransactionRequest implements Transaction {
   id: string;
-  feeInstructions: Array<Instruction>;
-  instructions: Array<Instruction>;
-  inputs: Array<SubstateRequirement>;
-  signatures: Array<TransactionSignature>;
-  unsignedTransaction: UnsignedTransaction;
-  minEpoch?: Epoch;
-  maxEpoch?: Epoch;
-  filledInputs: VersionedSubstateId[];
+  V1: TransactionV1;
 
-  constructor(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]) {
+  constructor(unsignedTransaction: UnsignedTransactionV1, signatures: TransactionSignature[]) {
     this.id = "";
-    this.feeInstructions = unsignedTransaction.feeInstructions;
-    this.instructions = unsignedTransaction.instructions;
-    this.inputs = unsignedTransaction.inputs;
-    this.signatures = signatures;
-    this.minEpoch = unsignedTransaction.minEpoch;
-    this.maxEpoch = unsignedTransaction.maxEpoch;
-    // Inputs filled by some authority. These are not part of the transaction hash nor the signature
-    this.filledInputs = [];
+    this.V1 = {
+      body: {
+        transaction: unsignedTransaction,
+        signatures,
+      },
+      seal_signature: {
+        public_key: "",
+        signature: {
+          public_nonce: "",
+          signature: "",
+        }
+      },
+      // Inputs filled by some authority. These are not part of the transaction hash nor the signature
+      filled_inputs: []
+    };
   }
 
   withFilledInputs(filled_inputs: Array<VersionedSubstateId>): this {
     return { ...this, filled_inputs };
   }
 
-  getUnsignedTransaction(): UnsignedTransaction {
-    return this.unsignedTransaction;
+  getUnsignedTransaction(): UnsignedTransactionV1 {
+    return this.V1.body.transaction;
   }
 
   getFeeInstructions(): Instruction[] {
-    return this.feeInstructions;
+    return this.V1.body.transaction.fee_instructions;
   }
 
   getInstructions(): Instruction[] {
-    return this.instructions;
+    return this.V1.body.transaction.instructions;
   }
 
   getSignatures(): TransactionSignature[] {
-    return this.signatures;
+    return this.V1.body.signatures;
   }
 
   getInputs(): SubstateRequirement[] {
-    return this.inputs;
+    return this.V1.body.transaction.inputs;
   }
 
   getFilledInputs(): VersionedSubstateId[] {
-    return this.filledInputs;
+    return this.V1.filled_inputs;
   }
 
   getFilledInputsMut(): VersionedSubstateId[] {
-    return this.filledInputs;
+    return this.V1.filled_inputs;
   }
 
-  getMinEpoch(): Epoch | undefined {
-    return this.minEpoch;
+  getMinEpoch(): Epoch | null {
+    return this.V1.body.transaction.min_epoch;
   }
 
-  getMaxEpoch(): Epoch | undefined {
-    return this.maxEpoch;
+  getMaxEpoch(): Epoch | null {
+    return this.V1.body.transaction.max_epoch;
   }
 
   setId(id: string): void {

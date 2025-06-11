@@ -13,7 +13,6 @@ A required substate has one of the following types:
 - Vault
 - UnclaimedConfidentialOutput
 - NonFungible
-- NonFungibleIndex
 - TransactionReceipt
 - Template
 - ValidatorFeePool

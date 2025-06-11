@@ -1,2 +1,2 @@
 export { buildTransactionRequest, submitAndWaitForTransaction, waitForTransactionResult } from "./submitTransaction";
-export { fromWorkspace, toWorkspace } from "./workspace";
+export { parseWorkspaceStringKey, NamedArg } from "./workspace";

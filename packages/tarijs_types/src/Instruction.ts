@@ -1,4 +1,4 @@
-import { ComponentAddress, LogLevel, PublishedTemplateAddress, SubstateType } from "@tari-project/typescript-bindings";
+import { ComponentAddress, ResourceAddress, LogLevel, PublishedTemplateAddress, SubstateType, WorkspaceOffsetId } from "@tari-project/typescript-bindings";
 import { TransactionArg } from "./TransactionArg";
 import { ConfidentialClaim } from "./ConfidentialClaim";
 import { Amount } from "./Amount";
@@ -14,7 +14,8 @@ export type Instruction =
   | ClaimValidatorFees
   | DropAllProofsInWorkspace
   | CreateFreeTestCoins
-  | AllocateAddress;
+  | AllocateAddress
+  | AssertBucketContains;
 
 export type CreateAccount = { CreateAccount: { owner_public_key: string; workspace_bucket: string | null } };
 export type CallFunction = {
@@ -34,3 +35,6 @@ export type CreateFreeTestCoins = {
 export type AllocateAddress = {
   AllocateAddress: { substate_type: SubstateType; workspace_id: string };
 };
+export type AssertBucketContains = {
+  AssertBucketContains: { key: WorkspaceOffsetId; resource_address: ResourceAddress; min_amount: Amount };
+}

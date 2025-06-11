@@ -1,1 +1,1 @@
-export type SubstateType = "Component" | "Resource" | "Vault" | "UnclaimedConfidentialOutput" | "NonFungible" | "TransactionReceipt" | "NonFungibleIndex" | "ValidatorFeePool" | "Template";
+export type SubstateType = "Component" | "Resource" | "Vault" | "UnclaimedConfidentialOutput" | "NonFungible" | "TransactionReceipt" | "ValidatorFeePool" | "Template";
