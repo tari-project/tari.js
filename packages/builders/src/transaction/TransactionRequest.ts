@@ -10,7 +10,6 @@ import {
 } from "@tari-project/typescript-bindings";
 
 
-
 ///TODO this implementation is not fully done, see:
 /// https://github.com/tari-project/tari-ootle/blob/development/dan_layer/transaction/src/transaction.rs
 export class TransactionRequest implements Transaction {
@@ -29,10 +28,8 @@ export class TransactionRequest implements Transaction {
         signature: {
           public_nonce: "",
           signature: "",
-        }
+        },
       },
-      // Inputs filled by some authority. These are not part of the transaction hash nor the signature
-      filled_inputs: []
     };
   }
 
@@ -58,14 +55,6 @@ export class TransactionRequest implements Transaction {
 
   getInputs(): SubstateRequirement[] {
     return this.V1.body.transaction.inputs;
-  }
-
-  getFilledInputs(): VersionedSubstateId[] {
-    return this.V1.filled_inputs;
-  }
-
-  getFilledInputsMut(): VersionedSubstateId[] {
-    return this.V1.filled_inputs;
   }
 
   getMinEpoch(): Epoch | null {

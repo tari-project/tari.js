@@ -5,17 +5,16 @@ import {
   convertStringToTransactionStatus,
   GetTransactionResultResponse,
   SubmitTransactionRequest,
-  SubmitTransactionResponse,
   VaultBalances,
   TemplateDefinition,
   Substate,
   AccountData,
   ListSubstatesResponse,
   ListSubstatesRequest,
+  SubmitTransactionResponse,
 } from "@tari-project/tarijs-types";
 import {
   ConfidentialViewVaultBalanceRequest,
-  Instruction,
   KeyBranch,
   ListAccountNftRequest,
   ListAccountNftResponse,
@@ -40,7 +39,7 @@ const walletConnectParams = {
         "tari_getNftsList",
       ],
       chains: ["tari:devnet"],
-      events: ['chainChanged", "accountsChanged'],
+      events: ["chainChanged\", \"accountsChanged"],
     },
   },
 };
@@ -152,11 +151,11 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   public async listSubstates({
-    filter_by_template,
-    filter_by_type,
-    limit,
-    offset,
-  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+                               filter_by_template,
+                               filter_by_type,
+                               limit,
+                               offset,
+                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const method = "tari_listSubstates";
     const params = {
       filter_by_template,
@@ -193,26 +192,12 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-    const method = req.is_dry_run ? "tari_submitTransactionDryRun" : "tari_submitTransaction";
+    const method = req.transaction.dry_run ? "tari_submitTransactionDryRun" : "tari_submitTransaction";
     const params: TransactionSubmitRequest = {
       transaction: {
-        V1: {
-          network: req.network,
-          fee_instructions: req.fee_instructions as Instruction[],
-          instructions: req.instructions as Instruction[],
-          inputs: req.required_substates.map((s) => ({
-            // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-            substate_id: s.substate_id as any,
-            version: s.version ?? null,
-          })),
-          min_epoch: null,
-          max_epoch: null,
-          dry_run: req.is_dry_run,
-          is_seal_signer_authorized: req.is_seal_signer_authorized,
-        },
+        V1: req.transaction,
       },
       signing_key_index: req.account_id,
-      autofill_inputs: [],
       detect_inputs: true,
       proof_ids: [],
       detect_inputs_use_unversioned: req.detect_inputs_use_unversioned,
@@ -244,11 +229,11 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async getConfidentialVaultBalances({
-    vault_id,
-    view_key_id,
-    maximum_expected_value = null,
-    minimum_expected_value = null,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+                                       vault_id,
+                                       view_key_id,
+                                       maximum_expected_value = null,
+                                       minimum_expected_value = null,
+                                     }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const method = "tari_viewConfidentialVaultBalance";
     const params = {
       view_key_id,

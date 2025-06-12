@@ -173,29 +173,15 @@ export class WalletDaemonTariSigner implements TariSigner {
   public async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
     const params = {
       transaction: {
-        V1: {
-          network: req.network,
-          instructions: req.instructions as Instruction[],
-          fee_instructions: req.fee_instructions as Instruction[],
-          inputs: req.required_substates.map((s) => ({
-            // TODO: Hmm The bindings want a SubstateId object, but the wallet only wants a string. Any is used to skip type checking here
-            substate_id: s.substate_id as any,
-            version: s.version ?? null,
-          })),
-          min_epoch: null,
-          max_epoch: null,
-          dry_run: req.is_dry_run,
-          is_seal_signer_authorized: req.is_seal_signer_authorized,
-        },
+        V1: req.transaction,
       },
       signing_key_index: req.account_id,
-      autofill_inputs: [],
       detect_inputs: true,
       proof_ids: [],
       detect_inputs_use_unversioned: req.detect_inputs_use_unversioned,
     };
 
-    const res = req.is_dry_run
+    const res = req.transaction.dry_run
       ? await this.client.submitTransactionDryRun(params)
       : await this.client.submitTransaction(params);
     return { transaction_id: res.transaction_id };
@@ -222,11 +208,11 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getConfidentialVaultBalances({
-    vault_id,
-    view_key_id,
-    maximum_expected_value = null,
-    minimum_expected_value = null,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+                                              vault_id,
+                                              view_key_id,
+                                              maximum_expected_value = null,
+                                              minimum_expected_value = null,
+                                            }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const res = await this.client.viewVaultBalance({
       view_key_id,
       vault_id,
@@ -237,11 +223,11 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async listSubstates({
-    filter_by_template,
-    filter_by_type,
-    limit,
-    offset,
-  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+                               filter_by_template,
+                               filter_by_type,
+                               limit,
+                               offset,
+                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.substatesList({
       filter_by_template,
       filter_by_type,

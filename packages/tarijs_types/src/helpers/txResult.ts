@@ -1,5 +1,4 @@
 import {
-  SubstateDiff,
   VaultId,
   Vault,
   SubstateId,
@@ -7,11 +6,9 @@ import {
   ResourceContainer,
   ResourceAddress,
   Amount,
-  RejectReason,
   substateIdToString,
-  ComponentAddress,
+  ComponentAddress, FinalizeResult,
 } from "@tari-project/typescript-bindings";
-import { FinalizeResultStatus } from "../FinalizeResult";
 import { UpSubstates } from "../SubstateDiff";
 
 function isOfType<T extends object>(obj: T, key: keyof T): boolean {
@@ -19,8 +16,8 @@ function isOfType<T extends object>(obj: T, key: keyof T): boolean {
 }
 
 export const txResultCheck = {
-  isAccept: (result: FinalizeResultStatus): result is { Accept: SubstateDiff } => {
-    return "Accept" in result;
+  isAccept: (result: FinalizeResult) => {
+    return "Accept" in result.result;
   },
 
   isVaultId: (substateId: SubstateId): substateId is { Vault: VaultId } => {
@@ -37,13 +34,13 @@ export const txResultCheck = {
     return "Fungible" in resourceContainer;
   },
 
-  isReject: (result: FinalizeResultStatus): result is { Reject: RejectReason } => {
-    return "Reject" in result;
+  isReject: (result: FinalizeResult): boolean => {
+    return "Reject" in result.result;
   },
   isAcceptFeeRejectRest: (
-    result: FinalizeResultStatus,
-  ): result is { AcceptFeeRejectRest: [SubstateDiff, RejectReason] } => {
-    return "AcceptFeeRejectRest" in result;
+    result: FinalizeResult,
+  ): boolean => {
+    return "AcceptFeeRejectRest" in result.result;
   },
 };
 

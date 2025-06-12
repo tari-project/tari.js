@@ -1,40 +1,28 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 import { TariSigner } from "@tari-project/tari-signer";
 import {
-  Transaction,
+  ComponentAddress,
+  substateIdToString,
   TransactionResult,
-  TransactionStatus,
+  UnsignedTransactionV1,
+} from "@tari-project/typescript-bindings";
+import {
   DownSubstates,
   UpSubstates,
-  SubmitTxResult,
-  ReqSubstate,
+  getSubstateValueFromUpSubstates,
   SubmitTransactionRequest,
-  ComponentAddress,
+  TransactionStatus,
 } from "@tari-project/tarijs-types";
-import { getSubstateValueFromUpSubstates, substateIdToString, txResultCheck } from "@tari-project/tarijs-types";
+import { SubmitTxResult } from "@tari-project/tarijs-types/dist/TransactionResult";
 
 export function buildTransactionRequest(
-  transaction: Transaction,
+  transaction: UnsignedTransactionV1,
   accountId: number,
-  requiredSubstates: ReqSubstate[],
-  inputRefs = [],
-  isDryRun = false,
-  network = 0,
-  isSealSignerAuthorized = true,
   detectInputsUseUnversioned = true,
 ): SubmitTransactionRequest {
   return {
-    network,
+    transaction,
     account_id: accountId,
-    instructions: transaction.instructions as object[],
-    fee_instructions: transaction.feeInstructions as object[],
-    inputs: transaction.inputs,
-    input_refs: inputRefs as object[],
-    required_substates: requiredSubstates,
-    is_dry_run: isDryRun,
-    min_epoch: transaction.minEpoch ?? null,
-    max_epoch: transaction.maxEpoch ?? null,
-    is_seal_signer_authorized: isSealSignerAuthorized,
     detect_inputs_use_unversioned: detectInputsUseUnversioned,
   };
 }
@@ -95,7 +83,7 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp as TransactionResult;
+      return resp.result?.result!;
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
@@ -105,16 +93,23 @@ export function getAcceptResultSubstates(txResult: TransactionResult): {
   upSubstates: UpSubstates;
   downSubstates: DownSubstates;
 } {
-  const result = txResult.result?.result;
-
-  if (result && txResultCheck.isAcceptFeeRejectRest(result)) {
+  if ("Accept" in txResult) {
     return {
-      upSubstates: result.AcceptFeeRejectRest[0].up_substates,
-      downSubstates: result.AcceptFeeRejectRest[0].down_substates,
+      upSubstates: txResult.Accept.up_substates,
+      downSubstates: txResult.Accept.down_substates,
     };
   }
-  if (result && txResultCheck.isAccept(result)) {
-    return { upSubstates: result.Accept.up_substates, downSubstates: result.Accept.down_substates };
+
+  if ("Reject" in txResult) {
+    throw new Error(`Transaction rejected: ${txResult.Reject}`);
   }
-  return { upSubstates: [], downSubstates: [] };
+
+  if ("AcceptFeeRejectRest" in txResult) {
+    return {
+      upSubstates: txResult.AcceptFeeRejectRest[0].up_substates,
+      downSubstates: txResult.AcceptFeeRejectRest[0].down_substates,
+    };
+  }
+
+  throw new Error(`Unexpected transaction result: ${JSON.stringify(txResult)}`);
 }

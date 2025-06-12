@@ -1,7 +1,7 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { transports } from "@tari-project/wallet_jrpc_client";
 
-class SignaligServer {
+class SignalingServer {
   private _token?: string;
   private _server_url: string;
 
@@ -72,7 +72,7 @@ class SignaligServer {
 export class TariConnection {
   private _peerConnection: RTCPeerConnection;
   private _dataChannel: RTCDataChannel;
-  private _signalingServer: SignaligServer;
+  private _signalingServer: SignalingServer;
   private _callbacks: { [key: string]: any[] };
   private _offer?: RTCSessionDescriptionInit;
   private _walletToken: string | undefined;
@@ -83,7 +83,7 @@ export class TariConnection {
   constructor(signalig_server_url?: string, config?: RTCConfiguration) {
     this._peerConnection = new RTCPeerConnection(config || this.config());
     this._dataChannel = this._peerConnection.createDataChannel("tari-data");
-    this._signalingServer = new SignaligServer(signalig_server_url);
+    this._signalingServer = new SignalingServer(signalig_server_url);
     this._callbacks = {};
   }
 
