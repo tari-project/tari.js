@@ -1,4 +1,8 @@
-import { SubstateType, TemplateDef, SubstateRequirement } from "@tari-project/typescript-bindings";
+import {
+  SubstateType,
+  TemplateDef,
+  UnsignedTransactionV1,
+} from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
@@ -13,15 +17,8 @@ export type ReqSubstate = {
 };
 
 export type SubmitTransactionRequest = {
-  network: number;
+  transaction: UnsignedTransactionV1,
   account_id: number;
-  instructions: object[];
-  fee_instructions: object[];
-  inputs: SubstateRequirement[];
-  is_dry_run: boolean;
-  min_epoch: number | null;
-  max_epoch: number | null;
-  is_seal_signer_authorized: boolean;
   detect_inputs_use_unversioned: boolean;
 };
 

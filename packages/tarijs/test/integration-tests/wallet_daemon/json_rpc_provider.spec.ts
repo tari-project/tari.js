@@ -12,6 +12,7 @@ import {
   waitForTransactionResult,
   WalletDaemonTariSigner,
 } from "../../../src";
+import { Instruction, SubstateId } from "@tari-project/typescript-bindings";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
@@ -102,19 +103,21 @@ describe("WalletDaemonTariSigner", () => {
             args: [`Amount(${fee})`],
           },
         },
-      ];
+      ] as Instruction[];
 
       const request: SubmitTransactionRequest = {
-        network: Network.LocalNet,
-        account_id: account.account_id,
-        fee_instructions,
-        instructions: [],
-        inputs: [],
-        is_dry_run: false,
-        min_epoch: null,
-        max_epoch: null,
-        is_seal_signer_authorized: true,
+        transaction: {
+          network: Network.LocalNet,
+          fee_instructions,
+          instructions: [],
+          inputs: [],
+          dry_run: false,
+          min_epoch: null,
+          max_epoch: null,
+          is_seal_signer_authorized: true,
+        },
         detect_inputs_use_unversioned: true,
+        account_id: account.account_id,
       };
       const result = await signer.submitTransaction(request);
 
@@ -128,22 +131,24 @@ describe("WalletDaemonTariSigner", () => {
       const account = await signer.getAccount();
 
       const request: SubmitTransactionRequest = {
-        network: Network.LocalNet,
-        account_id: account.account_id,
-        fee_instructions: [],
-        instructions: [
-          {
-            EmitLog: {
-              level: "Info",
-              message: "From Integration Test",
+        transaction: {
+          network: Network.LocalNet,
+          fee_instructions: [],
+          instructions: [
+            {
+              EmitLog: {
+                level: "Info",
+                message: "From Integration Test",
+              },
             },
-          },
-        ],
-        inputs: [],
-        is_dry_run: true,
-        min_epoch: null,
-        max_epoch: null,
-        is_seal_signer_authorized: true,
+          ],
+          inputs: [],
+          dry_run: true,
+          min_epoch: null,
+          max_epoch: null,
+          is_seal_signer_authorized: true,
+        },
+        account_id: account.account_id,
         detect_inputs_use_unversioned: true,
       };
       const result = await signer.submitTransaction(request);
@@ -159,7 +164,8 @@ describe("WalletDaemonTariSigner", () => {
       const xtrAddress = account.resources[0].resource_address;
 
       const fee = new Amount(2000);
-      const builder = new TransactionBuilder();
+      const network = Network.LocalNet;
+      const builder = new TransactionBuilder(network);
       builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
 
       builder.callMethod(
@@ -177,19 +183,12 @@ describe("WalletDaemonTariSigner", () => {
         },
         [workspaceId],
       );
-      const transaction = builder.build();
+      builder.addInput({ substate_id: { Component: account.address }, version: null });
+      const transaction = builder.buildUnsignedTransaction();
 
-      const isDryRun = false;
-      const inputRefs = undefined;
-      const network = Network.LocalNet;
-      const requiredSubstates = [{ substate_id: account.address }];
       const submitTransactionRequest = buildTransactionRequest(
         transaction,
         account.account_id,
-        requiredSubstates,
-        inputRefs,
-        isDryRun,
-        network,
       );
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
@@ -208,9 +207,9 @@ describe("WalletDaemonTariSigner", () => {
 
       assert(
         accountBalances &&
-          typeof accountBalances === "object" &&
-          "balances" in accountBalances &&
-          accountBalances.balances,
+        typeof accountBalances === "object" &&
+        "balances" in accountBalances &&
+        accountBalances.balances,
         "accountBalances is not an object",
       );
       assert(Array.isArray(accountBalances.balances), "accountBalances.balances is not an array");

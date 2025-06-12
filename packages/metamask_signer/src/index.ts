@@ -1,7 +1,6 @@
 import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
-  TransactionResult,
   TransactionStatus,
   SubmitTransactionResponse,
   VaultBalances,
@@ -99,11 +98,11 @@ export class MetamaskTariSigner implements TariSigner {
   }
 
   async listSubstates({
-    filter_by_template,
-    filter_by_type,
-    limit,
-    offset,
-  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+                        filter_by_template,
+                        filter_by_type,
+                        limit,
+                        offset,
+                      }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const res = (await this.metamaskRequest("listSubstates", {
       filter_by_template,
       filter_by_type,
@@ -115,11 +114,7 @@ export class MetamaskTariSigner implements TariSigner {
   }
 
   async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
-    const params = {
-      instructions: req.instructions,
-      fee_instructions: req.fee_instructions,
-      is_dry_run: req.is_dry_run,
-    };
+    const params = req.transaction;
 
     const resp = await this.metamaskRequest<any>("sendTransaction", params);
     if (!resp) {
@@ -171,11 +166,11 @@ export class MetamaskTariSigner implements TariSigner {
   }
 
   public async getConfidentialVaultBalances({
-    vault_id,
-    maximum_expected_value,
-    minimum_expected_value,
-    view_key_id,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+                                              vault_id,
+                                              maximum_expected_value,
+                                              minimum_expected_value,
+                                              view_key_id,
+                                            }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const resp = await this.metamaskRequest("getConfidentialVaultBalances", {
       view_key_id,
       vault_id,

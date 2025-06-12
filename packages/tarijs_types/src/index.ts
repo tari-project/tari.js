@@ -4,23 +4,11 @@ export { TransactionArg } from "./TransactionArg";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
 export { ConfidentialWithdrawProof } from "./ConfidentialWithdrawProof";
-export {
-  FinalizeResult,
-  FinalizeResultStatus,
-  TxResultAccept,
-  TxResultAcceptFeeRejectRest,
-  TxResultReject,
-} from "./FinalizeResult";
 export { GetTransactionResultResponse } from "./GetTransactionResultResponse";
-export { Instruction } from "./Instruction";
-export { Transaction } from "./Transaction";
-export { SubstateDiff, DownSubstates, UpSubstates } from "./SubstateDiff";
+export { DownSubstates, UpSubstates } from "./SubstateDiff";
 export { SubstateType } from "./SubstateType";
 export {
-  TransactionResult,
-  SubmitTxResult,
   SubmitTransactionResponse,
-  TransactionResultResponse,
 } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
 export { TransactionStatus } from "./TransactionStatus";
