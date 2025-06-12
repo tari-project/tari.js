@@ -11,7 +11,7 @@ export {
   SubmitTransactionResponse,
 } from "./TransactionResult";
 export { TransactionSignature } from "./TransactionSignature";
-export { TransactionStatus } from "./TransactionStatus";
+export { TransactionStatus, transactionStatusFromStr } from "./TransactionStatus";
 export { WorkspaceArg } from "./Workspace";
 export { ListAccountNftFromBalancesRequest } from "./ListAccountNftFromBalancesRequest";
 export { Network } from "./network";

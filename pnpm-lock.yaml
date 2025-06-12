@@ -290,6 +290,9 @@ importers:
       '@tari-project/tari-permissions':
         specifier: workspace:^
         version: link:../tari_permissions
+      '@tari-project/tari-provider':
+        specifier: workspace:^
+        version: link:../tari_provider
       '@tari-project/tari-signer':
         specifier: workspace:^
         version: link:../tari_signer

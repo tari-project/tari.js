@@ -17,7 +17,6 @@ import {
 } from "@tari-project/tarijs-types";
 import {
   ConfidentialViewVaultBalanceRequest,
-  Instruction,
   KeyBranch,
   ListAccountNftRequest,
   ListAccountNftResponse,
