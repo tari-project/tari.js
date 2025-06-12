@@ -2,7 +2,14 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { TariSigner } from "@tari-project/tari-signer";
 import { TariProvider } from "@tari-project/tari-provider";
 import { MetamaskTariSigner } from "@tari-project/metamask-signer";
-import { WalletDaemonTariSigner, WalletDaemonParameters, TariPermissions } from "@tari-project/wallet-daemon-signer";
+import {
+  WalletDaemonTariSigner,
+  WalletDaemonParameters,
+  WalletDaemonFetchParameters,
+  WalletDaemonBaseParameters,
+  TariPermissions,
+  WalletDaemonTariProvider,
+} from "@tari-project/wallet-daemon-signer";
 import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
 import {
@@ -52,7 +59,10 @@ export {
   TemplateDefinition,
   MetamaskTariSigner,
   WalletDaemonTariSigner,
+  WalletDaemonTariProvider,
   WalletDaemonParameters,
+  WalletDaemonFetchParameters,
+  WalletDaemonBaseParameters,
   TariUniverseSigner,
   TariUniverseSignerParameters,
   TariPermissions,
