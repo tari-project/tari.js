@@ -110,12 +110,7 @@ export class WalletDaemonTariProvider implements TariProvider {
   }
 
   async listSubstates(req: ListSubstatesRequest): Promise<ListSubstatesResponse> {
-    const resp = await this.client.substatesList({
-      filter_by_template: req.filter_by_template,
-      filter_by_type: req.filter_by_type,
-      limit: req.limit ? BigInt(req.limit) : null,
-      offset: req.offset ? BigInt(req.offset) : null,
-    });
+    const resp = await this.client.substatesList(req);
 
     return {
       substates: resp.substates.map((s) => ({
