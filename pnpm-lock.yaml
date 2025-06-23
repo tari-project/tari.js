@@ -251,7 +251,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.10.2
+        version: link:../../../dan/bindings
       '@tari-project/wallet-connect-signer':
         specifier: workspace:^
         version: link:../walletconnect
@@ -301,10 +301,10 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.10.2
+        version: link:../../../dan/bindings
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.6.2
+        version: link:../../../dan/clients/javascript/wallet_daemon_client
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
