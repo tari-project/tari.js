@@ -1,101 +1,149 @@
 # tari.js
 
-This project provides a unified TypeScript library to connect and send requests to a Tari wallet. It's intended for web application developers that want to interact with a Tari wallet (connect, get substates, submit transactions, etc.).
+> **🚀 The complete TypeScript toolkit for building on Tari** — Connect any wallet, query the blockchain, and create powerful dApps with confidence.
 
-Tari wallets supported:
-* Tari Wallet Daemon
-* MetaMask through the [tari-snap](https://github.com/tari-project/tari-snap)
+[![npm version](https://badge.fury.io/js/@tari-project%2Ftarijs.svg)](https://badge.fury.io/js/@tari-project%2Ftarijs)
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-tari--project.github.io-brightgreen)](https://tari-project.github.io/tari.js/)
 
-An example site (under the `example` folder) contains a web project that allows the user to connect to any type of Tari wallet and perform common actions.
+**✨ What makes tari.js special?**
+- **🔌 Universal Wallet Support** — MetaMask, Wallet Daemon, Universe, WalletConnect — all with one API
+- **🛡️ Privacy-First** — Built-in confidential transactions and zero-knowledge proofs
+- **📱 Developer Friendly** — Full TypeScript support, intuitive APIs, comprehensive docs
+- **⚡ Production Ready** — Battle-tested, optimized, and actively maintained
 
-Please read the [TODO](TODO.md) file for upcoming features.
+## 🎯 Quick Start (5 minutes)
 
-## Library building
+Get your first Tari app running in minutes:
 
-You must have the [tari-ootle](https://github.com/tari-project/tari-ootle) repo cloned at the same folder level as this repo.
+```bash
+# Install tari.js
+npm install @tari-project/tarijs @tari-project/wallet-daemon
 
-### Option 1: Local Build
+# Run your first transaction
+node -e "
+import { WalletDaemonSigner } from '@tari-project/tarijs';
+const wallet = new WalletDaemonSigner('http://localhost:18103');
+console.log('Connected to Tari!');
+"
+```
 
-To build the library locally:
-First you must install [proto](https://moonrepo.dev/proto) to manage node and pnpm versions 
-```shell
+**👉 [Complete Installation Guide](https://tari-project.github.io/tari.js/installation) | [5-Minute Tutorial](https://tari-project.github.io/tari.js/guides/getting-started-tutorial)**
+
+## 🏗️ What You Can Build
+
+### 🪙 **DeFi Applications**
+```typescript
+// Transfer tokens with privacy
+const transaction = wallet.createTransaction()
+  .confidentialTransfer({ amount: 1000, recipient })
+  .build();
+```
+
+### 🎮 **Gaming & NFTs**  
+```typescript
+// Mint game assets
+const nft = await wallet.mintNFT({
+  metadata: { name: "Epic Sword", rarity: "legendary" }
+});
+```
+
+### 💼 **Enterprise Solutions**
+```typescript
+// Batch operations for business workflows  
+const batch = wallet.createBatch()
+  .transfer(payroll)
+  .recordTransaction(audit)
+  .execute();
+```
+
+## 🔗 Supported Wallets
+
+| Wallet | Best For | Status |
+|--------|----------|--------|
+| **🖥️ [Tari Wallet Daemon](https://tari-project.github.io/tari.js/signers/wallet-daemon)** | Servers, advanced features | ✅ Production |
+| **🦊 [MetaMask](https://tari-project.github.io/tari.js/signers/metamask)** | Browser apps, familiar UX | ✅ Production |
+| **🌌 [Tari Universe](https://tari-project.github.io/tari.js/signers/tari-universe)** | Mobile, native experience | ✅ Production |
+| **📱 [WalletConnect](https://tari-project.github.io/tari.js/signers/wallet-connect)** | Cross-platform, mobile-first | ✅ Production |
+
+## 📚 Documentation Hub
+
+### 🚀 **Get Started**
+- **[Installation Guide](https://tari-project.github.io/tari.js/installation)** — Set up your development environment
+- **[First App Tutorial](https://tari-project.github.io/tari.js/guides/getting-started-tutorial)** — Build a working wallet app
+- **[Provider vs Signer](https://tari-project.github.io/tari.js/provider-vs-signer)** — Understand the core concepts
+
+### 📖 **Guides & Examples**
+- **[Wallet Integration](https://tari-project.github.io/tari.js/category/signers)** — Connect different wallet types
+- **[Transaction Building](https://tari-project.github.io/tari.js/wallet/submit-transaction/transaction-builder/)** — Create complex transactions
+- **[Production Deployment](https://tari-project.github.io/tari.js/guides/production-deployment)** — Go live with confidence
+
+### 🔧 **Reference**
+- **[Complete API Reference](https://tari-project.github.io/tari.js/api-reference)** — Every method documented
+- **[Troubleshooting](https://tari-project.github.io/tari.js/troubleshooting)** — Common issues & solutions
+- **[Templates & Examples](https://github.com/tari-project/tari.js/tree/main/examples)** — Copy-paste code snippets
+
+---
+
+## 🛠️ Contributing & Development  
+
+**Want to contribute?** We'd love your help! Here's how to get started:
+
+### 🚀 **Quick Development Setup**
+
+```bash
+# 1. Clone with required dependencies
+git clone https://github.com/tari-project/tari.js
+git clone https://github.com/tari-project/tari-ootle ../tari-ootle
+
+# 2. Install toolchain
+curl -fsSL https://moonrepo.dev/install/proto.sh | bash
 proto use
+
+# 3. Build everything
 pnpm install
 moon tarijs:build
 ```
 
-The bundled files for deployment or publication will be located under the `dist` folder of each package.
+### 🧪 **Run the Example App**
+```bash
+cd packages/tarijs/example
+cp .env.example .env    # Configure your wallet endpoints
+pnpm run dev           # Start development server
+```
 
-### Option 2: Docker Build
-
-Alternatively, you can build the library using Docker:
-
-```shell
-# Build the Docker image
+### 📦 **Docker Development**
+```bash
 docker build -t tarijs .
-
-# Run the container and copy the combined dist files
 docker create --name tarijs-build tarijs
 docker cp tarijs-build:/app/combined_dist/ ./dist
-docker rm tarijs-build
 ```
 
-This will create a combined build output in your local `dist` directory, containing all package distributions organized by package name, with the following structure:
-
-```
-dist/
-├── tarijs/
-├── tari_provider/
-├── tari_permissions/
-├── wallet_daemon/
-├── tari_signer/
-├── builders/
-├── metamask_signer/
-├── tari_universe/
-├── tarijs_types/
-├── indexer_provider/
-└── walletconnect/
-```
-
-Each package's dist folder contains its compiled JavaScript files, type definitions, and other build artifacts, excluding node_modules.
-
-## Running the example site
-
-To run the example site you will need to:
-* Compile the library following the previous section.
-* Have access to a Tari Wallet Daemon and to the Tari MetaMask Snap.
-* Copy the `example/.env.example` file to `example/.env` and edit the correct environment variable values.
-
-To run in development mode, in the packages/tarijs folder:
-```shell
-cd example
-moon tarijs:build
-pnpm run dev
-```
-
-For building and distribution,  in the packages/tarijs folder
-```shell
-cd example
-moon tarijs:build
-```
-The distribution files will be under the `example/dist` folder. 
-
-## Documentation
-
-This monorepo includes a documentation site located in the `docusaurus` folder.  It's built using [Docusaurus](https://docusaurus.io/) and generates a static website.
-
-### Modifying the Documentation
-
-To start the documentation site:
-
+### 📖 **Documentation Development**
 ```bash
-$ moon tari-docs:start
+moon tari-docs:start   # http://localhost:3000/tari.js/
 ```
 
-This will open the documentation site in your browser at `http://localhost:3000/tari.js/`
+**Need help getting started?** Check our **[Contributing Guide](https://tari-project.github.io/tari.js/contributing)** or ask in [GitHub Discussions](https://github.com/tari-project/tari.js/discussions).
 
-You can now update the documentation by editing files in the `docusaurus/tari-docs/docs/` folder. Changes will be reflected automatically.
+## 🤝 Community & Support
 
-### Publishing documentation
+- **📚 [Complete Documentation](https://tari-project.github.io/tari.js/)** — Everything you need to know
+- **💬 [GitHub Discussions](https://github.com/tari-project/tari.js/discussions)** — Ask questions, share ideas  
+- **🐛 [Issue Tracker](https://github.com/tari-project/tari.js/issues)** — Report bugs, request features
+- **🔧 [Troubleshooting Guide](https://tari-project.github.io/tari.js/troubleshooting)** — Common issues & solutions
+- **🎮 [Example Apps](https://github.com/tari-project/tari.js/tree/main/examples)** — See tari.js in action
 
-The documentation is hosted on GitHub Pages and served from the `/docs` folder of the `gh-pages` branch. The `documentation-deploy.yml` workflow defines the deployment process.
+## 📄 License
+
+This project is licensed under the **BSD 3-Clause License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the [Tari Project](https://tari.com)**
+
+[Website](https://tari.com) • [Blog](https://blog.tari.com) • [Twitter](https://twitter.com/tari) • [Discord](https://discord.gg/tari)
+
+</div>
