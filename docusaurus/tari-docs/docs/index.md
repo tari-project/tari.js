@@ -65,25 +65,25 @@ const transaction = new TransactionBuilder()
 ## 🎯 **Quick Navigation**
 
 ### 🚀 **Get Started (5 minutes)**
-- **[Installation](./installation)** — Set up your development environment
-- **[Getting Started Tutorial](./guides/getting-started-tutorial)** — Build your first app
-- **[Provider vs Signer](./provider-vs-signer)** — Understand core concepts
+- **[Installation](/docs/installation)** — Set up your development environment
+- **[Getting Started Tutorial](/docs/guides/getting-started-tutorial)** — Build your first app
+- **[Provider vs Signer](/docs/provider-vs-signer)** — Understand core concepts
 
 ### 🔌 **Wallet Integration**
-- **[Wallet Daemon](./signers/wallet-daemon)** — Full-featured server integration
-- **[MetaMask](./signers/metamask)** — Browser wallet via tari-snap
-- **[Tari Universe](./signers/tari-universe)** — Native mobile experience
-- **[WalletConnect](./signers/wallet-connect)** — Cross-platform mobile wallets
+- **[Wallet Daemon](/docs/signers/wallet-daemon)** — Full-featured server integration
+- **[MetaMask](/docs/signers/metamask)** — Browser wallet via tari-snap
+- **[Tari Universe](/docs/signers/tari-universe)** — Native mobile experience
+- **[WalletConnect](/docs/signers/wallet-connect)** — Cross-platform mobile wallets
 
 ### 🏗️ **Building Transactions**
-- **[Transaction Builder](./wallet/submit-transaction/transaction-builder/)** — Create complex transactions
-- **[Template System](./wallet/template-definition)** — Work with smart contracts
-- **[Fee Management](./wallet/submit-transaction/transaction-builder/fee)** — Optimize transaction costs
+- **[Transaction Builder](/docs/wallet/submit-transaction/transaction-builder/)** — Create complex transactions
+- **[Template System](/docs/wallet/template-definition)** — Work with smart contracts
+- **[Fee Management](/docs/wallet/submit-transaction/transaction-builder/fee)** — Optimize transaction costs
 
 ### 🔧 **Reference**
-- **[Complete API Reference](./api-reference)** — Every method documented
-- **[Troubleshooting](./troubleshooting)** — Common issues & solutions
-- **[Production Deployment](./guides/production-deployment)** — Go live securely
+- **[Complete API Reference](/docs/api-reference)** — Every method documented
+- **[Troubleshooting](/docs/troubleshooting)** — Common issues & solutions
+- **[Production Deployment](/docs/guides/production-deployment)** — Go live securely
 
 ## 📚 **Documentation Structure**
 
@@ -91,16 +91,16 @@ This documentation is organized for different user journeys:
 
 | If you're... | Start here |
 |--------------|------------|
-| **🆕 New to tari.js** | [Installation](./installation) → [Getting Started Tutorial](./guides/getting-started-tutorial) |
-| **🔌 Integrating wallets** | [Provider vs Signer](./provider-vs-signer) → [Wallet Documentation](./category/signers) |
-| **🏗️ Building transactions** | [Transaction Builder](./wallet/submit-transaction/transaction-builder/) → [Templates](./wallet/template-definition) |
-| **🚨 Having issues** | [Troubleshooting](./troubleshooting) → [GitHub Issues](https://github.com/tari-project/tari.js/issues) |
-| **📖 Looking for specifics** | [API Reference](./api-reference) → Search this site |
+| **🆕 New to tari.js** | [Installation](/docs/installation) → [Getting Started Tutorial](/docs/guides/getting-started-tutorial) |
+| **🔌 Integrating wallets** | [Provider vs Signer](/docs/provider-vs-signer) → [Wallet Documentation](/docs/category/signers) |
+| **🏗️ Building transactions** | [Transaction Builder](/docs/wallet/submit-transaction/transaction-builder/) → [Templates](/docs/wallet/template-definition) |
+| **🚨 Having issues** | [Troubleshooting](/docs/troubleshooting) → [GitHub Issues](https://github.com/tari-project/tari.js/issues) |
+| **📖 Looking for specifics** | [API Reference](/docs/api-reference) → Search this site |
 
 ## 🆕 **What's New in v0.5.0**
 
 :::info Major Update
-**Provider/Signer Split** — We've separated data access from wallet operations for better security and flexibility. [Learn about the changes →](./provider-vs-signer)
+**Provider/Signer Split** — We've separated data access from wallet operations for better security and flexibility. [Learn about the changes →](/docs/provider-vs-signer)
 :::
 
 ### 🎉 **New Features**
@@ -121,4 +121,4 @@ Upgrading from v0.4.0? Check our [GitHub releases](https://github.com/tari-proje
 
 ---
 
-**Ready to build something amazing?** [Install tari.js](./installation) and create your first Tari application in 5 minutes! 🚀
+**Ready to build something amazing?** [Install tari.js](/docs/installation) and create your first Tari application in 5 minutes! 🚀

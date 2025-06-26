@@ -15,7 +15,7 @@ const config: Config = {
   url: "https://tari-project.github.io/",
   baseUrl: "/tari.js",
 
-  onBrokenLinks: "warn",
+  onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
   i18n: {
