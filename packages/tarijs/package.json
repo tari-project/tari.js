@@ -12,7 +12,7 @@
     "integration-tests": "vitest run integration-tests"
   },
   "keywords": [],
-  "author": "",
+  "author": "The Tari Community",
   "license": "ISC",
   "dependencies": {
     "@metamask/providers": "catalog:",

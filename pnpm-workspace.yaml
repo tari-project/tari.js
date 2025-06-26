@@ -2,7 +2,9 @@ packages:
   - packages/*
   - apps/*
   - docusaurus/*
-  - "!**/test/**"
+  - examples/*
+  - '!**/test/**'
+
 catalog:
   typescript: ^5.0.4
   vitest: ^3.0.4

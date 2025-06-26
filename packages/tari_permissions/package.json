@@ -10,7 +10,7 @@
     "build": "tsc -b"
   },
   "keywords": [],
-  "author": "",
+  "author": "The Tari Community",
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
