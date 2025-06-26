@@ -1,26 +1,26 @@
-import { Box, Dialog, Divider, Stack, IconButton, Typography } from "@mui/material";
+import { Box, Dialog, Divider, Stack, IconButton, Typography, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { TariSigner } from "@tari-project/tari-signer";
 import { WalletDaemonTariSigner, WalletDaemonFetchParameters } from "@tari-project/wallet-daemon-signer";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
-import TariLogo from "./TariLogo";
-import WalletConnectLogo from "./WalletConnectLogo";
+import { TariLogo, WalletConnectLogo } from "./Logos";
 
 
 export interface WalletSelectionProps {
   open: boolean;
-  walletConnectProjectId?: string,
   onConnected?: (signer: TariSigner) => void;
+  walletConnectProjectId?: string,
   walletDaemonParams?: WalletDaemonFetchParameters;
   onClose: () => void;
 }
 
 export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactElement {
   const { onClose, open, onConnected, walletConnectProjectId, walletDaemonParams } = props;
+  const [isBusy, setIsBusy] = useState(false);
 
   const handleClose = onClose;
 
@@ -37,10 +37,20 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
     if (!walletConnectProjectId) {
       throw new Error("WalletConnect project ID was not provided.");
     }
-    const walletConnectSigner = new WalletConnectTariSigner(walletConnectProjectId);
-    await walletConnectSigner.connect();
-    onConnected?.(walletConnectSigner);
-    handleClose();
+    setIsBusy(true);
+    try {
+      const walletConnectSigner = new WalletConnectTariSigner(walletConnectProjectId);
+      const showDialog = await walletConnectSigner.connect();
+      // This must be before the showDialog call to prevent the dialog from appearing on top of the WalletConnect modal.
+      handleClose();
+      await showDialog();
+      onConnected?.(walletConnectSigner);
+    } catch (err) {
+      console.error("Error connecting to WalletConnect:", err);
+    } finally {
+      setIsBusy(false);
+    }
+
   };
 
   return (
@@ -60,13 +70,16 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
                                           callback={onWalletDaemonClick}></WalletConnectionMethodCard>
             </Grid>
           )}
-          <Grid size={{ xs: 4 }}>
-            {walletConnectProjectId && <WalletConnectionMethodCard
-              logo={<WalletConnectLogo />}
-              text="WalletConnect"
-              callback={onWalletConnectClick}
-            />}
-          </Grid>
+          {walletConnectProjectId && (
+            <Grid size={{ xs: 4 }}>
+              {isBusy ? <CircularProgress /> :
+                <WalletConnectionMethodCard
+                  logo={<WalletConnectLogo />}
+                  text="WalletConnect"
+                  callback={onWalletConnectClick}
+                />}
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Dialog>

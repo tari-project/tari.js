@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "The Tari Community",
   "license": "ISC",
   "engines": {
     "node": "22.13.1"
