@@ -1,0 +1,71 @@
+language: "typescript"
+platform: "node"
+type: "library"
+
+fileGroups:
+  configs:
+    - "tsconfig.json"
+    - "package.json"
+    - "eslint.config.ts"
+  sources:
+    - "src/**/*"
+  tests:
+    - "integration-tests/**/*"
+
+tasks:
+  build:
+    command: "pnpm run build"
+    inputs:
+      - "@files(sources)"
+      - "@files(configs)"
+    outputs:
+      - "dist"
+  format:
+    command: "pnpm run format"
+    inputs:
+      - "@files(sources)"
+      - "@files(configs)"
+      - "@files(tests)"
+    options:
+      runInCI: false
+  lint:
+    command: "pnpm run lint:fix"
+    inputs:
+      - "@files(sources)"
+      - "@files(configs)"
+      - "@files(tests)"
+    options:
+      runInCI: false
+    deps:
+      - "build"
+
+  lintCheck:
+    command: "pnpm run lint"
+    inputs:
+      - "@files(sources)"
+      - "@files(configs)"
+      - "@files(tests)"
+    deps:
+      - "build"
+  formatCheck:
+    command: "pnpm run format:check"
+    inputs:
+      - "@files(sources)"
+      - "@files(configs)"
+      - "@files(tests)"
+  test:
+    command: "pnpm run test"
+    inputs:
+      - "@files(sources)"
+      - "@files(tests)"
+      - "@files(configs)"
+    deps:
+      - "build"
+  integration-test:
+    command: "pnpm run integration-tests"
+    inputs:
+      - "@files(sources)"
+      - "@files(tests)"
+      - "@files(configs)"
+    deps:
+      - "build"

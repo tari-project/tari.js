@@ -21,6 +21,9 @@
       "path": "packages/metamask_signer"
     },
     {
+      "path": "packages/react-mui-connect-button"
+    },
+    {
       "path": "packages/tari_permissions"
     },
     {

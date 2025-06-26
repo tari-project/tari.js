@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "module": "ES2020",
     "target": "ESNext",
     "moduleResolution": "Bundler",
@@ -21,7 +22,10 @@
       "path": "../tari_signer"
     },
     {
-      "path": "../tarijs_types"
+      "path": "../wallet_daemon"
+    },
+    {
+      "path": "../walletconnect"
     }
   ]
 }
