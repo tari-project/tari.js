@@ -75,10 +75,11 @@ Create `src/services/walletService.ts`:
 
 ```typescript
 import { 
-  WalletDaemonSigner, 
+  WalletDaemonTariSigner, 
   IndexerProvider,
   TariSigner,
-  TariProvider 
+  TariProvider,
+  TariPermissions
 } from '@tari-project/tarijs';
 
 export interface WalletConnection {
@@ -92,9 +93,9 @@ export class WalletService {
 
   async connectWalletDaemon(endpoint: string = 'http://localhost:18103'): Promise<WalletConnection> {
     try {
-      const signer = new WalletDaemonSigner({
-        endpoint,
-        timeout: 10000
+      const signer = await WalletDaemonTariSigner.buildFetchSigner({
+        serverUrl: endpoint,
+        permissions: new TariPermissions()
       });
 
       const provider = new IndexerProvider({
@@ -102,7 +103,7 @@ export class WalletService {
       });
 
       // Test connection
-      await signer.getAccounts();
+      await signer.getAccount();
       
       this.connection = {
         signer,
@@ -357,30 +358,14 @@ export const WalletInfo: React.FC = () => {
     setError(null);
 
     try {
-      // Get all accounts
-      const accountList = await connection.signer.getAccounts();
+      // Get default account
+      const account = await connection.signer.getAccount();
       
-      const accountsWithBalance = await Promise.all(
-        accountList.map(async (account) => {
-          try {
-            const balance = await connection.signer.getBalance(account);
-            return {
-              address: account.address,
-              balance: balance,
-              name: account.name || 'Unnamed Account'
-            };
-          } catch (err) {
-            console.warn(`Failed to get balance for account ${account.address}:`, err);
-            return {
-              address: account.address,
-              balance: 0,
-              name: account.name || 'Unnamed Account'
-            };
-          }
-        })
-      );
-
-      setAccounts(accountsWithBalance);
+      setAccounts([{
+        address: account.address,
+        balance: account.resources.reduce((total, resource) => total + resource.balance, 0),
+        name: 'Default Account'
+      }]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load account information');
     } finally {
@@ -482,34 +467,21 @@ export const TransactionForm: React.FC = () => {
 
     try {
       // Get default account
-      const accounts = await connection.signer.getAccounts();
-      if (accounts.length === 0) {
-        throw new Error('No accounts available');
-      }
-
-      const defaultAccount = accounts[0];
+      const account = await connection.signer.getAccount();
       
-      // Check balance
-      const balance = await connection.signer.getBalance(defaultAccount);
-      const totalRequired = parseInt(amount) + parseInt(fee);
-      
-      if (balance < totalRequired) {
-        throw new Error(`Insufficient funds. Required: ${totalRequired}, Available: ${balance}`);
-      }
-
       // Build transaction
       const transaction = new TransactionBuilder()
-        .fee(parseInt(fee))
-        .callMethod(defaultAccount.address, 'transfer', {
-          amount: parseInt(amount),
-          destination: recipient
-        })
+        .feeTransactionPayFromComponent(account.address, fee)
+        .callMethod({
+          componentAddress: account.address,
+          methodName: 'withdraw',
+        }, [{ type: 'Amount', value: amount }])
         .build();
 
       // Submit transaction
-      const txResult = await connection.signer.submitTransaction(transaction);
+      const txResult = await connection.signer.submitTransaction({ transaction });
       
-      setResult(`Transaction submitted successfully! ID: ${txResult.transactionId}`);
+      setResult(`Transaction submitted successfully! ID: ${txResult.transaction_id}`);
       
       // Clear form
       setRecipient('');

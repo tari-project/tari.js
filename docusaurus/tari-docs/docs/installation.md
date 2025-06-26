@@ -113,7 +113,7 @@ For most use cases, install both provider and signer packages:
 
 ```bash npm2yarn
 # Complete installation with indexer provider and wallet daemon signer
-npm install @tari-project/tarijs @tari-project/indexer-provider @tari-project/wallet-daemon
+npm install @tari-project/tarijs @tari-project/indexer-provider @tari-project/wallet-daemon-signer
 ```
 
 For specific wallet types:

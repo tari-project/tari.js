@@ -18,12 +18,15 @@ Get your first Tari app running in minutes:
 
 ```bash
 # Install tari.js
-npm install @tari-project/tarijs @tari-project/wallet-daemon
+npm install @tari-project/tarijs @tari-project/wallet-daemon-signer
 
-# Run your first transaction
+# Run your first connection test
 node -e "
-import { WalletDaemonSigner } from '@tari-project/tarijs';
-const wallet = new WalletDaemonSigner('http://localhost:18103');
+import { WalletDaemonTariSigner, TariPermissions } from '@tari-project/tarijs';
+const wallet = await WalletDaemonTariSigner.buildFetchSigner({
+  serverUrl: 'http://localhost:18103',
+  permissions: new TariPermissions()
+});
 console.log('Connected to Tari!');
 "
 ```
@@ -34,27 +37,36 @@ console.log('Connected to Tari!');
 
 ### 🪙 **DeFi Applications**
 ```typescript
-// Transfer tokens with privacy
-const transaction = wallet.createTransaction()
-  .confidentialTransfer({ amount: 1000, recipient })
+// Transfer tokens
+const transaction = new TransactionBuilder()
+  .feeTransactionPayFromComponent(account.address, "100")
+  .callMethod({
+    componentAddress: account.address,
+    methodName: 'withdraw'
+  }, [{ type: 'Amount', value: '1000' }])
   .build();
 ```
 
 ### 🎮 **Gaming & NFTs**  
 ```typescript
-// Mint game assets
-const nft = await wallet.mintNFT({
-  metadata: { name: "Epic Sword", rarity: "legendary" }
-});
+// Call a smart contract function
+const transaction = new TransactionBuilder()
+  .feeTransactionPayFromComponent(account.address, "100")
+  .callFunction({
+    templateAddress: nftTemplate.address,
+    functionName: 'mint_nft'
+  }, [{ name: 'metadata', value: { name: "Epic Sword", rarity: "legendary" } }])
+  .build();
 ```
 
 ### 💼 **Enterprise Solutions**
 ```typescript
-// Batch operations for business workflows  
-const batch = wallet.createBatch()
-  .transfer(payroll)
-  .recordTransaction(audit)
-  .execute();
+// Multiple operations in one transaction
+const transaction = new TransactionBuilder()
+  .feeTransactionPayFromComponent(account.address, "100")
+  .callMethod({ componentAddress: account1, methodName: 'withdraw' }, [amount1])
+  .callMethod({ componentAddress: account2, methodName: 'withdraw' }, [amount2])
+  .build();
 ```
 
 ## 🔗 Supported Wallets

@@ -137,8 +137,9 @@ Custom styles are in `src/css/custom.css`:
 ### **Link Checking**
 
 ```bash
-# Check for broken links
-pnpm run test:links
+# Build and check for broken links manually
+pnpm build
+# Check console output for broken links
 ```
 
 ### **Build Testing**
@@ -152,8 +153,9 @@ pnpm serve
 ### **Accessibility**
 
 ```bash
-# Run accessibility checks
-pnpm run test:a11y
+# Manual accessibility testing recommended
+# Use browser dev tools accessibility tab
+# Test with screen readers
 ```
 
 ## 📈 **Analytics & SEO**

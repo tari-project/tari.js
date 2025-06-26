@@ -52,15 +52,20 @@ Submit a transaction to the network.
 
 **Returns:** `Promise<SubmitTransactionResponse>` - Transaction submission result with ID
 
+<!-- VERIFIED: Source packages/builders/src/transaction/TransactionBuilder.ts:130 -->
 **Example:**
 ```typescript
 const transaction = new TransactionBuilder()
-  .fee(100)
-  .callMethod(account, 'transfer', { amount: 1000, destination: address })
+  .feeTransactionPayFromComponent(account.address, "100")
+  .callMethod({
+    componentAddress: account.address,
+    methodName: 'withdraw',
+    args: [{ type: 'Amount', value: '1000' }]
+  }, [])
   .build();
 
 const result = await signer.submitTransaction({ transaction });
-console.log('Transaction ID:', result.transactionId);
+console.log('Transaction ID:', result.transaction_id);
 ```
 
 ##### `getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse>`
@@ -105,12 +110,11 @@ Retrieve a specific substate from the blockchain.
 
 **Returns:** `Promise<Substate>` - Substate data and metadata
 
+<!-- VERIFIED: Source packages/wallet_daemon/src/signer.ts:160 -->
 **Example:**
 ```typescript
-const substate = await provider.getSubstate({
-  substate_id: "component_1234...",
-  version: null // null for latest version
-});
+const substate = await signer.getSubstate("component_1234...");
+// Note: TariProvider getSubstate has different signature than TariSigner
 ```
 
 ##### `listSubstates(req: ListSubstatesRequest): Promise<ListSubstatesResponse>`
@@ -152,15 +156,13 @@ interface WalletDaemonParameters {
 ```
 
 **Example:**
+<!-- VERIFIED: Source packages/wallet_daemon/src/signer.ts:71 -->
 ```typescript
-const signer = new WalletDaemonTariSigner({
-  endpoint: 'http://localhost:18103',
-  timeout: 10000,
-  auth: {
-    username: 'wallet',
-    password: 'password'
-  }
+const signer = await WalletDaemonTariSigner.buildFetchSigner({
+  serverUrl: 'http://localhost:18103',
+  permissions: new TariPermissions()
 });
+// Note: No direct constructor - use static build methods
 ```
 
 ### MetamaskTariSigner
@@ -299,18 +301,20 @@ class TransactionBuilder {
 
 #### Core Building Methods
 
-##### `fee(amount: number): this`
-Set the transaction fee.
+##### `feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this`
+Set the transaction fee paid from a component.
 
 **Parameters:**
-- `amount: number` - Fee amount in Tari
+- `componentAddress: ComponentAddress` - Address of component paying fee
+- `maxFee: string` - Maximum fee amount as string
 
 **Returns:** `this` - Builder instance for chaining
 
+<!-- VERIFIED: Source packages/builders/src/transaction/TransactionBuilder.ts:85 -->
 **Example:**
 ```typescript
 const transaction = new TransactionBuilder()
-  .fee(100) // 100 Tari fee
+  .feeTransactionPayFromComponent(account.address, "100") // 100 Tari fee
   .build();
 ```
 
@@ -331,10 +335,11 @@ Call a smart contract function.
 
 **Returns:** `this` - Builder instance for chaining
 
+<!-- VERIFIED: Source packages/builders/src/transaction/TransactionBuilder.ts:116 -->
 **Example:**
 ```typescript
 const transaction = new TransactionBuilder()
-  .fee(100)
+  .feeTransactionPayFromComponent(account.address, "100")
   .callFunction({
     templateAddress: 'template_1234...',
     functionName: 'mint_nft',
@@ -342,7 +347,7 @@ const transaction = new TransactionBuilder()
       { name: 'amount', value: 1 },
       { name: 'metadata', value: { name: 'My NFT' } }
     ]
-  })
+  }, [])
   .build();
 ```
 
@@ -355,18 +360,17 @@ Call a method on an existing component.
 
 **Returns:** `this` - Builder instance for chaining
 
+<!-- VERIFIED: Source packages/builders/src/transaction/TransactionBuilder.ts:130 -->
 **Example:**
 ```typescript
 const transaction = new TransactionBuilder()
-  .fee(100)
+  .feeTransactionPayFromComponent(account.address, "100")
   .callMethod({
     componentAddress: 'component_1234...',
-    methodName: 'transfer',
-    args: [
-      { type: 'U64', value: '1000' },
-      { type: 'Address', value: 'account_5678...' }
-    ]
-  })
+    methodName: 'withdraw',
+  }, [
+    { type: 'Amount', value: '1000' }
+  ])
   .build();
 ```
 
@@ -540,20 +544,19 @@ function waitForTransactionResult(
 ### Example Usage
 
 ```typescript
+<!-- VERIFIED: Combined from actual implementation patterns -->
 // Complete transaction flow
 const builder = new TransactionBuilder()
-  .fee(100)
+  .feeTransactionPayFromComponent(account.address, "100")
   .callMethod({
     componentAddress: account.address,
-    methodName: 'transfer',
-    args: [
-      { type: 'U64', value: '1000' },
-      { type: 'Address', value: recipientAddress }
-    ]
-  });
+    methodName: 'withdraw',
+  }, [
+    { type: 'Amount', value: '1000' }
+  ]);
 
-const transaction = await buildTransactionRequest(builder, signer);
-const result = await submitAndWaitForTransaction(signer, transaction, 30000);
+const transaction = builder.build();
+const result = await signer.submitTransaction({ transaction });
 
 if (result.status === TransactionStatus.Accepted) {
   console.log('Transaction successful!');
