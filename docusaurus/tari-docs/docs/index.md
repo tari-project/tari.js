@@ -110,7 +110,7 @@ This documentation is organized for different user journeys:
 - **🛡️ Better error handling** and debugging tools
 
 ### 🔄 **Migration Guide**
-Upgrading from v0.4.0? Check our [migration guide](./guides/migration-v0.5.0) for step-by-step instructions.
+Upgrading from v0.4.0? Check our [GitHub releases](https://github.com/tari-project/tari.js/releases) for upgrade instructions.
 
 ## 🤝 **Community & Support**
 

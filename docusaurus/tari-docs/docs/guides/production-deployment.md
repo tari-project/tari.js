@@ -960,9 +960,9 @@ jobs:
 ## 🔗 **Related Resources**
 
 - **[Installation Guide](../installation)** — Development environment setup
-- **[Security Best Practices](../security-guide)** — Comprehensive security checklist
-- **[Performance Optimization](../performance-guide)** — Advanced optimization techniques
-- **[Monitoring Guide](../monitoring-guide)** — Complete observability setup
+- **[Security Best Practices](https://github.com/tari-project/tari.js/blob/main/SECURITY.md)** — Comprehensive security checklist
+- **[Performance Optimization](../troubleshooting#performance-issues)** — Advanced optimization techniques
+- **[Monitoring Guide](../troubleshooting)** — Complete observability setup
 - **[Troubleshooting](../troubleshooting)** — Common production issues
 
 ## 💬 **Support**

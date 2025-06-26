@@ -946,7 +946,7 @@ Congratulations! 🎉 You've built a functional Tari wallet application. Here's 
 ### 🚀 Production Ready:
 - **[Production Deployment Guide](./production-deployment.md)** - Security and performance best practices
 - **[Error Handling](../troubleshooting.md)** - Comprehensive error management
-- **[Testing Guide](./testing-guide.md)** - Unit and integration testing
+- **[GitHub Testing Examples](https://github.com/tari-project/tari.js/tree/main/packages/tarijs/test)** - Unit and integration testing examples
 
 ### 🛠️ Extend Your App:
 - Add support for multiple wallet types
