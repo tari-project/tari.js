@@ -39,14 +39,6 @@ export interface TariMethodDefinition {
   fromWorkspace?: string,
 }
 
-export interface TariCreateAccountDefinition {
-  methodName: string;
-  args?: {
-    ownerPublicKey: string;
-    workspaceBucket?: string;
-  };
-}
-
 export interface Builder {
   callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this;
 
@@ -109,7 +101,7 @@ export class TransactionBuilder implements Builder {
       min_epoch: null,
       max_epoch: null,
       dry_run: false,
-      is_seal_signer_authorized: false
+      is_seal_signer_authorized: false,
     };
     this.signatures = [];
     this.allocatedIds = new Map();
@@ -160,7 +152,7 @@ export class TransactionBuilder implements Builder {
   public createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this {
     return this.addInstruction({
       CallMethod: {
-        call: {Address: account},
+        call: { Address: account },
         method: "create_proof_for_resource",
         args: [resourceAddress],
       },
@@ -219,7 +211,7 @@ export class TransactionBuilder implements Builder {
   public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this {
     return this.addFeeInstruction({
       CallMethod: {
-        call: {Address: componentAddress},
+        call: { Address: componentAddress },
         method: "pay_fee",
         args: [maxFee],
       },
@@ -237,7 +229,7 @@ export class TransactionBuilder implements Builder {
   ): this {
     return this.addFeeInstruction({
       CallMethod: {
-        call: { Address:  componentAddress },
+        call: { Address: componentAddress },
         method: "pay_fee_confidential",
         args: [proof],
       },

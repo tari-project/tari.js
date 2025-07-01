@@ -1,8 +1,10 @@
 export class Hash {
   private value: number[];
+
   constructor(value: number[]) {
     this.value = value;
   }
+
   toJSON() {
     return this.value;
   }
@@ -21,10 +23,12 @@ export enum TAG {
 export class Tagged {
   private value: any;
   private tag: number;
+
   constructor(tag: number, value: any) {
     this.tag = tag;
     this.value = value;
   }
+
   toJSON() {
     return { "@@TAGGED@@": [this.tag, this.value] };
   }
@@ -32,9 +36,11 @@ export class Tagged {
 
 export class ResourceAddress {
   private tagged: Tagged;
+
   constructor(hash: Hash) {
     this.tagged = new Tagged(TAG.ResourceAddress, hash);
   }
+
   toJSON() {
     return this.tagged.toJSON();
   }
@@ -42,9 +48,11 @@ export class ResourceAddress {
 
 export class UnclaimedConfidentialOutputAddress {
   private hash: Hash;
+
   constructor(hash: Hash) {
     this.hash = hash;
   }
+
   toJSON() {
     return this.hash.toJSON();
   }
@@ -52,11 +60,14 @@ export class UnclaimedConfidentialOutputAddress {
 
 export type u64 = number;
 export type u32 = number;
+
 export class U256 {
   private value: number[];
+
   constructor(value: number[]) {
     this.value = value;
   }
+
   toJSON() {
     return this.value;
   }
@@ -66,9 +77,11 @@ export type NonFungibleIdType = u32 | u64 | string | U256;
 
 export class NonFungibleId {
   private value: NonFungibleIdType;
+
   constructor(value: NonFungibleIdType) {
     this.value = value;
   }
+
   toJSON() {
     switch (typeof this.value) {
       case "string":
@@ -83,10 +96,12 @@ export class NonFungibleId {
 export class NonFungibleAddressContents {
   private resource_address: ResourceAddress;
   private id: NonFungibleId;
+
   constructor(resource_address: ResourceAddress, id: NonFungibleId) {
     this.resource_address = resource_address;
     this.id = id;
   }
+
   toJSON() {
     return { resource_address: this.resource_address, id: this.id };
   }
@@ -94,9 +109,11 @@ export class NonFungibleAddressContents {
 
 export class NonFungibleAddress {
   private tagged: Tagged;
+
   constructor(value: NonFungibleAddressContents) {
     this.tagged = new Tagged(TAG.NonFungibleAddress, value);
   }
+
   toJSON() {
     return this.tagged.toJSON();
   }
@@ -105,9 +122,11 @@ export class NonFungibleAddress {
 
 export class ComponentAddress {
   private tagged: Tagged;
+
   constructor(hash: Hash) {
     this.tagged = new Tagged(TAG.ComponentAddress, hash);
   }
+
   toJSON() {
     return this.tagged.toJSON();
   }
@@ -115,9 +134,11 @@ export class ComponentAddress {
 
 export class VaultId {
   private tagged: Tagged;
+
   constructor(hash: Hash) {
     this.tagged = new Tagged(TAG.VaultId, hash);
   }
+
   toJSON() {
     return this.tagged.toJSON();
   }
@@ -132,9 +153,11 @@ export type SubstateAddressType =
 
 export class SubstateAddress {
   private value: SubstateAddressType;
+
   constructor(value: SubstateAddressType) {
     this.value = value;
   }
+
   toJSON() {
     if (this.value instanceof ComponentAddress) {
       return { Component: this.value };
@@ -151,9 +174,11 @@ export class SubstateAddress {
 
 export class TariPermissionAccountBalance {
   private value: SubstateAddress;
+
   constructor(value: SubstateAddress) {
     this.value = value;
   }
+
   toJSON() {
     console.log("stringify", this.value);
     return { AccountBalance: this.value };
@@ -161,7 +186,9 @@ export class TariPermissionAccountBalance {
 }
 
 export class TariPermissionAccountInfo {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "AccountInfo";
   }
@@ -169,6 +196,7 @@ export class TariPermissionAccountInfo {
 
 export class TariPermissionAccountList {
   private value?: ComponentAddress | null;
+
   constructor(value?: ComponentAddress) {
     if (value === undefined) {
       this.value = null;
@@ -176,6 +204,7 @@ export class TariPermissionAccountList {
       this.value = value;
     }
   }
+
   toJSON() {
     console.log("JSON TariPermissionAccountList", this.value);
     if (this.value === undefined) {
@@ -187,23 +216,30 @@ export class TariPermissionAccountList {
 }
 
 export class TariPermissionKeyList {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "KeyList";
   }
 }
 
 export class TariPermissionTransactionGet {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "TransactionGet";
   }
 }
+
 export class TariPermissionTransactionSend {
   private value?: SubstateAddress;
+
   constructor(value?: SubstateAddress) {
     this.value = value;
   }
+
   toJSON() {
     console.log("JSON TariPermissionTransactionSend", this.value);
     if (this.value === undefined) {
@@ -217,10 +253,12 @@ export class TariPermissionTransactionSend {
 export class TariPermissionGetNft {
   private value0?: SubstateAddress;
   private value1?: ResourceAddress;
+
   constructor(value0?: SubstateAddress, value1?: ResourceAddress) {
     this.value0 = value0;
     this.value1 = value1;
   }
+
   toJSON() {
     return { GetNft: [this.value0, this.value1] };
   }
@@ -228,30 +266,38 @@ export class TariPermissionGetNft {
 
 export class TariPermissionNftGetOwnershipProof {
   private value?: ResourceAddress;
+
   constructor(value?: ResourceAddress) {
     this.value = value;
   }
+
   toJSON() {
     return { NftGetOwnershipProof: this.value };
   }
 }
 
 export class TariPermissionTransactionsGet {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "TransactionGet";
   }
 }
 
 export class TariPermissionSubstatesRead {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "SubstatesRead";
   }
 }
 
 export class TariPermissionTemplatesRead {
-  constructor() {}
+  constructor() {
+  }
+
   toJSON() {
     return "TemplatesRead";
   }
@@ -300,6 +346,10 @@ export class TariPermissions {
   addPermissions(other: TariPermissions): this {
     this.permissions.push(...other.permissions);
     return this;
+  }
+
+  getPermissions(): TariPermission[] {
+    return this.permissions;
   }
 
   toJSON() {

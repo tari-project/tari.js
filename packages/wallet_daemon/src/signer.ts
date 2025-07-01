@@ -44,6 +44,7 @@ export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters 
   serverUrl: string;
 }
 
+
 export class WalletDaemonTariSigner implements TariSigner {
   public signerName = "WalletDaemon";
   params: WalletDaemonParameters;

@@ -12,7 +12,7 @@
   ],
   "references": [
     {
-      "path": "../tari_permissions"
+      "path": "../permissions"
     },
     {
       "path": "../tari_provider"

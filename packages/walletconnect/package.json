@@ -18,6 +18,7 @@
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
     "@tari-project/wallet_jrpc_client": "catalog:",
+    "@tari-project/tari-permissions": "workspace:",
     "@walletconnect/modal": "catalog:",
     "@walletconnect/universal-provider": "catalog:"
   },

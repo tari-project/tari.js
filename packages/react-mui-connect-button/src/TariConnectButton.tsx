@@ -5,13 +5,14 @@ import { TariWalletSelectionDialog } from "./TariWalletSelectionDialog";
 import { TariSigner } from "@tari-project/tari-signer";
 import { TariLogoWhite } from "./Logos";
 import { WalletDaemonFetchParameters } from "@tari-project/wallet-daemon-signer";
+import { WalletConnectParameters } from "@tari-project/wallet-connect-signer";
 
 
 export interface TariConnectButtonProps {
   isConnected: boolean;
   disabled?: boolean;
   onConnected?: (signer: TariSigner) => void;
-  walletConnectProjectId?: string,
+  walletConnectParams?: WalletConnectParameters,
   walletDaemonParams?: WalletDaemonFetchParameters;
 }
 
@@ -28,7 +29,7 @@ export function TariConnectButton(props: TariConnectButtonProps) {
 
   return (
     <>
-      {!props.walletConnectProjectId && !props.walletDaemonParams && (
+      {!props.walletDaemonParams && !props.walletConnectParams && (
         <div style={{ color: "red" }}>
           <strong>Warning:</strong> You must provide a WalletConnect project ID and/or Wallet Daemon parameters to use
           the Tari Connect Button.
@@ -42,7 +43,7 @@ export function TariConnectButton(props: TariConnectButtonProps) {
         open={walletSelectionOpen}
         onClose={onWalletSelectionClose}
         onConnected={props.onConnected}
-        walletConnectProjectId={props.walletConnectProjectId}
+        walletConnectParams={props.walletConnectParams}
         walletDaemonParams={props.walletDaemonParams}
       />
     </>

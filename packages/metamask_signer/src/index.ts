@@ -97,20 +97,8 @@ export class MetamaskTariSigner implements TariSigner {
     return { value: substate, address: { substate_id, version } };
   }
 
-  async listSubstates({
-                        filter_by_template,
-                        filter_by_type,
-                        limit,
-                        offset,
-                      }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
-    const res = (await this.metamaskRequest("listSubstates", {
-      filter_by_template,
-      filter_by_type,
-      limit,
-      offset,
-    })) as any;
-
-    return res;
+  async listSubstates(req: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+    return await this.metamaskRequest("listSubstates", req);
   }
 
   async submitTransaction(req: SubmitTransactionRequest): Promise<SubmitTransactionResponse> {
