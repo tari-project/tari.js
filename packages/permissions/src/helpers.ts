@@ -8,7 +8,7 @@ import {
   TariPermissionNftGetOwnershipProof,
   TariPermissionTransactionGet,
   TariPermissionTransactionSend,
-} from "./tari_permissions";
+} from "./permissions";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function createPermissionFromType(permission: any): TariPermission {

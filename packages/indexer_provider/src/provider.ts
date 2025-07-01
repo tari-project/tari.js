@@ -46,11 +46,11 @@ export class IndexerProvider implements TariProvider {
   }
 
   public async listSubstates({
-    filter_by_template,
-    filter_by_type,
-    limit,
-    offset,
-  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+                               filter_by_template,
+                               filter_by_type,
+                               limit,
+                               offset,
+                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.listSubstates({
       filter_by_template,
       filter_by_type,

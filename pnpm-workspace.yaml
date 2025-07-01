@@ -9,9 +9,15 @@ catalog:
   typescript: ^5.0.4
   vitest: ^3.0.4
   vite: ^6.1.0
-  "@types/node": ^22.13.1
-  "@tari-project/typescript-bindings": ">=1.10.2"
-  "@tari-project/wallet_jrpc_client": ^1.6.2
-  "@metamask/providers": ^18.2.0
-  "@walletconnect/universal-provider": ^2.13.3
-  "@walletconnect/modal": ^2.6.2
+  '@types/node': ^22.13.1
+  '@tari-project/typescript-bindings': '>=1.10.2'
+  '@tari-project/wallet_jrpc_client': ^1.6.2
+  '@metamask/providers': ^18.2.0
+  '@walletconnect/universal-provider': ^2.13.3
+  '@walletconnect/modal': ^2.6.2
+
+onlyBuiltDependencies:
+  - '@moonrepo/cli'
+  - core-js
+  - core-js-pure
+  - esbuild

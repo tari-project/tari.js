@@ -21,6 +21,7 @@ import {
   substateIdToString,
   TransactionSubmitRequest,
 } from "@tari-project/typescript-bindings";
+import { TariPermission } from "@tari-project/tari-permissions";
 
 const walletConnectParams = {
   optionalNamespaces: {
@@ -45,16 +46,26 @@ const walletConnectParams = {
   },
 };
 
+export interface WalletConnectParameters {
+  requiredPermissions?: TariPermission[];
+  optionalPermissions?: TariPermission[];
+  projectId: string;
+}
+
 export class WalletConnectTariSigner implements TariSigner {
   public signerName = "WalletConnect";
-  projectId: string;
+  params: WalletConnectParameters;
   wcProvider: UniversalProvider | undefined;
   wcSession: any | null;
 
-  constructor(projectId: string) {
-    this.projectId = projectId;
+  constructor(params: WalletConnectParameters) {
+    this.params = params;
     this.wcProvider = undefined;
     this.wcSession = null;
+  }
+
+  static init(params: WalletConnectParameters): WalletConnectTariSigner {
+    return new WalletConnectTariSigner(params);
   }
 
   async connect(): Promise<() => Promise<void>> {
@@ -63,15 +74,24 @@ export class WalletConnectTariSigner implements TariSigner {
     };
 
     // initialize WalletConnect
-    const projectId = this.projectId;
+    const projectId = this.params.projectId;
     const provider = await UniversalProvider.init({
       projectId,
       // TODO: parameterize the relay URL
       // relayUrl: "wss://relay.walletconnect.com",
     });
 
+    const sessionProperties = {
+      "required_permissions": JSON.stringify(this.params.requiredPermissions) || "[]",
+      "optional_permissions": JSON.stringify(this.params.optionalPermissions) || "[]",
+    };
+    const connectParams = {
+      ...walletConnectParams,
+      sessionProperties,
+    };
+
     // open UI modal with the connection URI
-    const { uri, approval } = await provider.client.connect(walletConnectParams);
+    const { uri, approval } = await provider.client.connect(connectParams);
     return async () => {
       const walletConnectModal = new WalletConnectModal({
         projectId,

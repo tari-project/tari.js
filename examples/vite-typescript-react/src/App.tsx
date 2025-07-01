@@ -1,11 +1,9 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import type { AccountData, TariSigner } from "@tari-project/tarijs-all";
-import { TariConnectButton } from "@tari-project/react-mui-connect-button";
+import { defaultPermissions, TariConnectButton } from "@tari-project/react-mui-connect-button";
 
-const WC_PROJECT_ID = "78f3485d08b9640a087cbcea000e1f8b"; // Replace with your actual WalletConnect project ID
+const WC_PROJECT_ID = "78f3485d08b9640a087cbcea000e1f8b"; // Replace with your WalletConnect project ID
 
 function App() {
   const [signer, setSigner] = useState<TariSigner | null>(null);
@@ -17,11 +15,16 @@ function App() {
     setAccount(account);
   };
 
+  const wcParams = {
+    projectId: WC_PROJECT_ID,
+    requiredPermissions: defaultPermissions().getPermissions(),
+  };
+
   return (
     <>
       <TariConnectButton
         isConnected={signer?.isConnected() || false}
-        walletConnectProjectId={WC_PROJECT_ID}
+        walletConnectParams={wcParams}
         onConnected={onConnected}
       />
       {account ? (

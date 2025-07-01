@@ -7,10 +7,12 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
     {
-      "path": "../tari_permissions"
+      "path": "../permissions"
     },
     {
       "path": "../tari_provider"
