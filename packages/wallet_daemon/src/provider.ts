@@ -76,15 +76,17 @@ export class WalletDaemonTariProvider implements TariProvider {
   async getSubstate(req: GetSubstateRequest): Promise<Substate> {
     // TODO: Substate address cannot be converted to SubstateId directly - Perhaps we need to change the provider interface
     const {
-      record,
-      value,
-    } = await this.client.substatesGet({ substate_id: req.substate_address as unknown as SubstateId });
+      substate,
+    } = await this.client.substatesGet({ substate_id: req.substate_address });
+    if (!substate) {
+      throw new Error(`Substate not found for address: ${req.substate_address}`);
+    }
 
     return {
-      value,
+      value: substate?.substate,
       address: {
-        substate_id: substateIdToString(record.substate_id),
-        version: record.version,
+        substate_id: req.substate_address,
+        version: substate?.version || 0,
       },
     };
   }
