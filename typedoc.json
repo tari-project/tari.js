@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["packages/builders/src/index.ts"], 
+  "out": "tsdocs/api",
+  "tsconfig": "./tsconfig.json",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeExternals": true,
+  "plugin": ["typedoc-plugin-markdown"],
+  "includeVersion": true
+}
