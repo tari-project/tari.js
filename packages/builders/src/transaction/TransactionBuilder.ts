@@ -27,23 +27,23 @@ import { NamedArg } from "../helpers/workspace";
  * The constructor takes an UnsignedTransaction and an array of TransactionSignatures as parameters.
  */
 export interface TransactionConstructor {
-/**
- * Creates a new {@link Transaction} instance.
- *
- * @param unsignedTransaction - The UnsignedTransaction to create the Transaction from.
- * @param signatures - An array of {@link TransactionSignature} objects, each containing:
- *   - `public_key`: A string representing a valid 32-byte Ristretto255 public key.
- *   - `signature`: An object containing:
- *       - `public_nonce`: A string representing the public nonce part of the Schnorr signature.
- *         - **Limitation:** Must be a valid 32-byte Ristretto255 public key (nonce), serialized as a string.
- *       - `signature`: A string representing the actual Schnorr signature scalar.
- *         - **Limitation:** Must be a valid 32-byte Schnorr signature scalar, serialized as a string.
- *
- * All fields must be validly encoded, canonical Ristretto255 public keys or Schnorr signature components in the correct format and length.
- * Any deviation (e.g., wrong length, invalid encoding) will result in errors or failed signature verification.
- *
- * @returns A new Transaction instance.
- */
+  /**
+   * Creates a new {@link Transaction} instance.
+   *
+   * @param unsignedTransaction - The UnsignedTransaction to create the Transaction from.
+   * @param signatures - An array of {@link TransactionSignature} objects, each containing:
+   *   - `public_key`: A string representing a valid 32-byte Ristretto255 public key.
+   *   - `signature`: An object containing:
+   *       - `public_nonce`: A string representing the public nonce part of the Schnorr signature.
+   *         - **Limitation:** Must be a valid 32-byte Ristretto255 public key (nonce), serialized as a string.
+   *       - `signature`: A string representing the actual Schnorr signature scalar.
+   *         - **Limitation:** Must be a valid 32-byte Schnorr signature scalar, serialized as a string.
+   *
+   * All fields must be validly encoded, canonical Ristretto255 public keys or Schnorr signature components in the correct format and length.
+   * Any deviation (e.g., wrong length, invalid encoding) will result in errors or failed signature verification.
+   *
+   * @returns A new Transaction instance.
+   */
   new(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
 }
 
@@ -74,9 +74,9 @@ export interface TariFunctionDefinition {
  * Defines a method that can be invoked on a component in the Tari network.
  */
 export interface TariMethodDefinition {
-/**
- * The name of the method to call on the component.
- */
+  /**
+   * The name of the method to call on the component.
+   */
   methodName: string;
   /**
    * Array of {@link TransactionArg} representing the arguments to pass to the method.
@@ -133,6 +133,7 @@ export interface Builder {
    * @returns The current instance of the Builder, allowing for method chaining.
    */
   callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this;
+
   /**
    * Adds a method call to the transaction, allowing the developer to invoke a method on a component. This implements {@link TariMethodDefinition}
    * @param method - The method definition to call, which includes the method name, arguments, and component address.
@@ -140,6 +141,7 @@ export interface Builder {
    * @returns The current instance of the Builder, allowing for method chaining.
    */
   callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this;
+
   /**
    * Adds an instruction to create a new account in the Tari Network to the transaction.
    * @param ownerPublicKey - The public key of the account owner, represented as a 64-character hexadecimal string.
@@ -148,6 +150,7 @@ export interface Builder {
    * @example
    */
   createAccount(ownerPublicKey: string, workspaceBucket?: string): this;
+
   /**
    * Creates an internal proof that can be used to prove ownership of a resource in a component's account.
    * @param account - The address of the component account that owns the resource. represented as a 64-character hexadecimal string, prepended with "component_".
@@ -155,6 +158,7 @@ export interface Builder {
    * @returns The current instance of the Builder, allowing for method chaining.
    */
   createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this;
+
   /**
    * Creates a variable in the workspace to store the output of the last instruction, which can be used later in the transaction.
    * @param key - The name of the variable to save the last instruction's output to.
@@ -173,19 +177,20 @@ export interface Builder {
   dropAllProofsInWorkspace(): this;
 
   /**
-  * Adds a `ClaimBurn` instruction to the transaction, allowing the user to claim a previously burned confidential output.
-  *
-  * @param claim - A {@link ConfidentialClaim} object containing cryptographic proofs that authorize the claim. This includes the burn output address, ownership proof, range proof, and optional withdraw proof.
-  * @returns The current instance of the Builder, enabling method chaining.
-  * @remarks
-  * - The `ConfidentialClaim` must be constructed off-chain using valid cryptographic data.
-  * - If `withdraw_proof` is required by the burn process, it must be included.
-  * - This method should be used only when recovering burned confidential resources.
-  */
+   * Adds a `ClaimBurn` instruction to the transaction, allowing the user to claim a previously burned confidential output.
+   *
+   * @param claim - A {@link ConfidentialClaim} object containing cryptographic proofs that authorize the claim. This includes the burn output address, ownership proof, range proof, and optional withdraw proof.
+   * @returns The current instance of the Builder, enabling method chaining.
+   * @remarks
+   * - The `ConfidentialClaim` must be constructed off-chain using valid cryptographic data.
+   * - If `withdraw_proof` is required by the burn process, it must be included.
+   * - This method should be used only when recovering burned confidential resources.
+   */
   claimBurn(claim: ConfidentialClaim): this;
 
 
   addInput(inputObject: SubstateRequirement): this;
+
   /** Adds a raw instruction to the transaction.
    *
    * @param instruction - A fully-formed {@link Instruction} object, such as `CreateAccount`, `CallMethod`, `ClaimBurn`, etc.
@@ -208,10 +213,10 @@ export interface Builder {
   addFeeInstruction(instruction: Instruction): this;
 
   /**
-  * Allows for the addition of a condition to the transaction that requires the minimum epoch in which the transaction can be executed. Transaction fails if executed before this epoch.
-  * @param minEpoch - The minimum epoch in which the transaction can be executed. If not set, the transaction can be executed in any epoch.
-  * @returns The current instance of the Builder, allowing for method chaining.
-  */
+   * Allows for the addition of a condition to the transaction that requires the minimum epoch in which the transaction can be executed. Transaction fails if executed before this epoch.
+   * @param minEpoch - The minimum epoch in which the transaction can be executed. If not set, the transaction can be executed in any epoch.
+   * @returns The current instance of the Builder, allowing for method chaining.
+   */
   withMinEpoch(minEpoch: number): this;
 
   /**
@@ -246,6 +251,7 @@ export interface Builder {
   withFeeInstructions(instructions: Instruction[]): this;
 
   withFeeInstructionsBuilder(builder: (builder: TransactionBuilder) => this): this;
+
   /**
    * Allows for setting an existing unsigned transaction to build upon. This is useful for modifying or extending an existing unsigned transaction.
    * @param unsignedTransaction - An {@link UnsignedTransactionV1} object representing the base transaction to build upon.
@@ -262,10 +268,11 @@ export interface Builder {
    * @param componentAddress
    * @param maxFee
    * @remarks
-   * - The component must have a method `take_fee` that returns a Bucket containing the revealed confidential XTR resource.
+   * - The component must have a method `pay_fee` that returns a Bucket containing the revealed confidential XTR resource.
    * - The fee instruction will lock up the `maxFee` amount for the duration of the transaction.
    */
   feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this;
+
   /**
    * Similar to {@link feeTransactionPayFromComponent}, but allows for paying the transaction fee using a confidential withdraw proof.
    * This method allows the transaction to pay fees from a component's account, rather than the transaction sender's account.
@@ -399,7 +406,7 @@ export class TransactionBuilder implements Builder {
   }
 
   /**
-   * Adds a fee instruction that calls the `take_fee` method on a component.
+   * Adds a fee instruction that calls the `pay_fee` method on a component.
    * This method must exist and return a Bucket with containing revealed confidential XTR resource.
    * This allows the fee to originate from sources other than the transaction sender's account.
    * The fee instruction will lock up the `max_fee` amount for the duration of the transaction.
@@ -415,7 +422,7 @@ export class TransactionBuilder implements Builder {
   }
 
   /**
-   * Adds a fee instruction that calls the `take_fee_confidential` method on a component.
+   * Adds a fee instruction that calls the `pay_fee_confidential` method on a component.
    * This method must exist and return a Bucket with containing revealed confidential XTR resource.
    * This allows the fee to originate from sources other than the transaction sender's account.
    */

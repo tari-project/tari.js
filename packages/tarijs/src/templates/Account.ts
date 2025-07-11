@@ -1,10 +1,10 @@
 import { ConfidentialWithdrawProof, NonFungibleId, ResourceAddress } from "@tari-project/typescript-bindings";
 import { Amount } from "@tari-project/tarijs-types";
-import { TariMethodDefinition, WorkspaceArg  } from "@tari-project/tarijs-builders";
+import { TariMethodDefinition, WorkspaceArg } from "@tari-project/tarijs-builders";
 import { TemplateFactory } from "./TemplateFactory";
 
 /**
- * Adds a fee instruction that calls the "take_fee" method on a component.
+ * Adds a fee instruction that calls the "pay_fee" method on a component.
  * This method must exist and return a Bucket with containing revealed confidential XTR resource.
  * This allows the fee to originate from sources other than the transaction sender's account.
  * The fee instruction will lock up the "max_fee" amount for the duration of the transaction.
@@ -16,8 +16,9 @@ interface PayFeeMethod extends TariMethodDefinition {
   methodName: "pay_fee";
   args?: [Amount];
 }
+
 // /**
-//  * Adds a fee instruction that calls the "take_fee_confidential" method on a component.
+//  * Adds a fee instruction that calls the "pay_fee_confidential" method on a component.
 //  * This method must exist and return a Bucket with containing revealed confidential XTR resource.
 //  * This allows the fee to originate from sources other than the transaction sender's account.
 //  * @param componentAddress
@@ -81,7 +82,9 @@ export class AccountTemplate extends TemplateFactory {
     this._initMethods();
   }
 
-  protected _initFunctions(): void {}
+  protected _initFunctions(): void {
+  }
+
   protected _initMethods(): void {
     this.deposit = this._defineMethod<DepositMethod>("deposit");
     this.withdraw = this._defineMethod<WithdrawMethod>("withdraw");
