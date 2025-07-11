@@ -10,7 +10,20 @@
     "node": "22.13.1"
   },
   "devDependencies": {
-    "@moonrepo/cli": "^1.32.1"
+    "@eslint/js": "^9.30.0",
+    "@moonrepo/cli": "^1.32.1",
+    "eslint": "^9.30.0",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "globals": "^16.2.0",
+    "typedoc-plugin-markdown": "^4.7.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0"
   },
-  "packageManager": "pnpm@9.15.3"
+  "packageManager": "pnpm@9.15.3",
+  "dependencies": {
+    "@tari-project/tarijs-types": "^0.10.1"
+  },
+  "scripts": {
+    "docs": "typedoc"
+  }
 }
