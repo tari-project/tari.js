@@ -35,9 +35,9 @@ export interface TransactionConstructor {
    *   - `public_key`: A string representing a valid 32-byte Ristretto255 public key.
    *   - `signature`: An object containing:
    *       - `public_nonce`: A string representing the public nonce part of the Schnorr signature.
-   *         - **Limitation:** Must be a valid 32-byte Ristretto255 public key (nonce), serialized as a string.
+   *         - **NOTE:** Must be a valid 32-byte Ristretto255 public key, serialized as a hex string.
    *       - `signature`: A string representing the actual Schnorr signature scalar.
-   *         - **Limitation:** Must be a valid 32-byte Schnorr signature scalar, serialized as a string.
+   *         - **NOTE:** Must be a valid 32-byte Schnorr signature scalar, serialized as a hex string.
    *
    * All fields must be validly encoded, canonical Ristretto255 public keys or Schnorr signature components in the correct format and length.
    * Any deviation (e.g., wrong length, invalid encoding) will result in errors or failed signature verification.
@@ -114,7 +114,7 @@ export interface TariMethodDefinition {
  * Defines the interface for a Transaction Builder that allows constructing and signing transactions in the Tari network.
  * This interface provides methods to add instructions, inputs, and other components to a transaction and then build a signed or unsigned transaction.
  * The methods are chained together to allow for a fluent API style of transaction construction.
- * The Builder interface is implmented by the {@link TransactionBuilder} class.
+ * The Builder interface is implemented by the {@link TransactionBuilder} class.
  *
  * @example
  * // Usage:
@@ -258,24 +258,24 @@ export interface Builder {
    * @returns The current instance of the Builder, allowing for method chaining.
    * @remarks
    * Using withUnsignedTransaction() overwrites the builder’s current unsigned transaction state with the provided one.
-   * It allows for more flexible workflows where unsigned transactions can be passed around, saved, and then further edited.
+   * Useful in cases where the unsigned transaction has been (partially) constructed already.
    */
   withUnsignedTransaction(unsignedTransaction: UnsignedTransactionV1): this;
 
   /**
-   * Adds a method for specifying the account that will pay the transaction fee.
-   * This method allows the transaction to pay fees from a component's account, rather than the transaction sender's account.
+   * Adds a method for specifying the component (typically an Account) that pays the transaction fee.
+   *
    * @param componentAddress
    * @param maxFee
    * @remarks
-   * - The component must have a method `pay_fee` that returns a Bucket containing the revealed confidential XTR resource.
-   * - The fee instruction will lock up the `maxFee` amount for the duration of the transaction.
+   * - The component must have a method `pay_fee` that calls `vault.pay_fee` with enough revealed confidential XTR.
+   * - Calls to vault.pay_fee lock up the `maxFee` amount for the duration of the transaction.
    */
   feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this;
 
   /**
    * Similar to {@link feeTransactionPayFromComponent}, but allows for paying the transaction fee using a confidential withdraw proof.
-   * This method allows the transaction to pay fees from a component's account, rather than the transaction sender's account.
+   *
    * @param componentAddress -  The address of the component from which to pay the fee, represented as a 64-character hexadecimal string, optionally prefixed by "component_".
    * @param proof - A {@link ConfidentialWithdrawProof} object containing the necessary cryptographic proofs to authorize the fee payment.
    */
@@ -392,9 +392,9 @@ export class TransactionBuilder implements Builder {
   }
 
   /**
-   * The `SaveVar` method replaces
+   * Puts the last instruction output into the workspace. These can be used as arguments subsequent instructions using `{Workspace: "my_name"}`.
+   * Alias to the `PutLastInstructionOutputOnWorkspace` instruction.
    * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
-   * to make saving variables easier.
    */
   public saveVar(name: string): this {
     let key = this.addNamedId(name);
@@ -406,10 +406,10 @@ export class TransactionBuilder implements Builder {
   }
 
   /**
-   * Adds a fee instruction that calls the `pay_fee` method on a component.
-   * This method must exist and return a Bucket with containing revealed confidential XTR resource.
-   * This allows the fee to originate from sources other than the transaction sender's account.
-   * The fee instruction will lock up the `max_fee` amount for the duration of the transaction.
+   * Adds a fee instruction that calls the `pay_fee` method on a component (usually an Account).
+   * This method must call `vault.pay_fee` with a revealed confidential XTR resource.
+   * Calls to pay_fee lock up the `max_fee` amount for the duration of the transaction. Any remaining amount is
+   * returned to the component's vault.
    */
   public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this {
     return this.addFeeInstruction({
