@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/react-mui-connect-button",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "React component to connect your website to the Tari Ootle Wallet",
   "type": "module",
   "publishConfig": {
@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@mui/icons-material": "^7",
     "@mui/material": "^7",
-    "react": "^18"
+    "react": "^18 || ^19"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -7,7 +7,9 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
     {
       "path": "../builders"
@@ -19,7 +21,7 @@
       "path": "../metamask_signer"
     },
     {
-      "path": "../tari_permissions"
+      "path": "../permissions"
     },
     {
       "path": "../tari_provider"

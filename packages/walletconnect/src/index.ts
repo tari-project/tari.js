@@ -21,9 +21,10 @@ import {
   substateIdToString,
   TransactionSubmitRequest,
 } from "@tari-project/typescript-bindings";
+import { TariPermission } from "@tari-project/tari-permissions";
 
 const walletConnectParams = {
-  requiredNamespaces: {
+  optionalNamespaces: {
     tari: {
       methods: [
         "tari_getSubstate",
@@ -39,51 +40,76 @@ const walletConnectParams = {
         "tari_getNftsList",
       ],
       chains: ["tari:devnet"],
-      events: ["chainChanged\", \"accountsChanged"],
+      events: [],
+      // events: ["chainChanged", "accountsChanged"],
     },
   },
 };
 
+export interface WalletConnectParameters {
+  requiredPermissions?: TariPermission[];
+  optionalPermissions?: TariPermission[];
+  projectId: string;
+}
+
 export class WalletConnectTariSigner implements TariSigner {
   public signerName = "WalletConnect";
-  projectId: string;
-  wcProvider: UniversalProvider | null;
+  params: WalletConnectParameters;
+  wcProvider: UniversalProvider | undefined;
   wcSession: any | null;
 
-  constructor(projectId: string) {
-    this.projectId = projectId;
-    this.wcProvider = null;
+  constructor(params: WalletConnectParameters) {
+    this.params = params;
+    this.wcProvider = undefined;
     this.wcSession = null;
   }
 
-  async connect(): Promise<void> {
-    if (this.wcProvider && this.wcSession) return;
+  static init(params: WalletConnectParameters): WalletConnectTariSigner {
+    return new WalletConnectTariSigner(params);
+  }
+
+  async connect(): Promise<() => Promise<void>> {
+    if (this.wcProvider && this.wcSession) return async () => {
+      // No-op if already connected
+    };
 
     // initialize WalletConnect
-    const projectId = this.projectId;
-    this.wcProvider = await UniversalProvider.init({
+    const projectId = this.params.projectId;
+    const provider = await UniversalProvider.init({
       projectId,
       // TODO: parameterize the relay URL
-      relayUrl: "wss://relay.walletconnect.com",
+      // relayUrl: "wss://relay.walletconnect.com",
     });
+
+    const sessionProperties = {
+      "required_permissions": JSON.stringify(this.params.requiredPermissions) || "[]",
+      "optional_permissions": JSON.stringify(this.params.optionalPermissions) || "[]",
+    };
+    const connectParams = {
+      ...walletConnectParams,
+      sessionProperties,
+    };
 
     // open UI modal with the connection URI
-    const { uri, approval } = await this.wcProvider.client.connect(walletConnectParams);
-    const walletConnectModal = new WalletConnectModal({
-      projectId,
-    });
-    if (uri) {
-      walletConnectModal.openModal({ uri });
-    }
+    const { uri, approval } = await provider.client.connect(connectParams);
+    return async () => {
+      const walletConnectModal = new WalletConnectModal({
+        projectId,
+      });
+      if (uri) {
+        await walletConnectModal.openModal({ uri });
+      }
 
-    // wait for the wallet to approve the connection
-    console.log("waiting for session approval from the wallet app");
-    const session = await approval();
-    walletConnectModal.closeModal();
+      // wait for the wallet to approve the connection
+      console.log("waiting for session approval from the wallet app");
+      const session = await approval();
+      walletConnectModal.closeModal();
 
-    // at this point session is open
-    console.log("session approved by the wallet");
-    this.wcSession = session;
+      // at this point session is open
+      console.log("session approved by the wallet");
+      this.wcProvider = provider;
+      this.wcSession = session;
+    };
   }
 
   private async sendRequest(method: string, params: object): Promise<any> {

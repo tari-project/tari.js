@@ -1,10 +1,10 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "",
   "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "The Tari Community",
   "license": "ISC",
   "engines": {
     "node": "22.13.1"

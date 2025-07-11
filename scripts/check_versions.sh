@@ -6,6 +6,8 @@ echo "Finding all package.json files and extracting versions..."
 
 declare -a versions
 
+gitroot=$(git rev-parse --show-toplevel)
+pushd "${gitroot}/packages" > /dev/null
 # Find all package.json files, excluding node_modules, and extract the version
 while IFS= read -r file; do
     version=$(jq -r '.version' "$file")
@@ -40,3 +42,5 @@ if [ "$all_same" = false ]; then
 else
     echo "✅ All package.json versions are consistent: $reference_version"
 fi
+
+popd > /dev/null

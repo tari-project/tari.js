@@ -29,7 +29,7 @@ import { NamedArg } from "../helpers/workspace";
 export interface TransactionConstructor {
 /**
  * Creates a new {@link Transaction} instance.
- * 
+ *
  * @param unsignedTransaction - The UnsignedTransaction to create the Transaction from.
  * @param signatures - An array of {@link TransactionSignature} objects, each containing:
  *   - `public_key`: A string representing a valid 32-byte Ristretto255 public key.
@@ -38,10 +38,10 @@ export interface TransactionConstructor {
  *         - **Limitation:** Must be a valid 32-byte Ristretto255 public key (nonce), serialized as a string.
  *       - `signature`: A string representing the actual Schnorr signature scalar.
  *         - **Limitation:** Must be a valid 32-byte Schnorr signature scalar, serialized as a string.
- * 
+ *
  * All fields must be validly encoded, canonical Ristretto255 public keys or Schnorr signature components in the correct format and length.
  * Any deviation (e.g., wrong length, invalid encoding) will result in errors or failed signature verification.
- * 
+ *
  * @returns A new Transaction instance.
  */
   new(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
@@ -58,9 +58,9 @@ export interface TariFunctionDefinition {
   functionName: string;
   /**
    * The arguments to pass to the function. Optional.
-   * 
+   *
    * Each argument is a {@link NamedArg}, which represents either a literal value or a reference to a workspace variable.
-   * 
+   *
    * @see NamedArg for full structure and usage.
    */
   args?: NamedArg[];
@@ -76,10 +76,10 @@ export interface TariFunctionDefinition {
 export interface TariMethodDefinition {
 /**
  * The name of the method to call on the component.
- */  
+ */
   methodName: string;
   /**
-   * Array of {@link TransactionArg} representing the arguments to pass to the method. 
+   * Array of {@link TransactionArg} representing the arguments to pass to the method.
    * These can be either literal values or references to workspace variables.
    */
   args?: TransactionArg[];
@@ -111,22 +111,11 @@ export interface TariMethodDefinition {
 }
 
 /**
- * Defines the structure for creating a Tari account.
- */
-export interface TariCreateAccountDefinition {
-  methodName: string;
-  args?: {
-    ownerPublicKey: string;
-    workspaceBucket?: string;
-  };
-}
-
-/** 
  * Defines the interface for a Transaction Builder that allows constructing and signing transactions in the Tari network.
  * This interface provides methods to add instructions, inputs, and other components to a transaction and then build a signed or unsigned transaction.
  * The methods are chained together to allow for a fluent API style of transaction construction.
  * The Builder interface is implmented by the {@link TransactionBuilder} class.
- * 
+ *
  * @example
  * // Usage:
  * const builder: Builder = new TransactionBuilder();
@@ -152,15 +141,15 @@ export interface Builder {
    */
   callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this;
   /**
-   * Adds an instruction to create a new account in the Tari Network to the transaction. 
-   * @param ownerPublicKey - The public key of the account owner, represented as a 64-character hexadecimal string. 
+   * Adds an instruction to create a new account in the Tari Network to the transaction.
+   * @param ownerPublicKey - The public key of the account owner, represented as a 64-character hexadecimal string.
    * @param workspaceBucket - An optional workspace bucket name to associate with the account. If provided, it will be used to create a workspace for the account. Allows for referencing the account elsewhere in the transaction without requiring it's address.
    * @returns The current instance of the Builder, allowing for method chaining.
    * @example
    */
   createAccount(ownerPublicKey: string, workspaceBucket?: string): this;
   /**
-   * Creates an internal proof that can be used to prove ownership of a resource in a component's account. 
+   * Creates an internal proof that can be used to prove ownership of a resource in a component's account.
    * @param account - The address of the component account that owns the resource. represented as a 64-character hexadecimal string, prepended with "component_".
    * @param resourceAddress - The address of the resource to create a proof for, represented as a 64-character hexadecimal string, prepended with "resource_".
    * @returns The current instance of the Builder, allowing for method chaining.
@@ -176,10 +165,10 @@ export interface Builder {
   saveVar(key: string): this;
 
   /**
-   * Calls a method to remove all proofs in the current workspace. 
+   * Calls a method to remove all proofs in the current workspace.
    * @returns The current instance of the Builder, allowing for method chaining.
    * @remarks
-   * Any proof references saved in the workspace via saveVar will be removed, invalidating any subsequent instructions that call on the variable. 
+   * Any proof references saved in the workspace via saveVar will be removed, invalidating any subsequent instructions that call on the variable.
    */
   dropAllProofsInWorkspace(): this;
 
@@ -200,7 +189,7 @@ export interface Builder {
   /** Adds a raw instruction to the transaction.
    *
    * @param instruction - A fully-formed {@link Instruction} object, such as `CreateAccount`, `CallMethod`, `ClaimBurn`, etc.
-   * 
+   *
    * @returns The current instance of the Builder for method chaining.
    *
    * @remarks
@@ -211,7 +200,7 @@ export interface Builder {
    * - You require more control over optional fields not exposed in convenience methods (e.g. custom `owner_rule`)
    * - You are working with experimental or less-common instructions
    *
-   * For common operations like creating accounts or calling methods, prefer high-level builder methods 
+   * For common operations like creating accounts or calling methods, prefer high-level builder methods
    * such as `createAccount()` or `callMethod()` for better readability and type safety.
    */
   addInstruction(instruction: Instruction): this;
@@ -231,9 +220,9 @@ export interface Builder {
    * @returns The current instance of the Builder, allowing for method chaining.
    */
   withMaxEpoch(maxEpoch: number): this;
-  
+
   /**
-   * Adds a substate requirement to the transaction, which is used to specify the inputs required for the transaction. 
+   * Adds a substate requirement to the transaction, which is used to specify the inputs required for the transaction.
    * @param inputs - An array of {@link SubstateRequirement} objects that define the inputs required for the transaction, consisting of substate IDs and optional versions. Typically, null version is used to indicate that any version of the substate is acceptable.
    * @returns The current instance of the Builder, allowing for method
    */
@@ -264,14 +253,14 @@ export interface Builder {
    * @remarks
    * Using withUnsignedTransaction() overwrites the builder’s current unsigned transaction state with the provided one.
    * It allows for more flexible workflows where unsigned transactions can be passed around, saved, and then further edited.
-   */  
+   */
   withUnsignedTransaction(unsignedTransaction: UnsignedTransactionV1): this;
 
   /**
    * Adds a method for specifying the account that will pay the transaction fee.
    * This method allows the transaction to pay fees from a component's account, rather than the transaction sender's account.
-   * @param componentAddress 
-   * @param maxFee 
+   * @param componentAddress
+   * @param maxFee
    * @remarks
    * - The component must have a method `take_fee` that returns a Bucket containing the revealed confidential XTR resource.
    * - The fee instruction will lock up the `maxFee` amount for the duration of the transaction.
@@ -308,7 +297,7 @@ export class TransactionBuilder implements Builder {
       min_epoch: null,
       max_epoch: null,
       dry_run: false,
-      is_seal_signer_authorized: false
+      is_seal_signer_authorized: false,
     };
     this.signatures = [];
     this.allocatedIds = new Map();
@@ -359,7 +348,7 @@ export class TransactionBuilder implements Builder {
   public createProof(account: ComponentAddress, resourceAddress: ResourceAddress): this {
     return this.addInstruction({
       CallMethod: {
-        call: {Address: account},
+        call: { Address: account },
         method: "create_proof_for_resource",
         args: [resourceAddress],
       },
@@ -418,7 +407,7 @@ export class TransactionBuilder implements Builder {
   public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this {
     return this.addFeeInstruction({
       CallMethod: {
-        call: {Address: componentAddress},
+        call: { Address: componentAddress },
         method: "pay_fee",
         args: [maxFee],
       },
@@ -436,7 +425,7 @@ export class TransactionBuilder implements Builder {
   ): this {
     return this.addFeeInstruction({
       CallMethod: {
-        call: { Address:  componentAddress },
+        call: { Address: componentAddress },
         method: "pay_fee_confidential",
         args: [proof],
       },

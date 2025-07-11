@@ -20,7 +20,6 @@ import {
   KeyBranch,
   ListAccountNftRequest,
   ListAccountNftResponse,
-  SubstateId,
   substateIdToString,
   SubstatesListRequest,
 } from "@tari-project/typescript-bindings";
@@ -43,6 +42,7 @@ export interface WalletDaemonParameters extends WalletDaemonBaseParameters {
 export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters {
   serverUrl: string;
 }
+
 
 export class WalletDaemonTariSigner implements TariSigner {
   public signerName = "WalletDaemon";
@@ -158,13 +158,18 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getSubstate(substateId: string): Promise<Substate> {
-    // Wallet daemon expects a SubstateId as a string
-    const { value, record } = await this.client.substatesGet({ substate_id: substateId as unknown as SubstateId });
+    const {
+      substate,
+    } = await this.client.substatesGet({ substate_id: substateId });
+    if (!substate) {
+      throw new Error(`Substate not found for address: ${substateId}`);
+    }
+
     return {
-      value,
+      value: substate?.substate,
       address: {
-        substate_id: substateIdToString(record.substate_id),
-        version: record.version,
+        substate_id: substateId,
+        version: substate?.version || 0,
       },
     };
   }

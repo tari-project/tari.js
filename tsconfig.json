@@ -21,6 +21,9 @@
       "path": "packages/metamask_signer"
     },
     {
+      "path": "packages/permissions"
+    },
+    {
       "path": "packages/react-mui-connect-button"
     },
     {

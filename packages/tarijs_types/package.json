@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs-types",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -10,7 +10,7 @@
     "build": "tsc -b"
   },
   "keywords": [],
-  "author": "",
+  "author": "The Tari Community",
   "license": "ISC",
   "dependencies": {
     "@tari-project/typescript-bindings": "catalog:"
