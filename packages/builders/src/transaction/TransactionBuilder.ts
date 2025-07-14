@@ -397,7 +397,7 @@ export class TransactionBuilder implements Builder {
    * `PutLastInstructionOutputOnWorkspace: { key: Array<number> }`
    */
   public saveVar(name: string): this {
-    let key = this.addNamedId(name);
+    const key = this.addNamedId(name);
     return this.addInstruction({
       PutLastInstructionOutputOnWorkspace: {
         key,
