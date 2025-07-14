@@ -1,4 +1,4 @@
-export { ComponentAddress, ResourceAddress, PublishedTemplateAddress, Epoch } from "@tari-project/typescript-bindings";
+export { ComponentAddress, ResourceAddress, PublishedTemplateAddress, Epoch, Transaction, TransactionResult } from "@tari-project/typescript-bindings";
 export { Amount } from "./Amount";
 export { TransactionArg } from "./TransactionArg";
 export { ConfidentialClaim } from "./ConfidentialClaim";

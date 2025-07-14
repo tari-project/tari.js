@@ -14,6 +14,7 @@ import {
   TransactionStatus,
 } from "@tari-project/tarijs-types";
 import { SubmitTxResult } from "@tari-project/tarijs-types/dist/TransactionResult";
+import { getTransactionResultStatus } from "@tari-project/tarijs-types/src/helpers/txResult";
 
 export function buildTransactionRequest(
   transaction: UnsignedTransactionV1,
@@ -51,9 +52,12 @@ export async function submitAndWaitForTransaction(
       return null;
     }
 
+    const resultStatus = getTransactionResultStatus(result);
+
     return {
       response,
       result,
+      resultStatus,
       upSubstates,
       downSubstates,
       newComponents,
