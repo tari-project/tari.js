@@ -24,6 +24,7 @@
     "@tari-project/tarijs-types": "^0.10.1"
   },
   "scripts": {
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "lint": "pnpm -r lint"
   }
 }

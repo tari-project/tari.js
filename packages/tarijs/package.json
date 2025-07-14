@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run unit-tests",
-    "integration-tests": "vitest run integration-tests"
+    "integration-tests": "vitest run integration-tests",
+     "lint": "eslint src/"
   },
   "keywords": [],
   "author": "The Tari Community",
