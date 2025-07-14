@@ -129,6 +129,7 @@ export class IndexerProviderClient {
 
   async __invokeRpc(method: string, params: object | null = null) {
     const id = this.id++;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const response = await this.transport.sendRequest<any>(
       {
         method,

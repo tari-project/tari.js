@@ -1,7 +1,6 @@
 import type { GetTemplateDefinitionResponse, ListTemplatesResponse } from "@tari-project/typescript-bindings";
 import {
   GetTransactionResultResponse,
-  TemplateDefinition,
   Substate,
   ListSubstatesResponse,
   GetSubstateRequest,

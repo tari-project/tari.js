@@ -4,7 +4,6 @@ import { IndexerProviderClient } from "./transports";
 import {
   GetTemplateDefinitionResponse,
   ListTemplatesResponse,
-  stringToSubstateId,
   substateIdToString,
   SubstatesListRequest,
 } from "@tari-project/typescript-bindings";
@@ -46,11 +45,11 @@ export class IndexerProvider implements TariProvider {
   }
 
   public async listSubstates({
-                               filter_by_template,
-                               filter_by_type,
-                               limit,
-                               offset,
-                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.listSubstates({
       filter_by_template,
       filter_by_type,
@@ -99,7 +98,7 @@ export class IndexerProvider implements TariProvider {
   }
 
   public async getTemplateDefinition(template_address: string): Promise<GetTemplateDefinitionResponse> {
-    let resp = await this.client.getTemplateDefinition({ template_address });
+    const resp = await this.client.getTemplateDefinition({ template_address });
     return resp;
   }
 }
