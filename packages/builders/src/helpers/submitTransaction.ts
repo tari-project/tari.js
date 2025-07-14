@@ -68,7 +68,6 @@ export async function waitForTransactionResult(
   signer: TariSigner | TariUniverseSigner,
   transactionId: string,
 ): Promise<TransactionResult> {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
@@ -82,8 +81,11 @@ export async function waitForTransactionResult(
     if (resp.status == TransactionStatus.Rejected) {
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
+    if (!resp.result?.result) {
+      throw new Error(`Transaction finalized but the result is undefined`);
+    }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp.result?.result!;
+      return resp.result?.result;
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
