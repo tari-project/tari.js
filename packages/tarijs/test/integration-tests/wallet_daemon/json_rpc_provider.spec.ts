@@ -1,7 +1,6 @@
 import { assert, describe, expect, it } from "vitest";
 
 import {
-  Amount,
   buildTransactionRequest,
   Network,
   submitAndWaitForTransaction,
@@ -12,7 +11,10 @@ import {
   waitForTransactionResult,
   WalletDaemonTariSigner,
 } from "../../../src";
-import { Instruction, SubstateId } from "@tari-project/typescript-bindings";
+import { Instruction } from "@tari-project/typescript-bindings";
+import { Amount } from "@tari-project/tarijs-types";
+
+const NETWORK = Network.LocalNet;
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
@@ -98,7 +100,7 @@ describe("WalletDaemonTariSigner", () => {
       const fee_instructions = [
         {
           CallMethod: {
-            component_address: account.address,
+            call: { Address: account.address },
             method: "pay_fee",
             args: [`Amount(${fee})`],
           },
@@ -107,7 +109,7 @@ describe("WalletDaemonTariSigner", () => {
 
       const request: SubmitTransactionRequest = {
         transaction: {
-          network: Network.LocalNet,
+          network: NETWORK,
           fee_instructions,
           instructions: [],
           inputs: [],
@@ -132,7 +134,7 @@ describe("WalletDaemonTariSigner", () => {
 
       const request: SubmitTransactionRequest = {
         transaction: {
-          network: Network.LocalNet,
+          network: NETWORK,
           fee_instructions: [],
           instructions: [
             {
@@ -154,7 +156,7 @@ describe("WalletDaemonTariSigner", () => {
       const result = await signer.submitTransaction(request);
       const txResult = await waitForTransactionResult(signer, result.transaction_id);
 
-      expect(txResult.status).toEqual(TransactionStatus.DryRun);
+      expect(txResult.finalizedTxStatus).toEqual(TransactionStatus.DryRun);
     });
 
     it("submits a transaction, that uses workspaces", async () => {
@@ -164,7 +166,7 @@ describe("WalletDaemonTariSigner", () => {
       const xtrAddress = account.resources[0].resource_address;
 
       const fee = new Amount(2000);
-      const network = Network.LocalNet;
+      const network = NETWORK;
       const builder = new TransactionBuilder(network);
       builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
 
@@ -183,16 +185,13 @@ describe("WalletDaemonTariSigner", () => {
         },
         [workspaceId],
       );
-      builder.addInput({ substate_id: { Component: account.address }, version: null });
+      builder.addInput({ substate_id: account.address, version: null });
       const transaction = builder.buildUnsignedTransaction();
 
-      const submitTransactionRequest = buildTransactionRequest(
-        transaction,
-        account.account_id,
-      );
+      const submitTransactionRequest = buildTransactionRequest(transaction, account.account_id);
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
-      expect(txResult.result.status).toBe(TransactionStatus.Accepted);
+      expect(txResult.finalizedTxStatus).toBe(TransactionStatus.Accepted);
     });
   });
 
@@ -207,9 +206,9 @@ describe("WalletDaemonTariSigner", () => {
 
       assert(
         accountBalances &&
-        typeof accountBalances === "object" &&
-        "balances" in accountBalances &&
-        accountBalances.balances,
+          typeof accountBalances === "object" &&
+          "balances" in accountBalances &&
+          accountBalances.balances,
         "accountBalances is not an object",
       );
       assert(Array.isArray(accountBalances.balances), "accountBalances.balances is not an array");
@@ -303,29 +302,18 @@ describe("WalletDaemonTariSigner", () => {
       const account = await signer.getAccount();
 
       const fee = new Amount(2000);
-      const builder = new TransactionBuilder();
+      const builder = new TransactionBuilder(NETWORK);
       builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
       builder.allocateAddress("Component", "id-1");
-      const transaction = builder.build();
+      const transaction = builder.buildUnsignedTransaction();
 
-      const isDryRun = false;
-      const inputRefs = undefined;
-      const network = Network.LocalNet;
-      const requiredSubstates = [{ substate_id: account.address }];
-      const submitTransactionRequest = buildTransactionRequest(
-        transaction,
-        account.account_id,
-        requiredSubstates,
-        inputRefs,
-        isDryRun,
-        network,
-      );
+      const submitTransactionRequest = buildTransactionRequest(transaction, account.account_id);
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
 
-      expect(txResult.result.status).toBe(TransactionStatus.OnlyFeeAccepted);
+      expect(txResult.finalizedTxStatus).toBe(TransactionStatus.OnlyFeeAccepted);
 
-      const executionResult = txResult.result.result?.result;
+      const executionResult = txResult.result;
       const reason =
         executionResult && "AcceptFeeRejectRest" in executionResult && executionResult.AcceptFeeRejectRest[1];
       const failure = reason && typeof reason === "object" && "ExecutionFailure" in reason && reason.ExecutionFailure;
@@ -339,29 +327,22 @@ describe("WalletDaemonTariSigner", () => {
       const account = await signer.getAccount();
 
       const fee = new Amount(2000);
-      const builder = new TransactionBuilder();
+      const builder = new TransactionBuilder(NETWORK);
       builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
-      builder.assertBucketContains("not_exist", "resource_0000000000000000000000000000000000000000000000000000000000000000", Amount.newAmount(1));
-      const transaction = builder.build();
-
-      const isDryRun = false;
-      const inputRefs = undefined;
-      const network = Network.LocalNet;
-      const requiredSubstates = [{ substate_id: account.address }];
-      const submitTransactionRequest = buildTransactionRequest(
-        transaction,
-        account.account_id,
-        requiredSubstates,
-        inputRefs,
-        isDryRun,
-        network,
+      builder.assertBucketContains(
+        "not_exist",
+        "resource_0000000000000000000000000000000000000000000000000000000000000000",
+        Amount.newAmount(1).getValue(),
       );
+      const transaction = builder.buildUnsignedTransaction();
+
+      const submitTransactionRequest = buildTransactionRequest(transaction, account.account_id);
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
 
-      expect(txResult.result.status).toBe(TransactionStatus.OnlyFeeAccepted);
+      expect(txResult.finalizedTxStatus).toBe(TransactionStatus.OnlyFeeAccepted);
 
-      const executionResult = txResult.result.result?.result;
+      const executionResult = txResult.result;
       const reason =
         executionResult && "AcceptFeeRejectRest" in executionResult && executionResult.AcceptFeeRejectRest[1];
       const failure = reason && typeof reason === "object" && "ExecutionFailure" in reason && reason.ExecutionFailure;
