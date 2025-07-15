@@ -60,11 +60,10 @@ export function getSubstateValueFromUpSubstates(
 
 export function getComponentsForTemplate(templateAddress: string, upSubstates: UpSubstates): ComponentAddress[] | null {
   const components: ComponentAddress[] = [];
-  const templateAddressBytes = new TextEncoder().encode(templateAddress);
   for (const [substateId, substate] of upSubstates) {
     if ("Component" in substate.substate) {
       const componentHeader = substate.substate.Component;
-      if (componentHeader.template_address === templateAddressBytes) {
+      if (componentHeader.template_address === templateAddress) {
         components.push(substateIdToString(substateId));
       }
     }

@@ -1,5 +1,6 @@
 export { ComponentAddress, ResourceAddress, PublishedTemplateAddress, Epoch, Transaction, TransactionResult } from "@tari-project/typescript-bindings";
 export { Amount } from "./Amount";
+export { BuiltInAccount, VaultSubstate } from "./Account";
 export { TransactionArg } from "./TransactionArg";
 export { ConfidentialClaim } from "./ConfidentialClaim";
 export { ConfidentialOutput } from "./ConfidentialOutput";
@@ -53,4 +54,11 @@ export {
   txResultCheck,
   BinaryTag,
   CborValue,
+  SimpleTransactionResult,
+  SimpleSubstateDiff,
+  AnySubstate,
+  DownSubstate,
+  UpSubstate,
+  splitOnce,
 } from "./helpers";
+export { ACCOUNT_TEMPLATE_ADDRESS, XTR, TARI_RESOURCE } from "./consts";

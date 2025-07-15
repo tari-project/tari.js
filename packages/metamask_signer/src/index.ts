@@ -80,7 +80,7 @@ export class MetamaskTariSigner implements TariSigner {
       account_id,
       address: res.address,
       public_key: res.public_key,
-      resources: [],
+      vaults: [],
     };
   }
 

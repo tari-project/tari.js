@@ -1,25 +1,15 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 import { TariSigner } from "@tari-project/tari-signer";
 import {
-  ComponentAddress,
-  substateIdToString,
   TransactionResult,
   UnsignedTransactionV1,
 } from "@tari-project/typescript-bindings";
 import {
   DownSubstates,
   UpSubstates,
-  getSubstateValueFromUpSubstates,
   SubmitTransactionRequest,
-  TransactionStatus,
+  TransactionStatus, SimpleTransactionResult,
 } from "@tari-project/tarijs-types";
-import { SubmitTxResult } from "@tari-project/tarijs-types/dist/TransactionResult";
-import { getTransactionResultStatus } from "@tari-project/tarijs-types/src/helpers/txResult";
-
-type FinalizedTransactionResponse = {
-  finalizedTxStatus: TransactionStatus;
-  result: TransactionResult;
-};
 
 export function buildTransactionRequest(
   transaction: UnsignedTransactionV1,
@@ -36,39 +26,10 @@ export function buildTransactionRequest(
 export async function submitAndWaitForTransaction(
   signer: TariSigner,
   req: SubmitTransactionRequest,
-): Promise<SubmitTxResult> {
+): Promise<SimpleTransactionResult> {
   try {
     const response = await signer.submitTransaction(req);
-    const { result, finalizedTxStatus } = await waitForTransactionResult(signer, response.transaction_id);
-    const { upSubstates, downSubstates } = getAcceptResultSubstates(result);
-    const newComponents = getSubstateValueFromUpSubstates("Component", upSubstates);
-
-    function getComponentForTemplate(templateAddress: string): ComponentAddress | null {
-      for (const [substateId, substate] of upSubstates) {
-        if ("Component" in substate.substate) {
-          const templateAddr = substate.substate.Component.template_address;
-          const templateString =
-            typeof templateAddr === "string" ? templateAddr : new TextDecoder().decode(templateAddr);
-          if (templateAddress === templateString) {
-            return substateIdToString(substateId);
-          }
-        }
-      }
-      return null;
-    }
-
-    const resultStatus = getTransactionResultStatus(result);
-
-    return {
-      response,
-      result,
-      resultStatus,
-      finalizedTxStatus,
-      upSubstates,
-      downSubstates,
-      newComponents,
-      getComponentForTemplate,
-    };
+    return await waitForTransactionResult(signer, response.transaction_id);
   } catch (e) {
     throw new Error(`Transaction failed: ${e}`);
   }
@@ -77,7 +38,8 @@ export async function submitAndWaitForTransaction(
 export async function waitForTransactionResult(
   signer: TariSigner | TariUniverseSigner,
   transactionId: string,
-): Promise<FinalizedTransactionResponse> {
+): Promise<SimpleTransactionResult> {
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
@@ -95,12 +57,13 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction finalized but the result is undefined`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return {
-        finalizedTxStatus: resp.status,
-        result: resp.result.result,
-      };
+      if (!resp.result) {
+        throw new Error(`BUG: Transaction result is empty for transaction ID: ${transactionId}`);
+      }
+
+      return SimpleTransactionResult.fromResponse(resp);
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "description": "",
   "type": "module",
   "keywords": [],
@@ -19,12 +19,10 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.0"
   },
-  "packageManager": "pnpm@9.15.3",
-  "dependencies": {
-    "@tari-project/tarijs-types": "^0.10.1"
-  },
   "scripts": {
-    "docs": "typedoc",
-    "lint": "pnpm -r lint"
+    "docs": "typedoc"
+  },
+  "dependencies": {
+    "@tari-project/tarijs-types": "workspace:^"
   }
 }

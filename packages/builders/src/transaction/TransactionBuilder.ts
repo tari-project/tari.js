@@ -2,9 +2,8 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import { TransactionRequest } from "./TransactionRequest";
-import { TransactionArg } from "@tari-project/tarijs-types";
+import { Amount, Network, TransactionArg } from "@tari-project/tarijs-types";
 import {
-  Amount,
   ComponentAddress,
   ConfidentialClaim,
   ConfidentialWithdrawProof,
@@ -18,8 +17,7 @@ import {
   WorkspaceOffsetId,
   UnsignedTransactionV1, AllocatableAddressType,
 } from "@tari-project/typescript-bindings";
-import { parseWorkspaceStringKey } from "../helpers";
-import { NamedArg } from "../helpers/workspace";
+import { parseWorkspaceStringKey, NamedArg } from "../helpers";
 
 /**
  * This interface defines the constructor for a Transaction object.
@@ -271,7 +269,7 @@ export interface Builder {
    * - The component must have a method `pay_fee` that calls `vault.pay_fee` with enough revealed confidential XTR.
    * - Calls to vault.pay_fee lock up the `maxFee` amount for the duration of the transaction.
    */
-  feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this;
+  feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this;
 
   /**
    * Similar to {@link feeTransactionPayFromComponent}, but allows for paying the transaction fee using a confidential withdraw proof.
@@ -295,7 +293,7 @@ export class TransactionBuilder implements Builder {
   private allocatedIds: Map<string, number>;
   private current_id: number;
 
-  constructor(network: number) {
+  constructor(network: Network | number) {
     this.unsignedTransaction = {
       network,
       fee_instructions: [],
@@ -309,6 +307,10 @@ export class TransactionBuilder implements Builder {
     this.signatures = [];
     this.allocatedIds = new Map();
     this.current_id = 0;
+  }
+
+  public static new(network: Network | number): TransactionBuilder {
+    return new TransactionBuilder(network);
   }
 
   public callFunction<T extends TariFunctionDefinition>(func: T, args: Exclude<T["args"], undefined>): this {
@@ -386,7 +388,7 @@ export class TransactionBuilder implements Builder {
       AssertBucketContains: {
         key,
         resource_address,
-        min_amount,
+        min_amount: min_amount.getValue(),
       },
     });
   }
@@ -411,12 +413,13 @@ export class TransactionBuilder implements Builder {
    * Calls to pay_fee lock up the `max_fee` amount for the duration of the transaction. Any remaining amount is
    * returned to the component's vault.
    */
-  public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: string): this {
+  public feeTransactionPayFromComponent(componentAddress: ComponentAddress, maxFee: Amount): this {
     return this.addFeeInstruction({
       CallMethod: {
         call: { Address: componentAddress },
         method: "pay_fee",
-        args: [maxFee],
+        // @ts-ignore TODO: once bindings are updated, remove ts-ignore
+        args: [maxFee.getValue()],
       },
     });
   }

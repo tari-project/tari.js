@@ -154,7 +154,7 @@ export class WalletConnectTariSigner implements TariSigner {
       address: account.address,
       public_key,
       // TODO: should be vaults not resources
-      resources: balances.map((b: any) => ({
+      vaults: balances.map((b: any) => ({
         type: b.resource_type,
         resource_address: b.resource_address,
         balance: b.balance + b.confidential_balance,
@@ -215,7 +215,7 @@ export class WalletConnectTariSigner implements TariSigner {
       account_id: res.account.key_index,
       address: (res.account.address as { Component: string }).Component,
       public_key: res.public_key,
-      resources: [],
+      vaults: [],
     };
   }
 

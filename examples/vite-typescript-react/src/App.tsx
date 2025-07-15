@@ -35,7 +35,7 @@ function App() {
           <p>Public Key: {account.public_key}</p>
           <h3>Resources:</h3>
           <ul>
-            {account.resources.map((resource, index) => (
+            {account.vaults.map((resource, index) => (
               <li key={index}>
                 {resource.type} - {resource.balance} {resource.token_symbol}
               </li>

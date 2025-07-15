@@ -7,7 +7,7 @@ export class Amount {
 
   public static readonly MAX: Amount = new Amount(Number.MAX_SAFE_INTEGER);
 
-  public static newAmount(amount: number): Amount {
+  public static new(amount: number): Amount {
     return new Amount(amount);
   }
 
@@ -109,5 +109,9 @@ export class Amount {
       return null;
     }
     return this.value as number;
+  }
+
+  public toJSON(): number {
+    return this.value;
   }
 }
