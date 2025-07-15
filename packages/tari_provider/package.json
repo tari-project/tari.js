@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tari-provider",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-     "lint": "eslint src/"
+    "lint": "eslint src/"
   },
   "keywords": [],
   "author": "The Tari Community",

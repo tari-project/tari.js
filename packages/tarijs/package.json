@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/tarijs-all",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -10,7 +10,7 @@
     "build": "tsc -b",
     "test": "vitest run unit-tests",
     "integration-tests": "vitest run integration-tests",
-     "lint": "eslint src/"
+    "lint": "eslint src/"
   },
   "keywords": [],
   "author": "The Tari Community",
