@@ -8,6 +8,7 @@ export default tseslint.config(eslint.configs.recommended, tseslint.configs.reco
     // "no-console": ["warn", { allow: ["info", "warn", "debug", "error"] }],
     "no-unused-vars": "off", // base rule must be disabled
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
