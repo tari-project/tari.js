@@ -1,14 +1,12 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 import { TariSigner } from "@tari-project/tari-signer";
-import {
-  TransactionResult,
-  UnsignedTransactionV1,
-} from "@tari-project/typescript-bindings";
+import { TransactionResult, UnsignedTransactionV1 } from "@tari-project/typescript-bindings";
 import {
   DownSubstates,
   UpSubstates,
   SubmitTransactionRequest,
-  TransactionStatus, SimpleTransactionResult,
+  TransactionStatus,
+  SimpleTransactionResult,
 } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
@@ -39,7 +37,6 @@ export async function waitForTransactionResult(
   signer: TariSigner | TariUniverseSigner,
   transactionId: string,
 ): Promise<SimpleTransactionResult> {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [

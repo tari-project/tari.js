@@ -242,7 +242,7 @@ export class WalletDaemonTariSigner implements TariSigner {
       offset,
     } as SubstatesListRequest);
 
-    const substates = resp.substates.map((s) => ({
+    const substates = resp.substates.map((s: any) => ({
       substate_id: typeof s.substate_id === "string" ? s.substate_id : substateIdToString(s.substate_id),
       module_name: s.module_name,
       version: s.version,

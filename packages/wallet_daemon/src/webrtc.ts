@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { transports } from "@tari-project/wallet_jrpc_client";
 
