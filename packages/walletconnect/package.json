@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/wallet-connect-signer",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "",
   "type": "module",
   "publishConfig": {

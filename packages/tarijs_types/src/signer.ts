@@ -26,7 +26,7 @@ export interface AccountData {
   account_id: number;
   address: string;
   public_key: string;
-  resources: VaultData[];
+  vaults: VaultData[];
 }
 
 export interface VaultData {
