@@ -16,6 +16,11 @@ import {
 import { SubmitTxResult } from "@tari-project/tarijs-types/dist/TransactionResult";
 import { getTransactionResultStatus } from "@tari-project/tarijs-types/src/helpers/txResult";
 
+type FinalizedTransactionResponse = {
+  finalizedTxStatus: TransactionStatus;
+  result: TransactionResult;
+};
+
 export function buildTransactionRequest(
   transaction: UnsignedTransactionV1,
   accountId: number,
@@ -34,7 +39,7 @@ export async function submitAndWaitForTransaction(
 ): Promise<SubmitTxResult> {
   try {
     const response = await signer.submitTransaction(req);
-    const result = await waitForTransactionResult(signer, response.transaction_id);
+    const { result, finalizedTxStatus } = await waitForTransactionResult(signer, response.transaction_id);
     const { upSubstates, downSubstates } = getAcceptResultSubstates(result);
     const newComponents = getSubstateValueFromUpSubstates("Component", upSubstates);
 
@@ -58,6 +63,7 @@ export async function submitAndWaitForTransaction(
       response,
       result,
       resultStatus,
+      finalizedTxStatus,
       upSubstates,
       downSubstates,
       newComponents,
@@ -71,7 +77,7 @@ export async function submitAndWaitForTransaction(
 export async function waitForTransactionResult(
   signer: TariSigner | TariUniverseSigner,
   transactionId: string,
-): Promise<TransactionResult> {
+): Promise<FinalizedTransactionResponse> {
   while (true) {
     const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
@@ -89,7 +95,10 @@ export async function waitForTransactionResult(
       throw new Error(`Transaction finalized but the result is undefined`);
     }
     if (FINALIZED_STATUSES.includes(resp.status)) {
-      return resp.result?.result;
+      return {
+        finalizedTxStatus: resp.status,
+        result: resp.result.result,
+      };
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
@@ -99,15 +108,15 @@ export function getAcceptResultSubstates(txResult: TransactionResult): {
   upSubstates: UpSubstates;
   downSubstates: DownSubstates;
 } {
+  if ("Reject" in txResult) {
+    throw new Error(`Transaction rejected: ${txResult.Reject}`);
+  }
+
   if ("Accept" in txResult) {
     return {
       upSubstates: txResult.Accept.up_substates,
       downSubstates: txResult.Accept.down_substates,
     };
-  }
-
-  if ("Reject" in txResult) {
-    throw new Error(`Transaction rejected: ${txResult.Reject}`);
   }
 
   if ("AcceptFeeRejectRest" in txResult) {

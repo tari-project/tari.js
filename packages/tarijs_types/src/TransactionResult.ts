@@ -16,6 +16,7 @@ export interface SubmitTxResult {
   response: SubmitTransactionResponse;
   result: TransactionResult;
   resultStatus: TransactionResultStatus | null;
+  finalizedTxStatus: TransactionStatus;
   upSubstates: UpSubstates;
   downSubstates: DownSubstates;
   newComponents: UpSubstates;
