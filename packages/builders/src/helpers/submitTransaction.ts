@@ -1,19 +1,15 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 import { TariSigner } from "@tari-project/tari-signer";
 import {
-  ComponentAddress, FinalizeResult,
-  substateIdToString,
   TransactionResult,
   UnsignedTransactionV1,
 } from "@tari-project/typescript-bindings";
 import {
   DownSubstates,
   UpSubstates,
-  getSubstateValueFromUpSubstates,
   SubmitTransactionRequest,
   TransactionStatus, SimpleTransactionResult,
 } from "@tari-project/tarijs-types";
-import { SubmitTxResult } from "@tari-project/tarijs-types/dist/TransactionResult";
 
 export function buildTransactionRequest(
   transaction: UnsignedTransactionV1,

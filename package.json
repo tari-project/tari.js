@@ -23,6 +23,6 @@
     "docs": "typedoc"
   },
   "dependencies": {
-    "@tari-project/tarijs-types": "^0.10.1"
+    "@tari-project/tarijs-types": "workspace:^"
   }
 }

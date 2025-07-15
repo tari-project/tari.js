@@ -9,8 +9,7 @@ import {
   waitForTransactionResult,
 } from "../../../src";
 import { Instruction } from "@tari-project/typescript-bindings";
-import { ACCOUNT_TEMPLATE_ADDRESS } from "@tari-project/tarijs-types";
-import { XTR } from "@tari-project/tarijs-types/dist/consts";
+import { XTR } from "@tari-project/tarijs-types";
 
 function buildSigner(): Promise<WalletDaemonTariSigner> {
   const permissions = new TariPermissions().addPermission("Admin");
@@ -166,10 +165,30 @@ describe("WalletDaemonTariSigner", () => {
       const nextKey = await signer.newTransactionKey();
 
       const fee = Amount.new(2000);
-      const transaction = TransactionBuilder
+      const transaction1 = TransactionBuilder
         .new(Network.LocalNet)
         .feeTransactionPayFromComponent(account.address, fee)
         .createAccount(nextKey)
+        .buildUnsignedTransaction();
+
+      const submitTransactionRequest1 = buildTransactionRequest(
+        transaction1,
+        account.account_id,
+      );
+
+      const txResult1 = await submitAndWaitForTransaction(signer, submitTransactionRequest1);
+      expect(txResult1.status).toBe(TransactionStatus.Accepted);
+      const newAccountId = txResult1.getResultingAccounts()[0].substate_id;
+
+      const transaction = TransactionBuilder
+        .new(Network.LocalNet)
+        .feeTransactionPayFromComponent(account.address, fee)
+        .callMethod({ componentAddress: account.address, methodName: "withdraw" }, [XTR, 10])
+        .saveVar("bucket")
+        .callMethod(
+          { componentAddress: newAccountId, methodName: "deposit" },
+          [{ Workspace: "bucket" }],
+        )
         .buildUnsignedTransaction();
 
       const submitTransactionRequest = buildTransactionRequest(
@@ -178,11 +197,12 @@ describe("WalletDaemonTariSigner", () => {
       );
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
-      expect(txResult.status).toBe(TransactionStatus.Accepted);
-      const accounts = txResult.getAccounts();
-      expect(accounts.length).toBe(2); // Original account + new account
-      const balance = accounts[0].vaults.get(XTR)!.balance;
-      expect(balance.value).toEqual(BigInt(0));
+      const vaults = txResult.getResultingVaults();
+      expect(vaults.length).toBe(2); // Original vault + new vault
+      // Find the vault not in the fee account
+      const vault = vaults.find((v) => !account.vaults.some((av) => v.id == av.vault_id));
+      expect(vault).toBeDefined();
+      expect(vault!.balance.value).toBe(BigInt(10));
     });
 
     it("submits a transaction, that uses workspaces", async () => {

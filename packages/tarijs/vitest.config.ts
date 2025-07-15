@@ -4,6 +4,7 @@ import { loadEnv } from "vite";
 export default defineConfig({
   root: ".",
   test: {
-    env: loadEnv("", "./integration-tests/", ""),
+    // Not sure why this doesnt work
+    env: loadEnv("", process.cwd() + "/test/integration-tests/", ""),
   },
 });

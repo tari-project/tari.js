@@ -20,18 +20,17 @@ import {
   LogEntry,
   Event,
 } from "@tari-project/typescript-bindings";
-import { BuiltInAccount } from "../Account";
+import { VaultSubstate, BuiltInAccount } from "../Account";
 import { TransactionStatus } from "../TransactionStatus";
 import { Option, Some, None } from "@thames/monads";
 import { GetTransactionResultResponse } from "../GetTransactionResultResponse";
-import { AccountData, parseCbor } from "@tari-project/tarijs-types";
+import { parseCbor } from "../";
 import { ACCOUNT_TEMPLATE_ADDRESS } from "../consts";
-import { VaultData } from "../signer";
 
 export class SimpleTransactionResult {
-  private transaction_id: TransactionId;
-  private finalizeResult: FinalizeResult;
-  private _status: TransactionStatus;
+  private readonly transaction_id: TransactionId;
+  private readonly finalizeResult: FinalizeResult;
+  private readonly _status: TransactionStatus;
 
   constructor(transaction_id: TransactionId, status: TransactionStatus, result: FinalizeResult) {
     this.transaction_id = transaction_id;
@@ -70,53 +69,51 @@ export class SimpleTransactionResult {
     return this.result.events;
   }
 
-  public newComponents(): ComponentHeader[] {
+  public getResultingComponents(): ComponentHeader[] {
     return this.getNewSubstatesOfType("Component") as ComponentHeader[];
   }
 
-  public newResources(): Resource[] {
+  public getResultingResources(): Resource[] {
     return this.getNewSubstatesOfType("Resource") as Resource[];
   }
 
-  public newVaults(): Vault[] {
-    return this.getNewSubstatesOfType("Vault") as Vault[];
+  public getResultingVaults(): VaultSubstate[] {
+    const vaults = this.getUpSubstatesOfType("Vault");
+    return vaults.map((upSubstate) => VaultSubstate.new(upSubstate.id, upSubstate.substate as Vault));
   }
 
-  public newNonFungibles(): NonFungible[] {
+  public getResultingNonFungibles(): NonFungible[] {
     return this.getNewSubstatesOfType("NonFungible") as NonFungible[];
   }
 
-  public newUnclaimedConfidentialOutputs(): UnclaimedConfidentialOutput[] {
-    return this.getNewSubstatesOfType("UnclaimedConfidentialOutput") as UnclaimedConfidentialOutput[];
+  public getTransactionReceipt(): TransactionReceipt {
+    return this.getNewSubstatesOfType("TransactionReceipt")[0]! as TransactionReceipt;
   }
 
-  public newTransactionReceipts(): TransactionReceipt[] {
-    return this.getNewSubstatesOfType("TransactionReceipt") as TransactionReceipt[];
-  }
-
-  public newValidatorFeePools(): ValidatorFeePool[] {
-    return this.getNewSubstatesOfType("ValidatorFeePool") as ValidatorFeePool[];
-  }
-
-  public newTemplates(): PublishedTemplate[] {
+  public getNewPublishedTemplates(): PublishedTemplate[] {
     return this.getNewSubstatesOfType("Template") as PublishedTemplate[];
   }
 
   public getNewSubstatesOfType(type: SubstateType): AnySubstate[] {
+    const upSubstates = this.getUpSubstatesOfType(type);
+    return upSubstates.map((upSubstate) => upSubstate.substate);
+  }
+
+  public getUpSubstatesOfType(type: SubstateType): UpSubstate[] {
     const diff = this.diff;
     if (diff.isNone()) {
       return [];
     }
     const d = diff.unwrap();
 
-    const resources: AnySubstate[] = [];
+    const substates = [];
     for (const upSubstate of d.upSubstates()) {
       if (upSubstate.type === type) {
-        resources.push(upSubstate.substate);
+        substates.push(upSubstate);
       }
     }
 
-    return resources;
+    return substates;
   }
 
   public getComponentsByTemplateAddress(templateAddress: PublishedTemplateAddress): SimpleComponent[] {
@@ -136,13 +133,13 @@ export class SimpleTransactionResult {
     return components;
   }
 
-  public getAccounts(): BuiltInAccount[] {
+  public getResultingAccounts(): GetAccountsResult[] {
     const components = this.getComponentsByTemplateAddress(ACCOUNT_TEMPLATE_ADDRESS);
 
     const accounts = [];
     for (const component of components) {
-      const account = component.decodBody<BuiltInAccount>();
-      accounts.push(account);
+      const account = component.decodeBody<BuiltInAccount>();
+      accounts.push({ substate_id: component.id, version: component.version, account });
     }
 
     return accounts;
@@ -171,7 +168,11 @@ export class SimpleTransactionResult {
   }
 
   public get onlyFeeAccepted(): Option<[SimpleSubstateDiff, RejectReason]> {
-    const result = this.result as any;
+    const result = this.result;
+    if (!result || !result.result || !("AcceptFeeRejectRest" in result.result)) {
+      return None;
+    }
+
     const [diff, reason] = result?.result.AcceptFeeRejectRest;
     return Some([SimpleSubstateDiff.from(diff), reason]);
   }
@@ -331,7 +332,14 @@ export class SimpleComponent {
     return this._substate;
   }
 
-  public decodBody<T>(): T {
+  public decodeBody<T>(): T {
     return parseCbor(this.substate.body.state) as T;
   }
+}
+
+
+export interface GetAccountsResult {
+  substate_id: string;
+  version: number;
+  account: BuiltInAccount;
 }

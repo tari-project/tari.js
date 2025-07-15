@@ -43,7 +43,7 @@ export { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexe
 export {
   Amount,
   BuiltInAccount,
-  AccountVault,
+  VaultSubstate,
   TransactionArg,
   ConfidentialClaim,
   ConfidentialOutput,

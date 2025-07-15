@@ -1,10 +1,10 @@
 import { BigAmount, ResourceAddress, ResourceType, Vault, VaultId } from "@tari-project/typescript-bindings";
 
 export interface BuiltInAccount {
-  vaults: Map<ResourceAddress, AccountVault>;
+  vaults: Record<ResourceAddress, VaultSubstate>;
 }
 
-export class AccountVault {
+export class VaultSubstate {
   private vaultId: VaultId;
   private vault: Vault;
 
@@ -13,8 +13,8 @@ export class AccountVault {
     this.vault = vault;
   }
 
-  public static new(vaultId: VaultId, vault: Vault): AccountVault {
-    return new AccountVault(vaultId, vault);
+  public static new(vaultId: VaultId, vault: Vault): VaultSubstate {
+    return new VaultSubstate(vaultId, vault);
   }
 
   public get id(): VaultId {
