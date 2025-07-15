@@ -93,6 +93,11 @@ export class WalletDaemonTariSigner implements TariSigner {
     return transport instanceof WebRtcRpcTransport ? transport : undefined;
   }
 
+  public async newTransactionKey(index?: number): Promise<string> {
+    const resp = await this.client.createKey({ branch: "transaction", specific_index: index || null });
+    return resp.public_key;
+  }
+
   public get token(): string | undefined {
     return this.getWebRtcTransport()?.token();
   }
@@ -125,7 +130,7 @@ export class WalletDaemonTariSigner implements TariSigner {
       account_id: res.account.key_index,
       address: (res.account.address as { Component: string }).Component,
       public_key: res.public_key,
-      resources: [],
+      vaults: [],
     };
   }
 
@@ -142,7 +147,7 @@ export class WalletDaemonTariSigner implements TariSigner {
       address,
       public_key,
       // TODO: should be vaults not resources
-      resources: balances.map((b: any) => ({
+      vaults: balances.map((b: any) => ({
         type: b.resource_type,
         resource_address: b.resource_address,
         balance: b.balance + b.confidential_balance,

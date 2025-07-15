@@ -1,8 +1,8 @@
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import { TariSigner } from "@tari-project/tari-signer";
-import { TariProvider } from "@tari-project/tari-provider";
-import { MetamaskTariSigner } from "@tari-project/metamask-signer";
-import {
+export { MetaMaskInpageProvider } from "@metamask/providers";
+export { TariSigner } from "@tari-project/tari-signer";
+export { TariProvider } from "@tari-project/tari-provider";
+export { MetamaskTariSigner } from "@tari-project/metamask-signer";
+export {
   WalletDaemonTariSigner,
   WalletDaemonParameters,
   WalletDaemonFetchParameters,
@@ -10,16 +10,16 @@ import {
   TariPermissions,
   WalletDaemonTariProvider,
 } from "@tari-project/wallet-daemon-signer";
-import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
-import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
-import {
+export { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
+export { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
+export {
   TransactionBuilder,
   TransactionRequest,
   buildTransactionRequest,
   submitAndWaitForTransaction,
   waitForTransactionResult,
 } from "@tari-project/tarijs-builders";
-import {
+export {
   convertStringToTransactionStatus,
   convertHexStringToU256Array,
   convertU256ToHexString,
@@ -39,50 +39,28 @@ import {
   parseCbor,
   getCborValueByPath,
 } from "@tari-project/tarijs-types";
-import { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
+export { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
+export {
+  Amount,
+  BuiltInAccount,
+  VaultSubstate,
+  TransactionArg,
+  ConfidentialClaim,
+  ConfidentialOutput,
+  ConfidentialWithdrawProof,
+  SubstateType,
+  SimpleTransactionResult,
+  SimpleSubstateDiff,
+  AnySubstate,
+  DownSubstate,
+  UpSubstate,
+  TransactionSignature,
+} from "@tari-project/tarijs-types";
+
 import * as templates from "./templates";
 import * as permissions from "@tari-project/tari-permissions";
 
-export * from "@tari-project/tarijs-types";
 export {
   permissions,
   templates,
-  Network,
-  TariSigner,
-  TariProvider,
-  AccountData,
-  TransactionStatus,
-  GetTransactionResultResponse,
-  SubmitTransactionRequest,
-  VaultBalances,
-  VaultData,
-  TemplateDefinition,
-  MetamaskTariSigner,
-  WalletDaemonTariSigner,
-  WalletDaemonTariProvider,
-  WalletDaemonParameters,
-  WalletDaemonFetchParameters,
-  WalletDaemonBaseParameters,
-  TariUniverseSigner,
-  TariUniverseSignerParameters,
-  TariPermissions,
-  MetaMaskInpageProvider,
-  Substate,
-  WalletConnectTariSigner,
-  TransactionBuilder,
-  TransactionRequest,
-  IndexerProvider,
-  IndexerProviderParameters,
-  convertStringToTransactionStatus,
-  buildTransactionRequest,
-  submitAndWaitForTransaction,
-  waitForTransactionResult,
-  convertHexStringToU256Array,
-  convertU256ToHexString,
-  createNftAddressFromResource,
-  createNftAddressFromToken,
-  parseCbor,
-  getCborValueByPath,
-  fromHexString,
-  toHexString,
 };
