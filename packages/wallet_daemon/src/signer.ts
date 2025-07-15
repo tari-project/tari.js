@@ -43,7 +43,6 @@ export interface WalletDaemonFetchParameters extends WalletDaemonBaseParameters 
   serverUrl: string;
 }
 
-
 export class WalletDaemonTariSigner implements TariSigner {
   public signerName = "WalletDaemon";
   params: WalletDaemonParameters;
@@ -56,7 +55,7 @@ export class WalletDaemonTariSigner implements TariSigner {
 
   static async build(params: WalletDaemonParameters): Promise<WalletDaemonTariSigner> {
     const allPermissions = WalletDaemonTariSigner.buildPermissions(params);
-    let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
+    const connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
     const client = WalletDaemonClient.new(WebRtcRpcTransport.new(connection));
     await connection.init(allPermissions, (conn) => {
       params.onConnection?.();
@@ -130,6 +129,7 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getAccount(): Promise<AccountData> {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const { account, public_key } = (await this.client.accountsGetDefault({})) as any;
     const address = typeof account.address === "object" ? account.address.Component : account.address;
     const { balances } = await this.client.accountsGetBalances({
@@ -142,6 +142,7 @@ export class WalletDaemonTariSigner implements TariSigner {
       address,
       public_key,
       // TODO: should be vaults not resources
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       resources: balances.map((b: any) => ({
         type: b.resource_type,
         resource_address: b.resource_address,
@@ -158,9 +159,7 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getSubstate(substateId: string): Promise<Substate> {
-    const {
-      substate,
-    } = await this.client.substatesGet({ substate_id: substateId });
+    const { substate } = await this.client.substatesGet({ substate_id: substateId });
     if (!substate) {
       throw new Error(`Substate not found for address: ${substateId}`);
     }
@@ -207,16 +206,16 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
-    let resp = await this.client.templatesGet({ template_address });
+    const resp = await this.client.templatesGet({ template_address });
     return resp.template_definition as TemplateDefinition;
   }
 
   public async getConfidentialVaultBalances({
-                                              vault_id,
-                                              view_key_id,
-                                              maximum_expected_value = null,
-                                              minimum_expected_value = null,
-                                            }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+    vault_id,
+    view_key_id,
+    maximum_expected_value = null,
+    minimum_expected_value = null,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const res = await this.client.viewVaultBalance({
       view_key_id,
       vault_id,
@@ -227,11 +226,11 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async listSubstates({
-                               filter_by_template,
-                               filter_by_type,
-                               limit,
-                               offset,
-                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const resp = await this.client.substatesList({
       filter_by_template,
       filter_by_type,

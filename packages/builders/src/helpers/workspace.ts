@@ -1,4 +1,4 @@
-import { TransactionArg, WorkspaceArg } from "@tari-project/tarijs-types";
+import { TransactionArg } from "@tari-project/tarijs-types";
 
 /**
  * A parsed workspace key string into an object with name and optional offset.

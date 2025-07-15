@@ -7,12 +7,11 @@ import { TariLogoWhite } from "./Logos";
 import { WalletDaemonFetchParameters } from "@tari-project/wallet-daemon-signer";
 import { WalletConnectParameters } from "@tari-project/wallet-connect-signer";
 
-
 export interface TariConnectButtonProps {
   isConnected: boolean;
   disabled?: boolean;
   onConnected?: (signer: TariSigner) => void;
-  walletConnectParams?: WalletConnectParameters,
+  walletConnectParams?: WalletConnectParameters;
   walletDaemonParams?: WalletDaemonFetchParameters;
 }
 

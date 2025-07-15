@@ -1,4 +1,9 @@
-import { Amount, ConfidentialWithdrawProof, TariFunctionDefinition, TariMethodDefinition } from "@tari-project/tarijs-builders";
+import {
+  Amount,
+  ConfidentialWithdrawProof,
+  TariFunctionDefinition,
+  TariMethodDefinition,
+} from "@tari-project/tarijs-builders";
 import { TemplateFactory } from "./TemplateFactory";
 
 interface MintFunction extends TariFunctionDefinition {
@@ -33,7 +38,7 @@ interface TakeFreeCoinsConfidentialMethod extends TariMethodDefinition {
 
 interface BurnCoinsMethod extends TariMethodDefinition {
   methodName: "burn_coins";
-  args?: [BigInt];
+  args?: [bigint];
 }
 
 interface TotalSupplyMethod extends TariMethodDefinition {

@@ -19,8 +19,8 @@ export default class FetchRpcTransport implements RpcTransport {
       headers["Authorization"] = `Bearer ${options.token}`;
     }
 
-    let controller = new AbortController();
-    let signal = controller.signal;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     const timeoutId = options.timeout_millis
       ? setTimeout(() => {

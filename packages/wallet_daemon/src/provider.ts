@@ -4,13 +4,13 @@ import {
   GetTransactionResultResponse,
   ListSubstatesRequest,
   ListSubstatesResponse,
-  Substate, SubstateMetadata,
+  Substate,
+  SubstateMetadata,
   transactionStatusFromStr,
 } from "@tari-project/tarijs-types";
 import {
   GetTemplateDefinitionResponse,
   ListTemplatesResponse,
-  SubstateId,
   substateIdToString,
 } from "@tari-project/typescript-bindings";
 import { WalletDaemonClient } from "@tari-project/wallet_jrpc_client";
@@ -31,7 +31,7 @@ export class WalletDaemonTariProvider implements TariProvider {
 
   static async buildWebRtc(params: WalletDaemonParameters): Promise<WalletDaemonTariProvider> {
     const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
-    let connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
+    const connection = new TariConnection(params.signalingServerUrl, params.webRtcConfig);
     const client = WalletDaemonClient.new(WebRtcRpcTransport.new(connection));
     await connection.init(allPermissions, (conn) => {
       params.onConnection?.();
@@ -41,7 +41,6 @@ export class WalletDaemonTariProvider implements TariProvider {
     });
     return new WalletDaemonTariProvider(params, client);
   }
-
 
   static async buildFetch(params: WalletDaemonFetchParameters) {
     const allPermissions = WalletDaemonTariProvider.buildPermissions(params);
@@ -75,9 +74,7 @@ export class WalletDaemonTariProvider implements TariProvider {
 
   async getSubstate(req: GetSubstateRequest): Promise<Substate> {
     // TODO: Substate address cannot be converted to SubstateId directly - Perhaps we need to change the provider interface
-    const {
-      substate,
-    } = await this.client.substatesGet({ substate_id: req.substate_address });
+    const { substate } = await this.client.substatesGet({ substate_id: req.substate_address });
     if (!substate) {
       throw new Error(`Substate not found for address: ${req.substate_address}`);
     }
@@ -115,12 +112,15 @@ export class WalletDaemonTariProvider implements TariProvider {
     const resp = await this.client.substatesList(req);
 
     return {
-      substates: resp.substates.map((s) => ({
-        substate_id: substateIdToString(s.substate_id),
-        module_name: s.module_name,
-        version: s.version,
-        template_address: s.template_address,
-      } as SubstateMetadata)),
+      substates: resp.substates.map(
+        (s) =>
+          ({
+            substate_id: substateIdToString(s.substate_id),
+            module_name: s.module_name,
+            version: s.version,
+            template_address: s.template_address,
+          } as SubstateMetadata),
+      ),
     };
   }
 
@@ -128,6 +128,4 @@ export class WalletDaemonTariProvider implements TariProvider {
     // const resp = await this.client.templatesListAuthored({});
     throw new Error("Listing all templates is not supported by WalletDaemonTariProvider.");
   }
-
-
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { transports } from "@tari-project/wallet_jrpc_client";
 
@@ -26,12 +27,12 @@ class SignalingServer {
     console.log("jsonRpc", method, token, params);
     let id = 0;
     id += 1;
-    let address = this._server_url;
-    let headers: { [key: string]: string } = { "Content-Type": "application/json" };
+    const address = this._server_url;
+    const headers: { [key: string]: string } = { "Content-Type": "application/json" };
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-    let response = await fetch(address, {
+    const response = await fetch(address, {
       method: "POST",
       body: JSON.stringify({
         method: method,
@@ -41,7 +42,7 @@ class SignalingServer {
       }),
       headers: headers,
     });
-    let json = await response.json();
+    const json = await response.json();
     if (json.error) {
       throw json.error;
     }
@@ -99,7 +100,7 @@ export class TariConnection {
     await this._signalingServer.initToken(permissions);
     // Setup our receiving end
     this._dataChannel.onmessage = (message) => {
-      let response = JSON.parse(message.data);
+      const response = JSON.parse(message.data);
       console.log("response", response);
 
       if (!this._callbacks[response.id]) {
@@ -107,7 +108,7 @@ export class TariConnection {
         return;
       }
       // The response should contain id, to identify the Promise.resolve, that is waiting for this result
-      let [resolve, reject] = this._callbacks[response.id];
+      const [resolve, reject] = this._callbacks[response.id];
       delete this._callbacks[response.id];
       if (response.payload?.error) {
         reject(new Error(response.payload.error));
@@ -119,8 +120,8 @@ export class TariConnection {
       // This should be removed before the release, but it's good for debugging.
       console.log("Data channel is open!");
 
-      this.sendMessage({ id: 0, jsonrpc: "2.0", method: "get.token", params: {} }, this._signalingServer.token)
-        .then((walletToken: unknown) => {
+      this.sendMessage({ id: 0, jsonrpc: "2.0", method: "get.token", params: {} }, this._signalingServer.token).then(
+        (walletToken: unknown) => {
           if (typeof walletToken !== "string") {
             throw Error("Received invalid JWT from wallet daemon");
           }
@@ -131,7 +132,8 @@ export class TariConnection {
           if (this.onConnection) {
             this.onConnection(this);
           }
-        });
+        },
+      );
     };
     this._peerConnection.onicecandidate = (event) => {
       console.log("event", event);
@@ -160,13 +162,13 @@ export class TariConnection {
   private async setAnswer() {
     // This is called once the other end got the offer and ices and created and store an answer and its ice candidates
     // We get its answer sdp
-    let sdp = await this._signalingServer.getAnswer();
+    const sdp = await this._signalingServer.getAnswer();
 
     // And its ice candidates
-    let iceCandidates = await this._signalingServer.getIceCandidates();
+    const iceCandidates = await this._signalingServer.getIceCandidates();
 
     // For us the answer is remote sdp
-    let answer = new RTCSessionDescription({ sdp, type: "answer" });
+    const answer = new RTCSessionDescription({ sdp, type: "answer" });
     this._peerConnection.setRemoteDescription(answer);
 
     // We add all the ice candidates to connect, the other end is doing the same with our ice candidates
@@ -199,7 +201,11 @@ export class TariConnection {
   }
 
   // If the last parameter has timeout property e.g. {timeout:1000}, it set the timeout for this call.
-  async sendMessage<T>(request: transports.RpcRequest, token: string | undefined, timeout_secs: number | null = null): Promise<T> {
+  async sendMessage<T>(
+    request: transports.RpcRequest,
+    token: string | undefined,
+    timeout_secs: number | null = null,
+  ): Promise<T> {
     if (!this.isConnected) {
       throw new Error("WALLET_DAEMON_NOT_CONNECTED");
     }

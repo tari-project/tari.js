@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TariSigner } from "@tari-project/tari-signer";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
@@ -69,9 +70,10 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async connect(): Promise<() => Promise<void>> {
-    if (this.wcProvider && this.wcSession) return async () => {
-      // No-op if already connected
-    };
+    if (this.wcProvider && this.wcSession)
+      return async () => {
+        // No-op if already connected
+      };
 
     // initialize WalletConnect
     const projectId = this.params.projectId;
@@ -82,8 +84,8 @@ export class WalletConnectTariSigner implements TariSigner {
     });
 
     const sessionProperties = {
-      "required_permissions": JSON.stringify(this.params.requiredPermissions) || "[]",
-      "optional_permissions": JSON.stringify(this.params.optionalPermissions) || "[]",
+      required_permissions: JSON.stringify(this.params.requiredPermissions) || "[]",
+      optional_permissions: JSON.stringify(this.params.optionalPermissions) || "[]",
     };
     const connectParams = {
       ...walletConnectParams,
@@ -177,11 +179,11 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   public async listSubstates({
-                               filter_by_template,
-                               filter_by_type,
-                               limit,
-                               offset,
-                             }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+    filter_by_template,
+    filter_by_type,
+    limit,
+    offset,
+  }: ListSubstatesRequest): Promise<ListSubstatesResponse> {
     const method = "tari_listSubstates";
     const params = {
       filter_by_template,
@@ -245,7 +247,7 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {
-    let resp = await this.sendRequest("tari_getTemplate", { template_address });
+    const resp = await this.sendRequest("tari_getTemplate", { template_address });
     return resp.template_definition as TemplateDefinition;
   }
 
@@ -255,11 +257,11 @@ export class WalletConnectTariSigner implements TariSigner {
   }
 
   async getConfidentialVaultBalances({
-                                       vault_id,
-                                       view_key_id,
-                                       maximum_expected_value = null,
-                                       minimum_expected_value = null,
-                                     }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+    vault_id,
+    view_key_id,
+    maximum_expected_value = null,
+    minimum_expected_value = null,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const method = "tari_viewConfidentialVaultBalance";
     const params = {
       view_key_id,
