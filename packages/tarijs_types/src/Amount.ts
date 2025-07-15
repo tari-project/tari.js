@@ -7,7 +7,7 @@ export class Amount {
 
   public static readonly MAX: Amount = new Amount(Number.MAX_SAFE_INTEGER);
 
-  public static new(amount: number): Amount {
+  public static of(amount: number): Amount {
     return new Amount(amount);
   }
 

@@ -164,7 +164,7 @@ describe("WalletDaemonTariSigner", () => {
       const account = await signer.getAccount();
       const nextKey = await signer.newTransactionKey();
 
-      const fee = Amount.new(2000);
+      const fee = Amount.of(2000);
       const transaction1 = TransactionBuilder
         .new(Network.LocalNet)
         .feeTransactionPayFromComponent(account.address, fee)
@@ -353,7 +353,7 @@ describe("WalletDaemonTariSigner", () => {
       const signer = await buildSigner();
       const account = await signer.getAccount();
 
-      const fee = Amount.new(2000);
+      const fee = Amount.of(2000);
       const transaction = TransactionBuilder.new(Network.LocalNet)
         .feeTransactionPayFromComponent(account.address, fee)
         .allocateAddress("Component", "id-1")
@@ -383,7 +383,7 @@ describe("WalletDaemonTariSigner", () => {
       const transaction = TransactionBuilder.new(Network.LocalNet)
         .feeTransactionPayFromComponent(account.address, fee)
         // Have to use add instruction to submit the transaction since this error is caught by the builder
-        // .assertBucketContains("not_exist", "resource_0000000000000000000000000000000000000000000000000000000000000000", Amount.new(1))
+        // .assertBucketContains("not_exist", "resource_0000000000000000000000000000000000000000000000000000000000000000", Amount.of(1))
         .addInstruction({
           AssertBucketContains: {
             key: { id: 123, offset: null },
