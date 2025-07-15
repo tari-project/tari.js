@@ -9,10 +9,8 @@ import {
   substateIdToString,
   ComponentAddress,
   FinalizeResult,
-  TransactionResult,
 } from "@tari-project/typescript-bindings";
 import { UpSubstates } from "../SubstateDiff";
-import { TransactionResultStatus } from "../TransactionResult";
 
 function isOfType<T extends object>(obj: T, key: keyof T): boolean {
   return obj !== null && typeof obj === "object" && key in obj;
@@ -69,17 +67,4 @@ export function getComponentsForTemplate(templateAddress: string, upSubstates: U
     }
   }
   return components;
-}
-
-export function getTransactionResultStatus(result: TransactionResult): TransactionResultStatus | null {
-  if ("Accept" in result) {
-    return TransactionResultStatus.Accept;
-  }
-  if ("AcceptFeeRejectRest" in result) {
-    return TransactionResultStatus.AcceptFeeRejectRest;
-  }
-  if ("Reject" in result) {
-    return TransactionResultStatus.Reject;
-  }
-  return null;
 }
