@@ -63,6 +63,9 @@ importers:
       knip:
         specifier: ^5.61.3
         version: 5.61.3(@types/node@24.0.14)(typescript@5.8.3)
+      typedoc:
+        specifier: ^0.28.7
+        version: 0.28.7(typescript@5.8.3)
       typedoc-plugin-markdown:
         specifier: ^4.7.0
         version: 4.7.0(typedoc@0.28.7(typescript@5.8.3))
