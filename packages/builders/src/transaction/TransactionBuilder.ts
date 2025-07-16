@@ -15,7 +15,8 @@ import {
   UnsignedTransaction,
   PublishedTemplateAddress,
   WorkspaceOffsetId,
-  UnsignedTransactionV1, AllocatableAddressType,
+  UnsignedTransactionV1,
+  AllocatableAddressType,
 } from "@tari-project/typescript-bindings";
 import { parseWorkspaceStringKey, NamedArg } from "../helpers";
 
@@ -23,7 +24,9 @@ import { parseWorkspaceStringKey, NamedArg } from "../helpers";
  * This interface defines the constructor for a Transaction object.
  * It is used to create a new signed Transaction instance from an UnsignedTransaction and an array of TransactionSignatures.
  * The constructor takes an UnsignedTransaction and an array of TransactionSignatures as parameters.
+ * @public
  */
+
 export interface TransactionConstructor {
   /**
    * Creates a new {@link Transaction} instance.
@@ -42,7 +45,7 @@ export interface TransactionConstructor {
    *
    * @returns A new Transaction instance.
    */
-  new(unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
+  new (unsignedTransaction: UnsignedTransaction, signatures: TransactionSignature[]): Transaction;
 }
 
 /**
@@ -105,7 +108,7 @@ export interface TariMethodDefinition {
    * @example
    * "my_workspace"
    */
-  fromWorkspace?: string,
+  fromWorkspace?: string;
 }
 
 /**
@@ -185,7 +188,6 @@ export interface Builder {
    * - This method should be used only when recovering burned confidential resources.
    */
   claimBurn(claim: ConfidentialClaim): this;
-
 
   addInput(inputObject: SubstateRequirement): this;
 
@@ -325,10 +327,10 @@ export class TransactionBuilder implements Builder {
   }
 
   public callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this {
-    const call = method.componentAddress ?
-      { Address: method.componentAddress } :
-      // NOTE: offset IDs are not supported for method calls
-      { Workspace: this.getNamedId(method.fromWorkspace!)! };
+    const call = method.componentAddress
+      ? { Address: method.componentAddress }
+      : // NOTE: offset IDs are not supported for method calls
+        { Workspace: this.getNamedId(method.fromWorkspace!)! };
     const resolvedArgs = this.resolveArgs(args);
     return this.addInstruction({
       CallMethod: {
@@ -340,9 +342,7 @@ export class TransactionBuilder implements Builder {
   }
 
   public createAccount(ownerPublicKey: string, workspaceBucket?: string): this {
-    const workspace_id = workspaceBucket ?
-      this.getOffsetIdFromWorkspaceName(workspaceBucket) :
-      null;
+    const workspace_id = workspaceBucket ? this.getOffsetIdFromWorkspaceName(workspaceBucket) : null;
 
     return this.addInstruction({
       CreateAccount: {
@@ -546,5 +546,4 @@ export class TransactionBuilder implements Builder {
       return arg;
     });
   }
-
 }

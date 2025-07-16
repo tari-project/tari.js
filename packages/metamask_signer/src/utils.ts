@@ -1,13 +1,12 @@
-import { MetaMaskInpageProvider } from '@metamask/providers';
-
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 export type GetSnapsResponse = Record<string, Snap>;
 
 export type Snap = {
-    permissionName: string;
-    id: string;
-    version: string;
-    initialPermissions: Record<string, unknown>;
+  permissionName: string;
+  id: string;
+  version: string;
+  initialPermissions: Record<string, unknown>;
 };
 
 /**
@@ -16,13 +15,10 @@ export type Snap = {
  * @param provider - The MetaMask inpage provider.
  * @returns The snaps installed in MetaMask.
  */
-export const getSnaps = async (
-    provider: MetaMaskInpageProvider,
-): Promise<GetSnapsResponse> =>
-    (await provider.request({
-        method: 'wallet_getSnaps',
-    })) as unknown as GetSnapsResponse;
-
+export const getSnaps = async (provider: MetaMaskInpageProvider): Promise<GetSnapsResponse> =>
+  (await provider.request({
+    method: "wallet_getSnaps",
+  })) as unknown as GetSnapsResponse;
 
 /**
  * Connect a snap to MetaMask.
@@ -30,14 +26,11 @@ export const getSnaps = async (
  * @param snapId - The ID of the snap.
  * @param params - The params to pass with the snap to connect.
  */
-export const connectSnap = async (
-    provider: MetaMaskInpageProvider,
-    snaps: Record<string, {version?: string}>,
-) => {
-    await provider.request({
-        method: 'wallet_requestSnaps',
-        params: snaps,
-    });
+export const connectSnap = async (provider: MetaMaskInpageProvider, snaps: Record<string, { version?: string }>) => {
+  await provider.request({
+    method: "wallet_requestSnaps",
+    params: snaps,
+  });
 };
 
 /**
@@ -47,24 +40,22 @@ export const connectSnap = async (
  * @returns The snap object returned by the extension.
  */
 export const getSnap = async (
-    provider: MetaMaskInpageProvider,
-    snapId: string,
-    version?: string
+  provider: MetaMaskInpageProvider,
+  snapId: string,
+  version?: string,
 ): Promise<Snap | undefined> => {
-    try {
-        const snaps = await getSnaps(provider);
+  try {
+    const snaps = await getSnaps(provider);
 
-        return Object.values(snaps).find(
-            (snap) =>
-                snap.id === snapId && (!version || snap.version === version),
-        );
-    } catch (e) {
-        console.log('Failed to obtain installed snap', e);
-        return undefined;
-    }
+    return Object.values(snaps).find((snap) => snap.id === snapId && (!version || snap.version === version));
+  } catch (e) {
+    console.log("Failed to obtain installed snap", e);
+    return undefined;
+  }
 };
 
-export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
+/** @public */
+export const isLocalSnap = (snapId: string) => snapId.startsWith("local:");
 
 /**
  * Detect if the wallet injecting the ethereum object is MetaMask Flask.
@@ -72,15 +63,15 @@ export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
  * @returns True if the MetaMask version is Flask, false otherwise.
  */
 export const isFlask = async (provider: MetaMaskInpageProvider) => {
-    try {
-        const clientVersion = await provider.request({
-            method: 'web3_clientVersion',
-        });
+  try {
+    const clientVersion = await provider.request({
+      method: "web3_clientVersion",
+    });
 
-        const isFlaskDetected = (clientVersion as string[])?.includes('flask');
+    const isFlaskDetected = (clientVersion as string[])?.includes("flask");
 
-        return Boolean(provider && isFlaskDetected);
-    } catch {
-        return false;
-    }
+    return Boolean(provider && isFlaskDetected);
+  } catch {
+    return false;
+  }
 };

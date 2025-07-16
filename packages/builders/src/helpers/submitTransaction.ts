@@ -64,6 +64,7 @@ export async function waitForTransactionResult(
   }
 }
 
+/** @public */
 export function getAcceptResultSubstates(txResult: TransactionResult): {
   upSubstates: UpSubstates;
   downSubstates: DownSubstates;
