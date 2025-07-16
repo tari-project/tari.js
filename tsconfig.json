@@ -27,7 +27,7 @@
       "path": "packages/react-mui-connect-button"
     },
     {
-      "path": "packages/tari_permissions"
+      "path": "packages/permissions"
     },
     {
       "path": "packages/tari_provider"
