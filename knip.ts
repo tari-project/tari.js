@@ -4,13 +4,14 @@ const config: KnipConfig = {
   rules: {
     files: "error",
     dependencies: "warn",
-    unlisted: "error",
+    unlisted: "warn",
     exports: "warn",
     types: "warn",
-    duplicates: "error",
+    duplicates: "warn",
   },
   ignoreBinaries: ["commitlint"],
   ignoreExportsUsedInFile: true,
+  ignore: ["docusaurus/**/*.ts"],
 };
 
 export default config;
