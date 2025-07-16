@@ -14,6 +14,7 @@ export type WindowSize = {
 };
 
 export type PickMatching<T, V> = { [K in keyof T as T[K] extends V ? K : never]: T[K] };
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 export type ExtractMethods<T> = PickMatching<T, Function>;
 export type SignerMethods = ExtractMethods<TariUniverseSigner>;
 export type SignerMethodNames = keyof SignerMethods;

@@ -119,7 +119,6 @@ export class NonFungibleAddress {
   }
 }
 
-
 export class ComponentAddress {
   private tagged: Tagged;
 
@@ -186,8 +185,7 @@ export class TariPermissionAccountBalance {
 }
 
 export class TariPermissionAccountInfo {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "AccountInfo";
@@ -216,8 +214,7 @@ export class TariPermissionAccountList {
 }
 
 export class TariPermissionKeyList {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "KeyList";
@@ -225,8 +222,7 @@ export class TariPermissionKeyList {
 }
 
 export class TariPermissionTransactionGet {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "TransactionGet";
@@ -277,8 +273,7 @@ export class TariPermissionNftGetOwnershipProof {
 }
 
 export class TariPermissionTransactionsGet {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "TransactionGet";
@@ -286,8 +281,7 @@ export class TariPermissionTransactionsGet {
 }
 
 export class TariPermissionSubstatesRead {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "SubstatesRead";
@@ -295,8 +289,7 @@ export class TariPermissionSubstatesRead {
 }
 
 export class TariPermissionTemplatesRead {
-  constructor() {
-  }
+  constructor() {}
 
   toJSON() {
     return "TemplatesRead";

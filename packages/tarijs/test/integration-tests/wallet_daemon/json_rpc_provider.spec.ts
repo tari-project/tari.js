@@ -108,7 +108,7 @@ describe("WalletDaemonTariSigner", () => {
 
       const request: SubmitTransactionRequest = {
         transaction: {
-          network: Network.LocalNet,
+          network: NETWORK,
           fee_instructions,
           instructions: [],
           inputs: [],
@@ -133,7 +133,7 @@ describe("WalletDaemonTariSigner", () => {
 
       const request: SubmitTransactionRequest = {
         transaction: {
-          network: Network.LocalNet,
+          network: NETWORK,
           fee_instructions: [],
           instructions: [
             {
@@ -233,10 +233,7 @@ describe("WalletDaemonTariSigner", () => {
         .addInput({ substate_id: account.address, version: null })
         .buildUnsignedTransaction();
 
-      const submitTransactionRequest = buildTransactionRequest(
-        transaction,
-        account.account_id,
-      );
+      const submitTransactionRequest = buildTransactionRequest(transaction, account.account_id);
 
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
       expect(txResult.status).toBe(TransactionStatus.Accepted);
@@ -254,9 +251,9 @@ describe("WalletDaemonTariSigner", () => {
 
       assert(
         accountBalances &&
-        typeof accountBalances === "object" &&
-        "balances" in accountBalances &&
-        accountBalances.balances,
+          typeof accountBalances === "object" &&
+          "balances" in accountBalances &&
+          accountBalances.balances,
         "accountBalances is not an object",
       );
       assert(Array.isArray(accountBalances.balances), "accountBalances.balances is not an array");

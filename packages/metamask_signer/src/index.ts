@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TariSigner } from "@tari-project/tari-signer";
 import {
   SubmitTransactionRequest,
@@ -17,7 +18,6 @@ import {
   ConfidentialViewVaultBalanceRequest,
   ListAccountNftRequest,
   ListAccountNftResponse,
-  SubstateType,
 } from "@tari-project/typescript-bindings";
 
 export const MetamaskNotInstalled = "METAMASK_NOT_INSTALLED";
@@ -154,11 +154,11 @@ export class MetamaskTariSigner implements TariSigner {
   }
 
   public async getConfidentialVaultBalances({
-                                              vault_id,
-                                              maximum_expected_value,
-                                              minimum_expected_value,
-                                              view_key_id,
-                                            }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+    vault_id,
+    maximum_expected_value,
+    minimum_expected_value,
+    view_key_id,
+  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
     const resp = await this.metamaskRequest("getConfidentialVaultBalances", {
       view_key_id,
       vault_id,
@@ -179,7 +179,7 @@ export class MetamaskTariSigner implements TariSigner {
     });
   }
 
-  private async metamaskRequest<T>(method: string, params: Object): Promise<T> {
+  private async metamaskRequest<T>(method: string, params: object): Promise<T> {
     console.log("Metamask request:", method, params);
     const resp = await this.metamask.request({
       method: "wallet_invokeSnap",

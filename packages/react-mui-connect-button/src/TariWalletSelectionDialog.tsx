@@ -9,7 +9,6 @@ import { ReactElement, useState } from "react";
 import { WalletConnectTariSigner, WalletConnectParameters } from "@tari-project/wallet-connect-signer";
 import { TariLogo, WalletConnectLogo } from "./Logos";
 
-
 export interface WalletSelectionProps {
   open: boolean;
   onConnected?: (signer: TariSigner) => void;
@@ -53,12 +52,10 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
     } finally {
       setIsBusy(false);
     }
-
   };
 
   return (
     <Dialog fullWidth={true} onClose={handleClose} open={open}>
-
       <Box sx={{ padding: 4, borderRadius: 4 }}>
         <Stack direction="row" justifyContent="space-between" spacing={2}>
           <Typography style={{ fontSize: 24 }}>Connect a wallet</Typography>
@@ -75,18 +72,24 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
         <Grid container spacing={2} justifyContent="center">
           {walletDaemonParams && (
             <Grid size={{ xs: 4 }}>
-              <WalletConnectionMethodCard logo={<TariLogo />} text="Tari Wallet Daemon"
-                                          callback={onWalletDaemonClick}></WalletConnectionMethodCard>
+              <WalletConnectionMethodCard
+                logo={<TariLogo />}
+                text="Tari Wallet Daemon"
+                callback={onWalletDaemonClick}
+              ></WalletConnectionMethodCard>
             </Grid>
           )}
           {walletConnectParams?.projectId && (
             <Grid size={{ xs: 4 }}>
-              {isBusy ? <CircularProgress /> :
+              {isBusy ? (
+                <CircularProgress />
+              ) : (
                 <WalletConnectionMethodCard
                   logo={<WalletConnectLogo />}
                   text="WalletConnect"
                   callback={onWalletConnectClick}
-                />}
+                />
+              )}
             </Grid>
           )}
         </Grid>
@@ -95,14 +98,21 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
   );
 }
 
-function WalletConnectionMethodCard({ logo, text, callback }: {
-  logo: ReactElement,
-  text: string,
-  callback: () => void
+function WalletConnectionMethodCard({
+  logo,
+  text,
+  callback,
+}: {
+  logo: ReactElement;
+  text: string;
+  callback: () => void;
 }) {
   return (
-    <Card variant="outlined" elevation={0}
-          sx={{ mty: 4, padding: 4, borderRadius: 4, width: "175px", height: "175px", cursor: "pointer" }}>
+    <Card
+      variant="outlined"
+      elevation={0}
+      sx={{ mty: 4, padding: 4, borderRadius: 4, width: "175px", height: "175px", cursor: "pointer" }}
+    >
       <CardContent onClick={callback}>
         <Stack direction="column" spacing={2} alignItems="center">
           <Box sx={{ textAlign: "center", width: "100%" }}>

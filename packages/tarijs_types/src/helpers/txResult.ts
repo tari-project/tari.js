@@ -7,7 +7,8 @@ import {
   ResourceAddress,
   Amount,
   substateIdToString,
-  ComponentAddress, FinalizeResult,
+  ComponentAddress,
+  FinalizeResult,
 } from "@tari-project/typescript-bindings";
 import { UpSubstates } from "../SubstateDiff";
 
@@ -37,9 +38,7 @@ export const txResultCheck = {
   isReject: (result: FinalizeResult): boolean => {
     return "Reject" in result.result;
   },
-  isAcceptFeeRejectRest: (
-    result: FinalizeResult,
-  ): boolean => {
+  isAcceptFeeRejectRest: (result: FinalizeResult): boolean => {
     return "AcceptFeeRejectRest" in result.result;
   },
 };

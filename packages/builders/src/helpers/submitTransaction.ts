@@ -1,14 +1,12 @@
 import { TariUniverseSigner } from "@tari-project/tari-universe-signer";
 import { TariSigner } from "@tari-project/tari-signer";
-import {
-  TransactionResult,
-  UnsignedTransactionV1,
-} from "@tari-project/typescript-bindings";
+import { TransactionResult, UnsignedTransactionV1 } from "@tari-project/typescript-bindings";
 import {
   DownSubstates,
   UpSubstates,
   SubmitTransactionRequest,
-  TransactionStatus, SimpleTransactionResult,
+  TransactionStatus,
+  SimpleTransactionResult,
 } from "@tari-project/tarijs-types";
 
 export function buildTransactionRequest(
@@ -39,7 +37,6 @@ export async function waitForTransactionResult(
   signer: TariSigner | TariUniverseSigner,
   transactionId: string,
 ): Promise<SimpleTransactionResult> {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const resp = await signer.getTransactionResult(transactionId);
     const FINALIZED_STATUSES = [
@@ -53,6 +50,9 @@ export async function waitForTransactionResult(
     if (resp.status == TransactionStatus.Rejected) {
       throw new Error(`Transaction rejected: ${JSON.stringify(resp.result)}`);
     }
+    if (!resp.result?.result) {
+      throw new Error(`Transaction finalized but the result is undefined`);
+    }
     if (FINALIZED_STATUSES.includes(resp.status)) {
       if (!resp.result) {
         throw new Error(`BUG: Transaction result is empty for transaction ID: ${transactionId}`);
@@ -64,19 +64,20 @@ export async function waitForTransactionResult(
   }
 }
 
+/** @public */
 export function getAcceptResultSubstates(txResult: TransactionResult): {
   upSubstates: UpSubstates;
   downSubstates: DownSubstates;
 } {
+  if ("Reject" in txResult) {
+    throw new Error(`Transaction rejected: ${txResult.Reject}`);
+  }
+
   if ("Accept" in txResult) {
     return {
       upSubstates: txResult.Accept.up_substates,
       downSubstates: txResult.Accept.down_substates,
     };
-  }
-
-  if ("Reject" in txResult) {
-    throw new Error(`Transaction rejected: ${txResult.Reject}`);
   }
 
   if ("AcceptFeeRejectRest" in txResult) {

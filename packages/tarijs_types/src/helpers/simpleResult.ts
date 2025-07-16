@@ -38,7 +38,11 @@ export class SimpleTransactionResult {
     this.finalizeResult = result;
   }
 
-  static new(transaction_id: TransactionId, status: TransactionStatus, result: FinalizeResult): SimpleTransactionResult {
+  static new(
+    transaction_id: TransactionId,
+    status: TransactionStatus,
+    result: FinalizeResult,
+  ): SimpleTransactionResult {
     return new SimpleTransactionResult(transaction_id, status, result);
   }
 
@@ -125,7 +129,10 @@ export class SimpleTransactionResult {
 
     const components = [];
     for (const upSubstate of d.upSubstates()) {
-      if (upSubstate.type === "Component" && (upSubstate.substate as ComponentHeader).template_address === templateAddress) {
+      if (
+        upSubstate.type === "Component" &&
+        (upSubstate.substate as ComponentHeader).template_address === templateAddress
+      ) {
         components.push(SimpleComponent.new(upSubstate.id, upSubstate.version, upSubstate.substate as ComponentHeader));
       }
     }
@@ -164,7 +171,7 @@ export class SimpleTransactionResult {
   }
 
   public get diff(): Option<SimpleSubstateDiff> {
-    return this.accept.or(this.onlyFeeAccepted.map((x => x[0])));
+    return this.accept.or(this.onlyFeeAccepted.map((x) => x[0]));
   }
 
   public get onlyFeeAccepted(): Option<[SimpleSubstateDiff, RejectReason]> {
@@ -173,7 +180,7 @@ export class SimpleTransactionResult {
       return None;
     }
 
-    const [diff, reason] = result?.result.AcceptFeeRejectRest;
+    const [diff, reason] = result.result.AcceptFeeRejectRest;
     return Some([SimpleSubstateDiff.from(diff), reason]);
   }
 
@@ -228,7 +235,6 @@ export class SimpleSubstateDiff {
   constructor(diff: SubstateDiff) {
     this.up_substates = diff.up_substates
       .map(([id, val]: [SubstateId | string, Substate]) => {
-
         if (!val.substate) {
           console.error("Substate is missing in the accept result", id, val);
           return null;
@@ -250,17 +256,15 @@ export class SimpleSubstateDiff {
       })
       .filter((x) => x !== null);
 
-    this.down_substates = diff.down_substates
-      .map(([id, version]: [SubstateId | string, number]) => {
-        const type = (typeof id === "string" ? prefixToSubstateType(splitOnce(id, "_")![0]) : Object.keys(id)[0]);
-        const idVal = substateIdToString(id);
-        return {
-          type: type! as SubstateType,
-          id: idVal,
-          version,
-        } as DownSubstate;
-      });
-
+    this.down_substates = diff.down_substates.map(([id, version]: [SubstateId | string, number]) => {
+      const type = typeof id === "string" ? prefixToSubstateType(splitOnce(id, "_")![0]) : Object.keys(id)[0];
+      const idVal = substateIdToString(id);
+      return {
+        type: type! as SubstateType,
+        id: idVal,
+        version,
+      } as DownSubstate;
+    });
 
     this.fee_withdrawals = diff.fee_withdrawals;
   }
@@ -283,7 +287,7 @@ export class SimpleSubstateDiff {
 }
 
 export type AnySubstate =
-  ComponentHeader
+  | ComponentHeader
   | Resource
   | Vault
   | UnclaimedConfidentialOutput
@@ -296,7 +300,7 @@ export type UpSubstate = {
   type: SubstateType;
   id: string;
   version: number;
-  substate: AnySubstate
+  substate: AnySubstate;
 };
 
 export type DownSubstate = {
@@ -336,7 +340,6 @@ export class SimpleComponent {
     return parseCbor(this.substate.body.state) as T;
   }
 }
-
 
 export interface GetAccountsResult {
   substate_id: string;

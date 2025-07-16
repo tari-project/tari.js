@@ -1,8 +1,4 @@
-import {
-  SubstateType,
-  TemplateDef,
-  UnsignedTransactionV1,
-} from "@tari-project/typescript-bindings";
+import { SubstateType, TemplateDef, UnsignedTransactionV1 } from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
@@ -17,7 +13,7 @@ export type ReqSubstate = {
 };
 
 export type SubmitTransactionRequest = {
-  transaction: UnsignedTransactionV1,
+  transaction: UnsignedTransactionV1;
   account_id: number;
   detect_inputs_use_unversioned: boolean;
 };
@@ -44,6 +40,7 @@ export interface VaultBalances {
 export type TemplateDefinition = TemplateDef;
 
 export interface Substate {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   value: any;
   address: {
     substate_id: string;

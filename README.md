@@ -114,7 +114,10 @@ proto use
 
 # 3. Build everything
 pnpm install
-moon tarijs:build
+moon :build
+
+# or target individual packages with 
+moon <package>:build
 ```
 
 ### 🧪 **Run the Example App**

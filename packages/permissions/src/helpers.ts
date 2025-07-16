@@ -10,7 +10,6 @@ import {
   TariPermissionTransactionSend,
 } from "./permissions";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export function createPermissionFromType(permission: any): TariPermission {
   if (Object.prototype.hasOwnProperty.call(permission, "AccountBalance")) {
     return new TariPermissionAccountBalance(permission.AccountBalance);
