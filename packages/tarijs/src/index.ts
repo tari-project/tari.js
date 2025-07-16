@@ -40,27 +40,9 @@ export {
   getCborValueByPath,
 } from "@tari-project/tarijs-types";
 export { IndexerProvider, IndexerProviderParameters } from "@tari-project/indexer-provider";
-export {
-  Amount,
-  BuiltInAccount,
-  VaultSubstate,
-  TransactionArg,
-  ConfidentialClaim,
-  ConfidentialOutput,
-  ConfidentialWithdrawProof,
-  SubstateType,
-  SimpleTransactionResult,
-  SimpleSubstateDiff,
-  AnySubstate,
-  DownSubstate,
-  UpSubstate,
-  TransactionSignature,
-} from "@tari-project/tarijs-types";
+export * from "@tari-project/tarijs-types";
 
 import * as templates from "./templates";
 import * as permissions from "@tari-project/tari-permissions";
 
-export {
-  permissions,
-  templates,
-};
+export { permissions, templates };
