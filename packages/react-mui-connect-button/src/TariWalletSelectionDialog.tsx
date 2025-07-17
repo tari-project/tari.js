@@ -48,7 +48,11 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
       onConnected?.(walletConnectSigner);
     } catch (err) {
       console.error("Error connecting to WalletConnect:", err);
-      setError(`Failed to connect to WalletConnect. ${err instanceof Error ? err.message : String(err)}`);
+      setError(
+        `Failed to connect to WalletConnect. ${
+          err instanceof Error ? err.message : typeof err === "string" ? err : JSON.stringify(err)
+        }`,
+      );
     } finally {
       setIsBusy(false);
     }
