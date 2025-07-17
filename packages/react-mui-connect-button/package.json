@@ -16,8 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "@tari-project/tari-permissions": "workspace:^",
+    "@tari-project/tari-provider": "workspace:*",
     "@tari-project/tari-signer": "workspace:^",
-    "@tari-project/tari-provider": "workspace:^",
     "@tari-project/wallet-connect-signer": "workspace:^",
     "@tari-project/wallet-daemon-signer": "workspace:^"
   },

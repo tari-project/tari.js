@@ -14,14 +14,13 @@
   "author": "The Tari Community",
   "license": "ISC",
   "dependencies": {
+    "@reown/appkit": "catalog:",
     "@tari-project/tari-permissions": "workspace:",
     "@tari-project/tari-signer": "workspace:^",
-    "@tari-project/tarijs-builders": "workspace:^",
+    "@tari-project/tarijs-builders": "workspace:*",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet_jrpc_client": "catalog:",
-    "@walletconnect/universal-provider": "catalog:",
-    "@reown/appkit": "catalog:"
+    "@walletconnect/universal-provider": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

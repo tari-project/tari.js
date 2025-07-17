@@ -258,7 +258,7 @@ importers:
         specifier: workspace:^
         version: link:../permissions
       '@tari-project/tari-provider':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../tari_provider
       '@tari-project/tari-signer':
         specifier: workspace:^
@@ -448,7 +448,7 @@ importers:
         specifier: workspace:^
         version: link:../tari_signer
       '@tari-project/tarijs-builders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../builders
       '@tari-project/tarijs-types':
         specifier: workspace:^
@@ -456,9 +456,6 @@ importers:
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
         version: 1.14.0
-      '@tari-project/wallet_jrpc_client':
-        specifier: 'catalog:'
-        version: 1.7.2
       '@walletconnect/universal-provider':
         specifier: 'catalog:'
         version: 2.21.3(typescript@5.8.3)(zod@3.25.76)
