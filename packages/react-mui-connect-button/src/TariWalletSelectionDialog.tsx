@@ -48,7 +48,11 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
       onConnected?.(walletConnectSigner);
     } catch (err) {
       console.error("Error connecting to WalletConnect:", err);
-      setError(`Failed to connect to WalletConnect. ${err instanceof Error ? err.message : String(err)}`);
+      setError(
+        `Failed to connect to WalletConnect. ${
+          err instanceof Error ? err.message : typeof err === "string" ? err : JSON.stringify(err)
+        }`,
+      );
     } finally {
       setIsBusy(false);
     }
@@ -70,26 +74,29 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
           </Box>
         )}
         <Grid container spacing={2} justifyContent="center">
-          {walletDaemonParams && (
-            <Grid size={{ xs: 4 }}>
-              <WalletConnectionMethodCard
-                logo={<TariLogo />}
-                text="Tari Wallet Daemon"
-                callback={onWalletDaemonClick}
-              ></WalletConnectionMethodCard>
-            </Grid>
-          )}
           {walletConnectParams?.projectId && (
             <Grid size={{ xs: 4 }}>
               {isBusy ? (
                 <CircularProgress />
               ) : (
-                <WalletConnectionMethodCard
-                  logo={<WalletConnectLogo />}
-                  text="WalletConnect"
-                  callback={onWalletConnectClick}
-                />
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 4 }}>
+                  <WalletConnectionMethodCard
+                    logo={<WalletConnectLogo />}
+                    text="WalletConnect"
+                    callback={onWalletConnectClick}
+                  ></WalletConnectionMethodCard>
+                </Grid>
               )}
+            </Grid>
+          )}
+
+          {walletDaemonParams && (
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 4 }}>
+              <WalletConnectionMethodCard
+                logo={<TariLogo />}
+                text="Tari Wallet Daemon"
+                callback={onWalletDaemonClick}
+              ></WalletConnectionMethodCard>
             </Grid>
           )}
         </Grid>
@@ -105,21 +112,40 @@ function WalletConnectionMethodCard({
 }: {
   logo: ReactElement;
   text: string;
-  callback: () => void;
+  callback: () => Promise<void>;
 }) {
   return (
     <Card
       variant="outlined"
       elevation={0}
-      sx={{ mty: 4, padding: 4, borderRadius: 4, width: "175px", height: "175px", cursor: "pointer" }}
+      sx={{
+        padding: 4,
+        borderRadius: 4,
+        width: "175px",
+        height: "175px",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      onClick={async () => {
+        await callback();
+      }}
     >
-      <CardContent onClick={callback}>
-        <Stack direction="column" spacing={2} alignItems="center">
-          <Box sx={{ textAlign: "center", width: "100%" }}>
-            <div style={{ borderRadius: 8, width: "50px", height: "50px" }}>{logo}</div>
-          </Box>
-          <Typography textAlign="center">{text}</Typography>
-        </Stack>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          padding: 0,
+        }}
+      >
+        {logo}
+        <Typography textAlign="center" sx={{ mt: 2 }}>
+          {text}
+        </Typography>
       </CardContent>
     </Card>
   );

@@ -1,6 +1,6 @@
 {
   "name": "@tari-project/wallet-connect-signer",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "",
   "type": "module",
   "publishConfig": {
@@ -14,13 +14,12 @@
   "author": "The Tari Community",
   "license": "ISC",
   "dependencies": {
+    "@reown/appkit": "catalog:",
+    "@tari-project/tari-permissions": "workspace:",
     "@tari-project/tari-signer": "workspace:^",
-    "@tari-project/tarijs-builders": "workspace:^",
+    "@tari-project/tarijs-builders": "workspace:*",
     "@tari-project/tarijs-types": "workspace:^",
     "@tari-project/typescript-bindings": "catalog:",
-    "@tari-project/wallet_jrpc_client": "catalog:",
-    "@tari-project/tari-permissions": "workspace:",
-    "@walletconnect/modal": "catalog:",
     "@walletconnect/universal-provider": "catalog:"
   },
   "devDependencies": {

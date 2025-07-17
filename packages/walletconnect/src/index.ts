@@ -1,6 +1,7 @@
 import { TariSigner } from "@tari-project/tari-signer";
 import UniversalProvider from "@walletconnect/universal-provider";
-import { WalletConnectModal } from "@walletconnect/modal";
+import { AppKitNetwork, mainnet, sepolia } from "@reown/appkit/networks";
+import { createAppKit } from "@reown/appkit/core";
 import {
   convertStringToTransactionStatus,
   GetTransactionResultResponse,
@@ -74,12 +75,19 @@ export class WalletConnectTariSigner implements TariSigner {
         // No-op if already connected
       };
 
-    // initialize WalletConnect
+    const metadata = {
+      name: "Tari Universe",
+      description: "Tari Universe Wallet",
+      url: "https://www.tari.com",
+      icons: ["https://tari.com/assets/img/node-icon-alt.svg"],
+    };
+
     const projectId = this.params.projectId;
     const provider = await UniversalProvider.init({
       projectId,
       // TODO: parameterize the relay URL
       // relayUrl: "wss://relay.walletconnect.com",
+      metadata,
     });
 
     const sessionProperties = {
@@ -91,20 +99,25 @@ export class WalletConnectTariSigner implements TariSigner {
       sessionProperties,
     };
 
-    // open UI modal with the connection URI
+    const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, sepolia];
+
     const { uri, approval } = await provider.client.connect(connectParams);
     return async () => {
-      const walletConnectModal = new WalletConnectModal({
-        projectId,
+      const walletConnectModal = createAppKit({
+        projectId: projectId,
+        networks: networks,
+        universalProvider: provider,
+        manualWCControl: true,
       });
+
       if (uri) {
-        await walletConnectModal.openModal({ uri });
+        await walletConnectModal.open({ uri });
       }
 
       // wait for the wallet to approve the connection
       console.log("waiting for session approval from the wallet app");
       const session = await approval();
-      walletConnectModal.closeModal();
+      walletConnectModal.close();
 
       // at this point session is open
       console.log("session approved by the wallet");

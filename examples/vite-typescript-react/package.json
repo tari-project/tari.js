@@ -10,12 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tari-project/tarijs-all": "workspace:^",
-    "@tari-project/react-mui-connect-button": "workspace:^",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7",
-    "@mui/material": "^7"
+    "@mui/material": "^7",
+    "@tari-project/react-mui-connect-button": "workspace:^",
+    "@tari-project/tarijs-all": "workspace:^",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
