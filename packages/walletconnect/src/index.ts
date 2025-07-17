@@ -81,7 +81,7 @@ export class WalletConnectTariSigner implements TariSigner {
       url: "https://www.tari.com",
       icons: ["https://tari.com/assets/img/node-icon-alt.svg"],
     };
-    // initialize WalletConnect
+
     const projectId = this.params.projectId;
     const provider = await UniversalProvider.init({
       projectId,
@@ -101,7 +101,6 @@ export class WalletConnectTariSigner implements TariSigner {
 
     const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, sepolia];
 
-    // open UI modal with the connection URI
     const { uri, approval } = await provider.client.connect(connectParams);
     return async () => {
       const walletConnectModal = createAppKit({
@@ -110,9 +109,7 @@ export class WalletConnectTariSigner implements TariSigner {
         universalProvider: provider,
         manualWCControl: true,
       });
-      // const walletConnectModal = new WalletConnectModal({
-      //   projectId,
-      // });
+
       if (uri) {
         await walletConnectModal.open({ uri });
       }
