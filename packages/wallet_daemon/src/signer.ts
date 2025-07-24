@@ -16,12 +16,16 @@ import {
   ListSubstatesRequest,
 } from "@tari-project/tarijs-types";
 import {
+  AccountGetResponse,
+  AccountsListRequest,
+  AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
   ListAccountNftRequest,
   ListAccountNftResponse,
   substateIdToString,
   SubstatesListRequest,
+  WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
 export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
@@ -133,6 +137,11 @@ export class WalletDaemonTariSigner implements TariSigner {
     };
   }
 
+  public async accountsList(req: AccountsListRequest): Promise<AccountsListResponse> {
+    const resp = await this.client.accountsList(req);
+    return resp;
+  }
+
   public async getAccount(): Promise<AccountData> {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const { account, public_key } = (await this.client.accountsGetDefault({})) as any;
@@ -156,6 +165,15 @@ export class WalletDaemonTariSigner implements TariSigner {
         token_symbol: b.token_symbol,
       })),
     };
+  }
+
+  public async getAccountByAddress(address: string): Promise<AccountGetResponse> {
+    const resp = await this.client.accountsGet({
+      name_or_address: {
+        ComponentAddress: address,
+      },
+    });
+    return resp;
   }
 
   public async getAccountBalances(componentAddress: string): Promise<unknown> {
@@ -254,5 +272,10 @@ export class WalletDaemonTariSigner implements TariSigner {
 
   public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
     return await this.client.nftsList(req);
+  }
+
+  public async getWalletInfo(): Promise<WalletGetInfoResponse> {
+    const resp = await this.client.walletGetInfo();
+    return resp;
   }
 }
