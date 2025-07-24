@@ -14,10 +14,14 @@ import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerP
 import { sendSignerCall } from "./utils";
 import { TariSigner } from "@tari-project/tari-signer";
 import {
+  AccountGetResponse,
   AccountsGetBalancesResponse,
+  AccountsListRequest,
+  AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
   ListAccountNftRequest,
   ListAccountNftResponse,
+  WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
 export class TariUniverseSigner implements TariSigner {
@@ -83,8 +87,16 @@ export class TariUniverseSigner implements TariSigner {
     return this.sendRequest({ methodName: "requestParentSize", args: [] });
   }
 
+  public async accountsList(req: AccountsListRequest): Promise<AccountsListResponse> {
+    return this.sendRequest({ methodName: "accountsList", args: [req] });
+  }
+
   public async getAccount(): Promise<AccountData> {
     return this.sendRequest({ methodName: "getAccount", args: [] });
+  }
+
+  public async getAccountByAddress(address: string): Promise<AccountGetResponse> {
+    return this.sendRequest({ methodName: "getAccountByAddress", args: [address] });
   }
 
   public async getAccountBalances(componentAddress: string): Promise<AccountsGetBalancesResponse> {
@@ -125,5 +137,9 @@ export class TariUniverseSigner implements TariSigner {
 
   public async getNftsFromAccountBalances(req: ListAccountNftFromBalancesRequest): Promise<ListAccountNftResponse> {
     return this.sendRequest({ methodName: "getNftsFromAccountBalances", args: [req] });
+  }
+
+  public async getWalletInfo(): Promise<WalletGetInfoResponse> {
+    return this.sendRequest({ methodName: "getWalletInfo", args: [] });
   }
 }

@@ -15,12 +15,16 @@ import {
   SubmitTransactionResponse,
 } from "@tari-project/tarijs-types";
 import {
+  AccountGetResponse,
+  AccountsListRequest,
+  AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
   ListAccountNftRequest,
   ListAccountNftResponse,
   substateIdToString,
   TransactionSubmitRequest,
+  WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 import { TariPermission } from "@tari-project/tari-permissions";
 
@@ -39,6 +43,7 @@ const walletConnectParams = {
         "tari_createFreeTestCoins",
         "tari_listSubstates",
         "tari_getNftsList",
+        "tari_getWalletInfo",
       ],
       chains: ["tari:devnet"],
       events: [],
@@ -154,6 +159,11 @@ export class WalletConnectTariSigner implements TariSigner {
     return this.wcSession !== null;
   }
 
+  async accountsList(req: AccountsListRequest): Promise<AccountsListResponse> {
+    const res = await this.sendRequest("tari_accountsList", req);
+    return res as AccountsListResponse;
+  }
+
   async getAccount(): Promise<AccountData> {
     const { account, public_key } = await this.sendRequest("tari_getDefaultAccount", {});
     const { balances } = await this.sendRequest("tari_getAccountBalances", {
@@ -175,6 +185,15 @@ export class WalletConnectTariSigner implements TariSigner {
         token_symbol: b.token_symbol,
       })),
     };
+  }
+
+  async getAccountByAddress(address: string): Promise<AccountGetResponse> {
+    const res = await this.sendRequest("tari_getAccountByAddress", {
+      name_or_address: {
+        ComponentAddress: address,
+      },
+    });
+    return res as AccountGetResponse;
   }
 
   async getSubstate(substate_address: string): Promise<Substate> {
@@ -295,5 +314,10 @@ export class WalletConnectTariSigner implements TariSigner {
     };
     const res = await this.sendRequest(method, params);
     return res as ListAccountNftResponse;
+  }
+
+  public async getWalletInfo(): Promise<WalletGetInfoResponse> {
+    const res = await this.sendRequest("tari_getWalletInfo", {});
+    return res as WalletGetInfoResponse;
   }
 }
