@@ -6,6 +6,7 @@ import { TariSigner } from "@tari-project/tari-signer";
 import { TariLogoWhite } from "./Logos";
 import { WalletDaemonFetchParameters } from "@tari-project/wallet-daemon-signer";
 import { WalletConnectParameters } from "@tari-project/wallet-connect-signer";
+import { TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 
 export interface TariConnectButtonProps {
   isConnected: boolean;
@@ -13,6 +14,7 @@ export interface TariConnectButtonProps {
   onConnected?: (signer: TariSigner) => void;
   walletConnectParams?: WalletConnectParameters;
   walletDaemonParams?: WalletDaemonFetchParameters;
+  tariUniverseParams?: TariUniverseSignerParameters;
 }
 
 export function TariConnectButton(props: TariConnectButtonProps) {
@@ -44,6 +46,7 @@ export function TariConnectButton(props: TariConnectButtonProps) {
         onConnected={props.onConnected}
         walletConnectParams={props.walletConnectParams}
         walletDaemonParams={props.walletDaemonParams}
+        tariUniverseParams={props.tariUniverseParams}
       />
     </>
   );

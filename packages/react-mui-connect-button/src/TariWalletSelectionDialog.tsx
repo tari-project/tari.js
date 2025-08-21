@@ -8,17 +8,19 @@ import { WalletDaemonTariSigner, WalletDaemonFetchParameters } from "@tari-proje
 import { ReactElement, useState } from "react";
 import { WalletConnectTariSigner, WalletConnectParameters } from "@tari-project/wallet-connect-signer";
 import { TariLogo, WalletConnectLogo } from "./Logos";
+import { TariUniverseSigner, TariUniverseSignerParameters } from "@tari-project/tari-universe-signer";
 
 export interface WalletSelectionProps {
   open: boolean;
   onConnected?: (signer: TariSigner) => void;
   walletConnectParams?: WalletConnectParameters;
   walletDaemonParams?: WalletDaemonFetchParameters;
+  tariUniverseParams?: TariUniverseSignerParameters;
   onClose: () => void;
 }
 
 export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactElement {
-  const { onClose, open, onConnected, walletConnectParams, walletDaemonParams } = props;
+  const { onClose, open, onConnected, walletConnectParams, walletDaemonParams, tariUniverseParams } = props;
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,6 +58,15 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
     } finally {
       setIsBusy(false);
     }
+  };
+
+  const onTariUniverseClick = async () => {
+    if (!tariUniverseParams) {
+      throw new Error("Tari Universe Signer parameters were not provided.");
+    }
+    const tuSigner = new TariUniverseSigner(tariUniverseParams);
+    onConnected?.(tuSigner);
+    handleClose();
   };
 
   return (
@@ -96,6 +107,16 @@ export function TariWalletSelectionDialog(props: WalletSelectionProps): ReactEle
                 logo={<TariLogo />}
                 text="Tari Wallet Daemon"
                 callback={onWalletDaemonClick}
+              ></WalletConnectionMethodCard>
+            </Grid>
+          )}
+
+          {tariUniverseParams && (
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 4 }}>
+              <WalletConnectionMethodCard
+                logo={<TariLogo />}
+                text="Tari Universe"
+                callback={onTariUniverseClick}
               ></WalletConnectionMethodCard>
             </Grid>
           )}
