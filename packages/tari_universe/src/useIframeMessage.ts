@@ -1,12 +1,12 @@
 export enum MessageType {
   SIGNER_CALL = "SIGNER_CALL",
-  RESIZE = "RESIZE",
+  RESIZE = "resize",
   SET_LANGUAGE = "SET_LANGUAGE",
   SET_THEME = "SET_THEME",
   GET_INIT_CONFIG = "GET_INIT_CONFIG",
   OPEN_EXTERNAL_LINK = "OPEN_EXTERNAL_LINK",
   ERROR = "ERROR",
-  SET_ALLOWED_DOMAINS = "SET_ALLOWED_DOMAINS",
+  NOTIFICATION = "NOTIFICATION",
 }
 
 interface SignerCallMessage {
@@ -57,10 +57,10 @@ type ErrorMessage = {
   };
 };
 
-interface SetAllowedDomainsMessage {
-  type: MessageType.SET_ALLOWED_DOMAINS;
+interface EmitNotificationMessage {
+  type: MessageType.NOTIFICATION;
   payload: {
-    domains: string[];
+    notification: string;
   };
 }
 
@@ -72,7 +72,7 @@ export type IframeMessage =
   | GetInitConfigMessage
   | OpenLinkMessage
   | ErrorMessage
-  | SetAllowedDomainsMessage;
+  | EmitNotificationMessage;
 
 // Post a message to the parent window
 export function postToParentIframe(message: IframeMessage, targetOrigin: string = "*") {
