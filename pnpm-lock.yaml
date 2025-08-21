@@ -263,6 +263,9 @@ importers:
       '@tari-project/tari-signer':
         specifier: workspace:^
         version: link:../tari_signer
+      '@tari-project/tari-universe-signer':
+        specifier: workspace:^
+        version: link:../tari_universe
       '@tari-project/wallet-connect-signer':
         specifier: workspace:^
         version: link:../walletconnect
