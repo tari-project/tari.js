@@ -23,6 +23,7 @@ import {
   ListAccountNftResponse,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
+import { MessageType } from "./useIframeMessage";
 
 export class TariUniverseSigner implements TariSigner {
   public signerName = "TariUniverse";
@@ -30,8 +31,8 @@ export class TariUniverseSigner implements TariSigner {
 
   public constructor(public params: TariUniverseSignerParameters) {
     const filterResizeEvent = function (event: MessageEvent) {
-      if (event.data && event.data.type === "resize") {
-        const resizeEvent = new CustomEvent("resize", {
+      if (event.data && event.data.type === MessageType.RESIZE) {
+        const resizeEvent = new CustomEvent(MessageType.RESIZE, {
           detail: { width: event.data.width, height: event.data.height },
         });
         window.dispatchEvent(resizeEvent);
@@ -92,6 +93,7 @@ export class TariUniverseSigner implements TariSigner {
   }
 
   public async getAccount(): Promise<AccountData> {
+    console.warn("ELOSZKI Z GET ACCOUNT");
     return this.sendRequest({ methodName: "getAccount", args: [] });
   }
 

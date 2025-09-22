@@ -1,5 +1,6 @@
 import { TariPermissions } from "@tari-project/tari-permissions";
 import { TariUniverseSigner } from "./signer";
+import { MessageType } from "./useIframeMessage";
 
 export type TariUniverseSignerParameters = {
   permissions: TariPermissions;
@@ -28,7 +29,7 @@ export type SignerRequest<T extends SignerMethodNames> = {
 
 export type SignerResponse<T extends SignerMethodNames> = {
   id: number;
-  type: "signer-call";
+  type: MessageType.SIGNER_CALL;
   result: SignerReturnType<T>;
   resultError?: string;
 };
