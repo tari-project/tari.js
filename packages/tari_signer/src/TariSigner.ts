@@ -3,8 +3,6 @@ import type {
   AccountsListRequest,
   AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 import {
@@ -17,6 +15,8 @@ import {
   Substate,
   ListSubstatesResponse,
   ListSubstatesRequest,
+  ListNftsRequest,
+  ListNftsResponse,
 } from "@tari-project/tarijs-types";
 
 export interface TariSigner {
@@ -32,6 +32,6 @@ export interface TariSigner {
   getPublicKey(branch: string, index: number): Promise<string>;
   getConfidentialVaultBalances(req: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances>;
   listSubstates(req: ListSubstatesRequest): Promise<ListSubstatesResponse>;
-  getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse>;
+  getNftsList(req: ListNftsRequest): Promise<ListNftsResponse>;
   getWalletInfo(): Promise<WalletGetInfoResponse>;
 }

@@ -12,7 +12,7 @@ import {
   AccountData,
   ListSubstatesResponse,
   ListSubstatesRequest,
-  SubmitTransactionResponse,
+  SubmitTransactionResponse, ListNftsResponse, ListNftsRequest,
 } from "@tari-project/tarijs-types";
 import {
   AccountGetResponse,
@@ -20,8 +20,6 @@ import {
   AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
   substateIdToString,
   TransactionSubmitRequest,
   WalletGetInfoResponse,
@@ -173,8 +171,8 @@ export class WalletConnectTariSigner implements TariSigner {
 
     return {
       account_id: account.key_index,
-      address: account.address,
-      public_key,
+      component_address: account.address,
+      wallet_address: public_key,
       // TODO: should be vaults not resources
       vaults: balances.map((b: any) => ({
         type: b.resource_type,
@@ -244,8 +242,8 @@ export class WalletConnectTariSigner implements TariSigner {
     const res = await this.sendRequest(method, params);
     return {
       account_id: res.account.key_index,
-      address: (res.account.address as { Component: string }).Component,
-      public_key: res.public_key,
+      component_address: (res.account.address as { Component: string }).Component,
+      wallet_address: res.public_key,
       vaults: [],
     };
   }
@@ -305,15 +303,15 @@ export class WalletConnectTariSigner implements TariSigner {
     return { balances: res.balances as unknown as Map<string, number | null> };
   }
 
-  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+  public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
     const method = "tari_getNftsList";
     const params = {
-      account: req.account,
+      account: req.accountAddress,
       limit: req.limit,
       offset: req.offset,
     };
     const res = await this.sendRequest(method, params);
-    return res as ListAccountNftResponse;
+    return res as ListNftsResponse;
   }
 
   public async getWalletInfo(): Promise<WalletGetInfoResponse> {

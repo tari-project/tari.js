@@ -9,6 +9,8 @@ import {
   ListSubstatesRequest,
   GetTransactionResultResponse,
   ListAccountNftFromBalancesRequest,
+  ListNftsRequest,
+  ListNftsResponse,
 } from "@tari-project/tarijs-types";
 import { SignerRequest, SignerMethodNames, SignerReturnType, TariUniverseSignerParameters, WindowSize } from "./types";
 import { sendSignerCall } from "./utils";
@@ -19,8 +21,6 @@ import {
   AccountsListRequest,
   AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 import { MessageType } from "./useIframeMessage";
@@ -133,11 +133,11 @@ export class TariUniverseSigner implements TariSigner {
     return this.sendRequest({ methodName: "getTemplateDefinition", args: [template_address] });
   }
 
-  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+  public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
     return this.sendRequest({ methodName: "getNftsList", args: [req] });
   }
 
-  public async getNftsFromAccountBalances(req: ListAccountNftFromBalancesRequest): Promise<ListAccountNftResponse> {
+  public async getNftsFromAccountBalances(req: ListAccountNftFromBalancesRequest): Promise<ListNftsResponse> {
     return this.sendRequest({ methodName: "getNftsFromAccountBalances", args: [req] });
   }
 

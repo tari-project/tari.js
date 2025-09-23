@@ -5,7 +5,8 @@ import { TransactionRequest } from "./TransactionRequest";
 import { Amount, Network, TransactionArg } from "@tari-project/tarijs-types";
 import {
   ComponentAddress,
-  ConfidentialClaim,
+  MinotariBurnClaimProof,
+  ClaimBurnOutputData,
   ConfidentialWithdrawProof,
   Instruction,
   ResourceAddress,
@@ -187,7 +188,7 @@ export interface Builder {
    * - If `withdraw_proof` is required by the burn process, it must be included.
    * - This method should be used only when recovering burned confidential resources.
    */
-  claimBurn(claim: ConfidentialClaim): this;
+  claimBurn(claim: MinotariBurnClaimProof, output_data: ClaimBurnOutputData): this;
 
   addInput(inputObject: SubstateRequirement): this;
 
@@ -346,7 +347,7 @@ export class TransactionBuilder implements Builder {
 
     return this.addInstruction({
       CreateAccount: {
-        public_key_address: ownerPublicKey,
+        owner_public_key: ownerPublicKey,
         owner_rule: null, // Custom owner rule is not set by default
         access_rules: null, // Custom access rules are not set by default
         workspace_id,
@@ -364,10 +365,11 @@ export class TransactionBuilder implements Builder {
     });
   }
 
-  public claimBurn(claim: ConfidentialClaim): this {
+public claimBurn(claim: MinotariBurnClaimProof, output_data: ClaimBurnOutputData): this {
     return this.addInstruction({
       ClaimBurn: {
         claim,
+        output_data,
       },
     });
   }

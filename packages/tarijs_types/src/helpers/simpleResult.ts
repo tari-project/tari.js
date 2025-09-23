@@ -10,7 +10,7 @@ import {
   SubstateDiff,
   SubstateType,
   TransactionReceipt,
-  UnclaimedConfidentialOutput,
+  ClaimedOutputTombstone,
   ValidatorFeePool,
   PublishedTemplate,
   ValidatorFeeWithdrawal,
@@ -290,7 +290,7 @@ export type AnySubstate =
   | ComponentHeader
   | Resource
   | Vault
-  | UnclaimedConfidentialOutput
+  | ClaimedOutputTombstone
   | NonFungible
   | TransactionReceipt
   | ValidatorFeePool
