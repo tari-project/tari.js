@@ -31,8 +31,8 @@ function App() {
         <div>
           <h2>Connected Account</h2>
           <p>Account ID: {account.account_id}</p>
-          <p>Address: {account.address}</p>
-          <p>Public Key: {account.public_key}</p>
+          <p>Component: {account.component_address}</p>
+          <p>Wallet Address: {account.wallet_address}</p>
           <h3>Resources:</h3>
           <ul>
             {account.vaults.map((resource, index) => (
