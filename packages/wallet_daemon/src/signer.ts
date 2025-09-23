@@ -154,13 +154,12 @@ export class WalletDaemonTariSigner implements TariSigner {
       account_id: account.key_index,
       component_address: account.component_address,
       wallet_address: address,
-      // TODO: should be vaults not resources
       vaults: balances.map((b: any) => ({
         type: b.resource_type,
         resource_address: b.resource_address,
-        balance: b.balance + b.confidential_balance,
-        vault_id:
-          typeof b.vault_address === "object" && "Vault" in b.vault_address ? b.vault_address.Vault : b.vault_address,
+        balance: b.balance,
+        confidential_balance: b.confidential_balance,
+        vault_id: b.vault_address,
         token_symbol: b.token_symbol,
       })),
     };
