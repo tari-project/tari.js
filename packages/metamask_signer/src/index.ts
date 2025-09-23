@@ -10,7 +10,7 @@ import {
   ListSubstatesResponse,
   AccountData,
   ListSubstatesRequest,
-  GetTransactionResultResponse,
+  GetTransactionResultResponse, ListNftsResponse, ListNftsRequest,
 } from "@tari-project/tarijs-types";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { connectSnap, getSnap, isFlask, Snap } from "./utils";
@@ -19,8 +19,6 @@ import {
   AccountsListRequest,
   AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
@@ -82,8 +80,8 @@ export class MetamaskTariSigner implements TariSigner {
     })) as any;
     return {
       account_id,
-      address: res.address,
-      public_key: res.public_key,
+      component_address: res.address,
+      wallet_address: res.public_key,
       vaults: [],
     };
   }
@@ -213,8 +211,8 @@ export class MetamaskTariSigner implements TariSigner {
     return resp as T;
   }
 
-  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
-    const resp = (await this.metamaskRequest("getNftsList", req)) as ListAccountNftResponse;
+  public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
+    const resp = (await this.metamaskRequest("getNftsList", req)) as ListNftsResponse;
     return resp;
   }
 

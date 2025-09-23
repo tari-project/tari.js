@@ -12,17 +12,9 @@ import {
 } from "@tari-project/typescript-bindings";
 import { UpSubstates } from "../SubstateDiff";
 
-function isOfType<T extends object>(obj: T, key: keyof T): boolean {
-  return obj !== null && typeof obj === "object" && key in obj;
-}
-
 export const txResultCheck = {
   isAccept: (result: FinalizeResult) => {
     return "Accept" in result.result;
-  },
-
-  isVaultId: (substateId: SubstateId): substateId is { Vault: VaultId } => {
-    return isOfType(substateId, "Vault" as keyof SubstateId);
   },
 
   isVaultSubstate: (substate: SubstateValue): substate is { Vault: Vault } => {

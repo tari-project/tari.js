@@ -1,12 +1,7 @@
 import {
   GetEpochManagerStatsResponse,
-  GetNonFungibleCollectionsResponse,
-  GetNonFungibleCountRequest,
-  GetNonFungibleCountResponse,
   GetNonFungiblesRequest,
   GetNonFungiblesResponse,
-  GetRelatedTransactionsRequest,
-  GetRelatedTransactionsResponse,
   GetTemplateDefinitionRequest,
   GetTemplateDefinitionResponse,
   IndexerGetIdentityResponse,
@@ -92,20 +87,8 @@ export class IndexerProviderClient {
     return this.__invokeRpc("get_transaction_result", params);
   }
 
-  public getSubstateTransactions(params: GetRelatedTransactionsRequest): Promise<GetRelatedTransactionsResponse> {
-    return this.__invokeRpc("get_substate_transactions", params);
-  }
-
   public getNonFungibles(params: GetNonFungiblesRequest): Promise<GetNonFungiblesResponse> {
     return this.__invokeRpc("get_non_fungibles", params);
-  }
-
-  public getNonFungibleCollections(): Promise<GetNonFungibleCollectionsResponse> {
-    return this.__invokeRpc("get_non_fungible_collections");
-  }
-
-  public getNonFungibleCount(params: GetNonFungibleCountRequest): Promise<GetNonFungibleCountResponse> {
-    return this.__invokeRpc("get_non_fungible_count", params);
   }
 
   public getEpochManagerStats(): Promise<GetEpochManagerStatsResponse> {

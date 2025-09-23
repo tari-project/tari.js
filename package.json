@@ -1,13 +1,13 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "",
   "type": "module",
   "keywords": [],
   "author": "The Tari Community",
   "license": "ISC",
   "engines": {
-    "node": "22.13.1"
+    "node": "22.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
@@ -25,6 +25,5 @@
   },
   "dependencies": {
     "@tari-project/tarijs-types": "workspace:^"
-  },
-  "packageManager": "pnpm@9.15.3"
+  }
 }

@@ -1,4 +1,11 @@
-import { SubstateType, TemplateDef, UnsignedTransactionV1 } from "@tari-project/typescript-bindings";
+import {
+  SubstateType,
+  TemplateDef,
+  UnsignedTransactionV1,
+  ComponentAddress,
+  NonFungibleToken,
+  OotleAddress,
+} from "@tari-project/typescript-bindings";
 
 export type SubstateMetadata = {
   substate_id: string;
@@ -20,8 +27,8 @@ export type SubmitTransactionRequest = {
 
 export interface AccountData {
   account_id: number;
-  address: string;
-  public_key: string;
+  component_address: ComponentAddress;
+  wallet_address: OotleAddress;
   vaults: VaultData[];
 }
 
@@ -62,4 +69,14 @@ export type ListSubstatesRequest = {
 export type GetSubstateRequest = {
   substate_address: string;
   version: number | null;
+};
+
+export type ListNftsRequest = {
+  accountAddress: ComponentAddress;
+  limit: number | null;
+  offset: number | null;
+};
+
+export type ListNftsResponse = {
+  nfts: Array<NonFungibleToken>
 };

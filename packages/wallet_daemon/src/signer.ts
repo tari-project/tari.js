@@ -14,6 +14,8 @@ import {
   Substate,
   ListSubstatesResponse,
   ListSubstatesRequest,
+  ListNftsResponse,
+  ListNftsRequest,
 } from "@tari-project/tarijs-types";
 import {
   AccountGetResponse,
@@ -21,8 +23,6 @@ import {
   AccountsListResponse,
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
-  ListAccountNftRequest,
-  ListAccountNftResponse,
   substateIdToString,
   SubstatesListRequest,
   WalletGetInfoResponse,
@@ -125,14 +125,14 @@ export class WalletDaemonTariSigner implements TariSigner {
   public async createFreeTestCoins(): Promise<AccountData> {
     const res = await this.client.createFreeTestCoins({
       account: { Name: "template_web" },
-      amount: 1000000,
+      amount: 1000_000_000,
       max_fee: null,
-      key_id: 0,
     });
     return {
       account_id: res.account.key_index,
-      address: (res.account.address as { Component: string }).Component,
-      public_key: res.public_key,
+      component_address: res.account.component_address,
+      wallet_address: res.address,
+      // TODO: API for fetching vaults by account
       vaults: [],
     };
   }
@@ -153,8 +153,8 @@ export class WalletDaemonTariSigner implements TariSigner {
 
     return {
       account_id: account.key_index,
-      address,
-      public_key,
+      component_address: address,
+      wallet_address: public_key,
       // TODO: should be vaults not resources
       vaults: balances.map((b: any) => ({
         type: b.resource_type,
@@ -181,16 +181,16 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getSubstate(substateId: string): Promise<Substate> {
-    const { substate } = await this.client.substatesGet({ substate_id: substateId });
-    if (!substate) {
+    const { substate_from_remote } = await this.client.substatesGet({ substate_id: substateId });
+    if (!substate_from_remote) {
       throw new Error(`Substate not found for address: ${substateId}`);
     }
 
     return {
-      value: substate?.substate,
+      value: substate_from_remote?.substate,
       address: {
         substate_id: substateId,
-        version: substate?.version || 0,
+        version: substate_from_remote?.version || 0,
       },
     };
   }
@@ -261,7 +261,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     } as SubstatesListRequest);
 
     const substates = resp.substates.map((s: any) => ({
-      substate_id: typeof s.substate_id === "string" ? s.substate_id : substateIdToString(s.substate_id),
+      substate_id: substateIdToString(s.substate_id),
       module_name: s.module_name,
       version: s.version,
       template_address: s.template_address,
@@ -270,7 +270,7 @@ export class WalletDaemonTariSigner implements TariSigner {
     return { substates };
   }
 
-  public async getNftsList(req: ListAccountNftRequest): Promise<ListAccountNftResponse> {
+  public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
     return await this.client.nftsList(req);
   }
 
