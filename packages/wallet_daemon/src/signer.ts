@@ -144,17 +144,16 @@ export class WalletDaemonTariSigner implements TariSigner {
 
   public async getAccount(): Promise<AccountData> {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const { account, public_key } = (await this.client.accountsGetDefault({})) as any;
-    const address = typeof account.address === "object" ? account.address.Component : account.address;
+    const { account, address } = await this.client.accountsGetDefault({});
     const { balances } = await this.client.accountsGetBalances({
-      account: { ComponentAddress: address },
+      account: { ComponentAddress: account.component_address },
       refresh: false,
     });
 
     return {
       account_id: account.key_index,
-      component_address: address,
-      wallet_address: public_key,
+      component_address: account.component_address,
+      wallet_address: address,
       // TODO: should be vaults not resources
       vaults: balances.map((b: any) => ({
         type: b.resource_type,
