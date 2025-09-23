@@ -35,6 +35,7 @@ export interface AccountData {
 export interface VaultData {
   type: string;
   balance: number;
+  confidential_balance: number;
   resource_address: string;
   token_symbol: string;
   vault_id: string;
