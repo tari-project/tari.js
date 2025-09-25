@@ -29,7 +29,7 @@ export {
   GetTransactionResultResponse,
   AccountData,
   SubmitTransactionRequest,
-  VaultBalances,
+  RevealedBalances,
   VaultData,
   TemplateDefinition,
   Substate,

@@ -41,9 +41,10 @@ export interface VaultData {
   vault_id: string;
 }
 
-export interface VaultBalances {
-  balances: Map<string, number | null>;
+export interface RevealedBalances {
+  balances: Map<string, bigint | null>;
 }
+
 
 export type TemplateDefinition = TemplateDef;
 

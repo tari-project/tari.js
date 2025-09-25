@@ -9,7 +9,7 @@ import {
   GetTransactionResultResponse,
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-  VaultBalances,
+  RevealedBalances,
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
@@ -24,7 +24,7 @@ import {
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
   substateIdToString,
-  SubstatesListRequest,
+  SubstatesListRequest, UtxoId,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
@@ -235,14 +235,29 @@ export class WalletDaemonTariSigner implements TariSigner {
     view_key_id,
     maximum_expected_value = null,
     minimum_expected_value = null,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+  }: ConfidentialViewVaultBalanceRequest): Promise<RevealedBalances> {
     const res = await this.client.viewVaultBalance({
       view_key_id,
       vault_id,
       minimum_expected_value,
       maximum_expected_value,
     });
-    return { balances: res.balances as unknown as Map<string, number | null> };
+    return { balances: res.balances as unknown as Map<string, bigint | null> };
+  }
+  public async decryptUtxoValue(
+    utxoId: UtxoId,
+    viewKeyId: number,
+    maximum_expected_value = null,
+    minimum_expected_value = null,
+  ): Promise<RevealedBalances> {
+    const res = await this.client.stealthUtxosDecryptValue({
+      utxo_id: utxoId,
+      view_key_id: viewKeyId,
+      minimum_expected_value,
+      maximum_expected_value,
+    });
+
+    return { balances: res.balances as unknown as Map<string, bigint | null> };
   }
 
   public async listSubstates({
@@ -269,7 +284,11 @@ export class WalletDaemonTariSigner implements TariSigner {
   }
 
   public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
-    return await this.client.nftsList(req);
+    return await this.client.nftsList({
+      account: {ComponentAddress: req.accountAddress},
+      limit: req.limit || 100,
+      offset: req.offset || 0,
+    });
   }
 
   public async getWalletInfo(): Promise<WalletGetInfoResponse> {

@@ -4,7 +4,6 @@ import {
   SubmitTransactionRequest,
   TransactionStatus,
   SubmitTransactionResponse,
-  VaultBalances,
   TemplateDefinition,
   Substate,
   ListSubstatesResponse,
@@ -18,7 +17,6 @@ import {
   AccountGetResponse,
   AccountsListRequest,
   AccountsListResponse,
-  ConfidentialViewVaultBalanceRequest,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
@@ -161,22 +159,6 @@ export class MetamaskTariSigner implements TariSigner {
     }
 
     return resp.public_key;
-  }
-
-  public async getConfidentialVaultBalances({
-    vault_id,
-    maximum_expected_value,
-    minimum_expected_value,
-    view_key_id,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
-    const resp = await this.metamaskRequest("getConfidentialVaultBalances", {
-      view_key_id,
-      vault_id,
-      minimum_expected_value,
-      maximum_expected_value,
-    });
-
-    return { balances: resp as Map<string, number | null> };
   }
 
   getTemplateDefinition(template_address: string): Promise<TemplateDefinition> {

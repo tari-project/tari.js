@@ -33,7 +33,7 @@ export {
   Substate,
   SubstateMetadata,
   TemplateDefinition,
-  VaultBalances,
+  RevealedBalances,
   VaultData,
 } from "./signer";
 

@@ -3,7 +3,7 @@ import {
   AccountData,
   Substate,
   TemplateDefinition,
-  VaultBalances,
+  RevealedBalances,
   ListSubstatesResponse,
   SubmitTransactionRequest,
   ListSubstatesRequest,
@@ -73,7 +73,7 @@ export class TariUniverseSigner implements TariSigner {
     maximum_expected_value,
     minimum_expected_value,
     view_key_id,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+  }: ConfidentialViewVaultBalanceRequest): Promise<RevealedBalances> {
     return this.sendRequest({
       methodName: "getConfidentialVaultBalances",
       args: [{ view_key_id, vault_id, minimum_expected_value, maximum_expected_value }],
