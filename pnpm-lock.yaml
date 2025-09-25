@@ -13,11 +13,11 @@ catalogs:
       specifier: 1.7.15
       version: 1.7.15
     '@tari-project/typescript-bindings':
-      specifier: '>=1.17.0'
-      version: 1.17.0
+      specifier: '>=1.17.2'
+      version: 1.17.2
     '@tari-project/wallet_jrpc_client':
-      specifier: ^1.7.2
-      version: 1.7.2
+      specifier: ^1.9.2
+      version: 1.9.2
     '@types/node':
       specifier: ^22.13.1
       version: 22.16.4
@@ -178,7 +178,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -200,10 +200,10 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.7.2
+        version: 1.9.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -225,7 +225,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -290,7 +290,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -306,7 +306,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -328,10 +328,10 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.7.2
+        version: 1.9.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -371,7 +371,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@tari-project/wallet-connect-signer':
         specifier: workspace:^
         version: link:../walletconnect
@@ -396,7 +396,7 @@ importers:
     dependencies:
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@thames/monads':
         specifier: ^0.7.0
         version: 0.7.0
@@ -424,10 +424,10 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@tari-project/wallet_jrpc_client':
         specifier: 'catalog:'
-        version: 1.7.2
+        version: 1.9.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -455,7 +455,7 @@ importers:
         version: link:../tarijs_types
       '@tari-project/typescript-bindings':
         specifier: 'catalog:'
-        version: 1.17.0
+        version: 1.17.2
       '@walletconnect/universal-provider':
         specifier: 'catalog:'
         version: 2.21.3(typescript@5.8.3)(zod@3.25.76)
@@ -2513,11 +2513,11 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@tari-project/typescript-bindings@1.17.0':
-    resolution: {integrity: sha512-VvV6fBsIglHMIhOzbN4fWKy5le/KjT3vrqFEITOMfDhJ2Igsp/r1lOINx0QexARO5nJkEo16pMYDRaMrehNasQ==}
+  '@tari-project/typescript-bindings@1.17.2':
+    resolution: {integrity: sha512-gDiI1Rl9p2cJMwNdq8E5J/D1BjRVA2UlIGlclGzJbcGd8tonxGxBBDvyJzAh0Qer2wpCx7owUhgMIXtwE9Y2Rw==}
 
-  '@tari-project/wallet_jrpc_client@1.7.2':
-    resolution: {integrity: sha512-Eua8vszl8Wyd9whA6Q9PgV457aF01NcCk8EZvLkTJjH1LPk7fZ+Q3mLorIOHrpNr9TZ/Ffgq4G11aRRxthbgpw==}
+  '@tari-project/wallet_jrpc_client@1.9.2':
+    resolution: {integrity: sha512-kZaBsPa7mAb+XEqIMAu5ie/3OA8iw+AMcWtYGkknNYZJOzhc79YdKtCnRLjtH4pttQpEurQ3vf9GMp3t+OlZpg==}
 
   '@thames/monads@0.7.0':
     resolution: {integrity: sha512-D9gK5uUdKJEfUESAJPwTdnhgd1odkxiVvcTlQmYeYhgDMlW4w8KcOyqEJ+m2fzxgIga9mk8IbFsy4xXrM5ssrA==}
@@ -10238,13 +10238,13 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tari-project/typescript-bindings@1.17.0':
+  '@tari-project/typescript-bindings@1.17.2':
     dependencies:
       bech32: 2.0.0
 
-  '@tari-project/wallet_jrpc_client@1.7.2':
+  '@tari-project/wallet_jrpc_client@1.9.2':
     dependencies:
-      '@tari-project/typescript-bindings': 1.17.0
+      '@tari-project/typescript-bindings': 1.17.2
 
   '@thames/monads@0.7.0': {}
 

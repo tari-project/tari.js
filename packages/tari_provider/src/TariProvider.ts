@@ -1,4 +1,7 @@
-import type { GetTemplateDefinitionResponse, ListTemplatesResponse } from "@tari-project/typescript-bindings";
+import type {
+  GetTemplateDefinitionResponse,
+  ListTemplatesResponse,
+} from "@tari-project/typescript-bindings";
 import {
   GetTransactionResultResponse,
   Substate,

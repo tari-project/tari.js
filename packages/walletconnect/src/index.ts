@@ -6,7 +6,7 @@ import {
   convertStringToTransactionStatus,
   GetTransactionResultResponse,
   SubmitTransactionRequest,
-  VaultBalances,
+  RevealedBalances,
   TemplateDefinition,
   Substate,
   AccountData,
@@ -290,7 +290,7 @@ export class WalletConnectTariSigner implements TariSigner {
     view_key_id,
     maximum_expected_value = null,
     minimum_expected_value = null,
-  }: ConfidentialViewVaultBalanceRequest): Promise<VaultBalances> {
+  }: ConfidentialViewVaultBalanceRequest): Promise<RevealedBalances> {
     const method = "tari_viewConfidentialVaultBalance";
     const params = {
       view_key_id,
@@ -300,7 +300,7 @@ export class WalletConnectTariSigner implements TariSigner {
     };
 
     const res = await this.sendRequest(method, params);
-    return { balances: res.balances as unknown as Map<string, number | null> };
+    return { balances: res.balances as unknown as Map<string, bigint | null> };
   }
 
   public async getNftsList(req: ListNftsRequest): Promise<ListNftsResponse> {
