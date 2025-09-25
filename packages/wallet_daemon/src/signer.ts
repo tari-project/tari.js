@@ -24,12 +24,10 @@ import {
   ConfidentialViewVaultBalanceRequest,
   KeyBranch,
   substateIdToString,
-  SubstatesListRequest, UtxoId,
+  SubstatesListRequest, UtxoAddress, UtxoId,
   WalletGetInfoResponse,
 } from "@tari-project/typescript-bindings";
 
-export const WalletDaemonNotConnected = "WALLET_DAEMON_NOT_CONNECTED";
-export const Unsupported = "UNSUPPORTED";
 
 export interface WalletDaemonBaseParameters {
   permissions: TariPermissions;
@@ -245,13 +243,14 @@ export class WalletDaemonTariSigner implements TariSigner {
     return { balances: res.balances as unknown as Map<string, bigint | null> };
   }
   public async decryptUtxoValue(
-    utxoId: UtxoId,
+    utxoAddress: UtxoAddress,
     viewKeyId: number,
     maximum_expected_value = null,
     minimum_expected_value = null,
   ): Promise<RevealedBalances> {
     const res = await this.client.stealthUtxosDecryptValue({
-      utxo_id: utxoId,
+      resource_address: utxoAddress.resource_address,
+      utxo_id: utxoAddress.id,
       view_key_id: viewKeyId,
       minimum_expected_value,
       maximum_expected_value,
