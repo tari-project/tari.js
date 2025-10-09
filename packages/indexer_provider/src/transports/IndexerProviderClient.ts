@@ -1,128 +1,112 @@
-import {
+/*
+ * //  Copyright 2024 The Tari Project
+ * //  SPDX-License-Identifier: BSD-3-Clause
+ */
+
+import type {
   GetEpochManagerStatsResponse,
-  GetNonFungiblesRequest,
-  GetNonFungiblesResponse,
-  GetTemplateDefinitionRequest,
-  GetTemplateDefinitionResponse,
+  GetNetworkSyncStateResponse, GetNonFungiblesRequest, GetNonFungiblesResponse,
+  GetSubstatesRequest,
+  GetSubstatesResponse,
+  IndexerAddPeerRequest,
+  IndexerAddPeerResponse,
+  IndexerGetConnectionsResponse,
   IndexerGetIdentityResponse,
   IndexerGetSubstateRequest,
   IndexerGetSubstateResponse,
-  IndexerSubmitTransactionRequest,
-  IndexerSubmitTransactionResponse,
-  InspectSubstateRequest,
-  InspectSubstateResponse,
-  ListTemplatesRequest,
-  ListTemplatesResponse,
-  SubstatesListRequest,
-  SubstatesListResponse,
-  TransactionGetResultRequest,
-  TransactionGetResultResponse,
-  TransactionWaitResultRequest,
-  TransactionWaitResultResponse,
+  IndexerGetTransactionResultResponse,
+  IndexerReadyResponse, ListRecentTransactionsRequest, ListRecentTransactionsResponse,
+  ListSubstatesRequest,
+  ListSubstatesResponse, ListTemplatesResponse,
+  SubstateId,
+  TemplatesGetResponse,
+  TemplatesListAuthoredRequest,
+  TemplatesListAuthoredResponse,
+  TransactionId,
+  TransactionSubmitRequest,
+  TransactionSubmitResponse,
 } from "@tari-project/typescript-bindings";
-import { FetchRpcTransport, RpcTransport } from "./rpc";
+import { FetchTransport, HttpTransport } from "./fetch";
 
 export class IndexerProviderClient {
-  private token: string | null;
-  private transport: RpcTransport;
-  private id: number;
-  private connected: boolean;
+  private transport: HttpTransport;
 
-  constructor(transport: RpcTransport) {
-    this.token = null;
+  constructor(transport: HttpTransport) {
     this.transport = transport;
-    this.id = 0;
-    this.connected = false;
   }
 
-  public static new(transport: RpcTransport): IndexerProviderClient {
+  public static new(transport: HttpTransport): IndexerProviderClient {
     return new IndexerProviderClient(transport);
   }
 
   public static usingFetchTransport(url: string): IndexerProviderClient {
-    return IndexerProviderClient.new(FetchRpcTransport.new(url));
+    return IndexerProviderClient.new(FetchTransport.new(url));
   }
 
   getTransport() {
     return this.transport;
   }
 
-  public isAuthenticated() {
-    return this.token !== null;
+  public identityGet(): Promise<IndexerGetIdentityResponse> {
+    return this.transport.sendGet(`identity`, {});
   }
 
-  public isConnected() {
-    return this.connected;
+  public waitUntilReady(): Promise<IndexerReadyResponse> {
+    return this.transport.sendGet(`wait-until-ready`, {});
   }
 
-  public setToken(token: string) {
-    this.token = token;
+  public epochManagerStats(): Promise<GetEpochManagerStatsResponse> {
+    return this.transport.sendGet(`epoch-manager/stats`, {});
   }
 
-  public submitTransaction(params: IndexerSubmitTransactionRequest): Promise<IndexerSubmitTransactionResponse> {
-    return this.__invokeRpc("submit_transaction", params);
+  public networkStats(): Promise<GetNetworkSyncStateResponse> {
+    return this.transport.sendGet(`network/stats`, {});
   }
 
-  public inspectSubstate(params: InspectSubstateRequest): Promise<InspectSubstateResponse> {
-    return this.__invokeRpc("inspect_substate", params);
+  public addConnection(req: IndexerAddPeerRequest): Promise<IndexerAddPeerResponse> {
+    return this.transport.sendPost(`network/connections`, req);
   }
 
-  public getSubstate(params: IndexerGetSubstateRequest): Promise<IndexerGetSubstateResponse> {
-    return this.__invokeRpc("get_substate", params);
-  }
-
-  public listSubstates(params: SubstatesListRequest): Promise<SubstatesListResponse> {
-    return this.__invokeRpc("list_substates", params);
-  }
-
-  public listTemplates(params: ListTemplatesRequest): Promise<ListTemplatesResponse> {
-    return this.__invokeRpc("list_templates", params);
-  }
-
-  public getTemplateDefinition(params: GetTemplateDefinitionRequest): Promise<GetTemplateDefinitionResponse> {
-    return this.__invokeRpc("get_template_definition", params);
-  }
-
-  public getTransactionResult(params: TransactionGetResultRequest): Promise<TransactionGetResultResponse> {
-    return this.__invokeRpc("get_transaction_result", params);
+  public getConnections(): Promise<IndexerGetConnectionsResponse> {
+    return this.transport.sendGet(`network/connections`, {});
   }
 
   public getNonFungibles(params: GetNonFungiblesRequest): Promise<GetNonFungiblesResponse> {
-    return this.__invokeRpc("get_non_fungibles", params);
+    return this.transport.sendGet(`non-fungibles`, params);
   }
 
-  public getEpochManagerStats(): Promise<GetEpochManagerStatsResponse> {
-    return this.__invokeRpc("get_epoch_manager_stats");
+  public substatesGet(id: SubstateId, params: IndexerGetSubstateRequest): Promise<IndexerGetSubstateResponse> {
+    return this.transport.sendGet(`substates/${encodeURIComponent(id)}`, params);
   }
 
-  public waitForTransactionResult(params: TransactionWaitResultRequest): Promise<TransactionWaitResultResponse> {
-    return this.__invokeRpc("transactions.wait_result", params);
+  public listSubstates(params: ListSubstatesRequest): Promise<ListSubstatesResponse> {
+    return this.transport.sendGet(`substates`, params);
   }
 
-  public async getIdentity(): Promise<IndexerGetIdentityResponse | undefined> {
-    try {
-      const res: IndexerGetIdentityResponse = await this.__invokeRpc("get_identity");
-      this.connected = !!res.public_key;
-      return res;
-    } catch (e) {
-      console.error("Failed to get Indexer identity:", e);
-      this.connected = false;
-    }
+  public fetchSubstates(params: GetSubstatesRequest): Promise<GetSubstatesResponse> {
+    return this.transport.sendPost(`substates/fetch`, params);
   }
 
-  async __invokeRpc(method: string, params: object | null = null) {
-    const id = this.id++;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const response = await this.transport.sendRequest<any>(
-      {
-        method,
-        jsonrpc: "2.0",
-        id: id,
-        params: params || {},
-      },
-      { token: this.token ?? undefined, timeout_millis: undefined },
-    );
+  public submitTransaction(params: TransactionSubmitRequest): Promise<TransactionSubmitResponse> {
+    return this.transport.sendPost(`transactions`, params);
+  }
 
-    return response;
+  public getTransactionResult(transaction_id: TransactionId): Promise<IndexerGetTransactionResultResponse> {
+    return this.transport.sendGet(`transactions/${encodeURIComponent(transaction_id)}/result`, {});
+  }
+
+  public listRecentTransactions(params: ListRecentTransactionsRequest): Promise<ListRecentTransactionsResponse> {
+    return this.transport.sendGet(`transactions/recent`, params);
+  }
+
+  public templatesList(limit: number = 0): Promise<ListTemplatesResponse> {
+    return this.transport.sendGet(`templates`, { limit });
+  }
+  public templatesGet(template_address: string): Promise<TemplatesGetResponse> {
+    return this.transport.sendGet(`templates/${encodeURIComponent(template_address)}`, {});
+  }
+
+  public templatesListAuthored(params: TemplatesListAuthoredRequest): Promise<TemplatesListAuthoredResponse> {
+    return this.transport.sendPost(`templates`, params);
   }
 }

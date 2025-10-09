@@ -5,15 +5,13 @@ import {
   GetTemplateDefinitionResponse,
   ListTemplatesResponse,
   substateIdToString,
-  SubstatesListRequest,
 } from "@tari-project/typescript-bindings";
 import {
-  convertStringToTransactionStatus,
   GetSubstateRequest,
   GetTransactionResultResponse,
   ListSubstatesRequest,
   ListSubstatesResponse,
-  Substate,
+  Substate, TransactionStatus,
 } from "@tari-project/tarijs-types";
 
 export interface IndexerProviderParameters {
@@ -35,13 +33,13 @@ export class IndexerProvider implements TariProvider {
 
   static async build(params: IndexerProviderParameters) {
     const client = IndexerProviderClient.usingFetchTransport(params.indexerJrpcUrl);
-    await client.getIdentity();
+    await client.identityGet();
     params.onConnection?.();
     return new IndexerProvider(params, client);
   }
 
   public isConnected(): boolean {
-    return this.client.isConnected();
+    return true;
   }
 
   public async listSubstates({
@@ -53,12 +51,12 @@ export class IndexerProvider implements TariProvider {
     const resp = await this.client.listSubstates({
       filter_by_template,
       filter_by_type,
-      limit,
-      offset,
-    } as SubstatesListRequest);
+      limit: limit ? BigInt(limit) : null,
+      offset: offset ? BigInt(offset) : null,
+    });
 
     const substates = resp.substates.map((s) => ({
-      substate_id: typeof s.substate_id === "string" ? s.substate_id : substateIdToString(s.substate_id),
+      substate_id: s.substate_id,
       module_name: s.module_name,
       version: s.version,
       template_address: s.template_address,
@@ -68,8 +66,9 @@ export class IndexerProvider implements TariProvider {
   }
 
   public async getSubstate({ substate_address, version }: GetSubstateRequest): Promise<Substate> {
-    const resp = await this.client.getSubstate({
-      address: substate_address,
+    const resp = await this.client.substatesGet(
+       substate_address,
+      {
       version: version ?? null,
       local_search_only: false,
     });
@@ -83,22 +82,90 @@ export class IndexerProvider implements TariProvider {
   }
 
   public async listTemplates(limit: number = 0): Promise<ListTemplatesResponse> {
-    const resp = await this.client.listTemplates({ limit });
+    const resp = await this.client.templatesList(limit);
     return resp;
   }
 
   public async getTransactionResult(transactionId: string): Promise<GetTransactionResultResponse> {
-    const resp = await this.client.getTransactionResult({ transaction_id: transactionId });
+    const resp = await this.client.getTransactionResult(transactionId);
 
-    return {
-      transaction_id: transactionId,
-      status: convertStringToTransactionStatus(resp.status),
-      result: resp.result,
-    };
+    // TODO: make not suck
+    if (resp.result == "Pending") {
+      return {
+        transaction_id: transactionId,
+        status: TransactionStatus.Pending,
+        result: null
+      };
+    }
+    if (!('Finalized' in resp.result)) {
+      throw new Error("Transaction result was not pending nor finalized");
+    }
+
+    let finalized = resp.result.Finalized;
+    let result = finalized.execution_result?.finalize.result;
+    if (!result) {
+      if (finalized.abort_details) {
+        console.error("Transaction aborted:", finalized.abort_details);
+        return {
+          transaction_id: transactionId,
+          status: TransactionStatus.Rejected,
+          result: null
+        };
+      }
+      throw new Error("Transaction finalized without result or abort details");
+    }
+
+    if ('Accept' in result) {
+      return {
+        transaction_id: transactionId,
+        status: TransactionStatus.Accepted,
+        result: {
+            transaction_hash: transactionId,
+            events: finalized?.execution_result?.finalize.events || [],
+            logs: finalized?.execution_result?.finalize.logs || [],
+            execution_results: finalized?.execution_result?.finalize.execution_results || [],
+            result,
+            fee_receipt: finalized?.execution_result?.finalize.fee_receipt!
+          }
+
+      };
+    }
+    if ('Reject' in result) {
+      return {
+        transaction_id: transactionId,
+        status: TransactionStatus.Rejected,
+        result: {
+            transaction_hash: transactionId,
+            events: finalized.execution_result?.finalize.events || [],
+            logs: finalized.execution_result?.finalize.logs || [],
+            execution_results: finalized?.execution_result?.finalize.execution_results || [],
+            result,
+            fee_receipt: finalized.execution_result?.finalize.fee_receipt!
+          }
+      };
+    }
+
+    if ('AcceptFeeRejectRest' in result) {
+      return {
+        transaction_id: transactionId,
+        status: TransactionStatus.OnlyFeeAccepted,
+        result: {
+            transaction_hash: transactionId,
+            events: finalized?.execution_result?.finalize.events || [],
+            logs: finalized?.execution_result?.finalize.logs || [],
+            execution_results: finalized?.execution_result?.finalize.execution_results || [],
+            result,
+            fee_receipt: finalized?.execution_result?.finalize.fee_receipt!
+          }
+      };
+    }
+
+    console.error("Unknown transaction result type:", result);
+    throw new Error("Unknown transaction result type");
   }
 
   public async getTemplateDefinition(template_address: string): Promise<GetTemplateDefinitionResponse> {
-    const resp = await this.client.getTemplateDefinition({ template_address });
-    return resp;
+    const resp = await this.client.templatesGet(template_address);
+    return {name: resp.template_definition.V1.template_name, definition: resp.template_definition};
   }
 }
