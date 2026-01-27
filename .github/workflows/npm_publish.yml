@@ -53,5 +53,5 @@ jobs:
           fi
 
           echo "== Publishing =="
-          pnpm publish --provenance -r
+          pnpm publish --provenance -r --no-git-checks
 
