@@ -19,7 +19,7 @@ jobs:
       - run: pnpm install
       - run: moon tari-docs:build
       - name: Upload Build Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: docusaurus/tari-docs/build
 
