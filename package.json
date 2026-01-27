@@ -1,7 +1,19 @@
 {
   "name": "@tari-project/tarijs",
-  "version": "0.14.4",
+  "version": "0.14.5",
   "description": "",
+  "homepage": "https://github.com/tari-project/tari.js#readme",
+  "bugs": {
+    "url": "https://github.com/tari-project/tari.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tari-project/tari.js.git"
+  },
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "keywords": [],
   "author": "The Tari Community",
@@ -23,6 +35,7 @@
     "lint": "pnpm -r lint",
     "knip": "knip"
   },
+  "packageManager": "pnpm@10.28.0",
   "dependencies": {
     "@tari-project/tarijs-types": "workspace:^"
   }

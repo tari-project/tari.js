@@ -1,8 +1,17 @@
 {
   "name": "@tari-project/metamask-signer",
-  "version": "0.14.4",
+  "version": "0.14.5",
   "description": "",
   "type": "module",
+  "homepage": "https://github.com/tari-project/tari.js#readme",
+  "bugs": {
+    "url": "https://github.com/tari-project/tari.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tari-project/tari.js.git"
+  },
+  "private": false,
   "publishConfig": {
     "access": "public"
   },

@@ -7,6 +7,10 @@ on:
   push:
     branches: main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -15,12 +19,41 @@ jobs:
       - uses: 'moonrepo/setup-toolchain@v0'
         with:
           auto-install: true
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+      - uses: actions/setup-node@v6
+        with:
+            node-version: '24'
+            registry-url: 'https://registry.npmjs.org'
+            cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: moon :build
-      - name: Publish
+      - name: Publish all modules to NPM
         run: |
-          pnpm config set git-checks false
-          pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          pnpm publish --access public --no-git-checks -r
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          #set -euo pipefail
+
+          echo "== Local package.json =="
+          node -e "const p=require('./package.json'); console.log({name:p.name, version:p.version})"
+
+          LOCAL_VERSION=$(node -p "require('./package.json').version")
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+
+          echo "Local version: $LOCAL_VERSION"
+          echo "Package name:  $PACKAGE_NAME"
+
+          echo "== Registry check =="
+          echo "Running: pnpm info $PACKAGE_NAME version"
+
+          REMOTE_VERSION=$(pnpm info "$PACKAGE_NAME" version 2>/dev/null || echo "NOT_FOUND")
+          echo "Remote version: $REMOTE_VERSION"
+
+          if [ "$REMOTE_VERSION" = "$LOCAL_VERSION" ]; then
+            echo "Version $LOCAL_VERSION already published, skipping."
+            exit 0
+          fi
+
+          echo "== Publishing =="
+          pnpm publish --provenance -r
+
