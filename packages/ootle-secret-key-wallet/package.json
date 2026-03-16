@@ -1,0 +1,27 @@
+{
+  "name": "@tari-project/ootle-secret-key-wallet",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tari-project/ootle": "workspace:*",
+    "@tari-project/ootle-wasm": "workspace:*",
+    "@tari-project/ootle-ts-bindings": "file:../../../../localnet/ootle/bindings"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

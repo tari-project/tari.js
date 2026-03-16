@@ -234,6 +234,101 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
+  packages/ootle:
+    dependencies:
+      '@tari-project/ootle-ts-bindings':
+        specifier: file:../../../../localnet/ootle/bindings
+        version: file:../../localnet/ootle/bindings
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.16.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+
+  packages/ootle-indexer:
+    dependencies:
+      '@tari-project/ootle':
+        specifier: workspace:*
+        version: link:../ootle
+      '@tari-project/ootle-ts-bindings':
+        specifier: file:../../../../localnet/ootle/bindings
+        version: file:../../localnet/ootle/bindings
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.16.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+
+  packages/ootle-secret-key-wallet:
+    dependencies:
+      '@tari-project/ootle':
+        specifier: workspace:*
+        version: link:../ootle
+      '@tari-project/ootle-ts-bindings':
+        specifier: file:../../../../localnet/ootle/bindings
+        version: file:../../localnet/ootle/bindings
+      '@tari-project/ootle-wasm':
+        specifier: workspace:*
+        version: link:../ootle-wasm
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.16.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+
+  packages/ootle-wallet-daemon-signer:
+    dependencies:
+      '@tari-project/ootle':
+        specifier: workspace:*
+        version: link:../ootle
+      '@tari-project/ootle-ts-bindings':
+        specifier: file:../../../../localnet/ootle/bindings
+        version: file:../../localnet/ootle/bindings
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.16.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+
+  packages/ootle-wasm:
+    dependencies:
+      '@tari-project/ootle':
+        specifier: workspace:*
+        version: link:../ootle
+      '@tari-project/ootle-ts-bindings':
+        specifier: file:../../../../localnet/ootle/bindings
+        version: file:../../localnet/ootle/bindings
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.16.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.16.4)(jiti@2.4.2)(terser@5.43.1)(yaml@2.8.0)
+
   packages/permissions:
     devDependencies:
       '@types/node':
@@ -2512,6 +2607,9 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@tari-project/ootle-ts-bindings@file:../../localnet/ootle/bindings':
+    resolution: {directory: ../../localnet/ootle/bindings, type: directory}
 
   '@tari-project/typescript-bindings@1.17.2':
     resolution: {integrity: sha512-gDiI1Rl9p2cJMwNdq8E5J/D1BjRVA2UlIGlclGzJbcGd8tonxGxBBDvyJzAh0Qer2wpCx7owUhgMIXtwE9Y2Rw==}
@@ -10237,6 +10335,10 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tari-project/ootle-ts-bindings@file:../../localnet/ootle/bindings':
+    dependencies:
+      bech32: 2.0.0
 
   '@tari-project/typescript-bindings@1.17.2':
     dependencies:

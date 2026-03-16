@@ -9,6 +9,21 @@
   },
   "references": [
     {
+      "path": "packages/ootle"
+    },
+    {
+      "path": "packages/ootle-indexer"
+    },
+    {
+      "path": "packages/ootle-wasm"
+    },
+    {
+      "path": "packages/ootle-secret-key-wallet"
+    },
+    {
+      "path": "packages/ootle-wallet-daemon-signer"
+    },
+    {
       "path": "docusaurus/tari-docs"
     },
     {
