@@ -22,10 +22,7 @@ export function App() {
 
   const filtered = templates.filter((t) => {
     const q = search.toLowerCase();
-    return (
-      t.template_address.toLowerCase().includes(q) ||
-      (t.name ?? "").toLowerCase().includes(q)
-    );
+    return t.template_address.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
   });
 
   return (
@@ -35,7 +32,9 @@ export function App() {
         <div className="topbar-left">
           <TariLogo size={28} />
           <span className="topbar-title">Template Inspector</span>
-          <div className={`status-badge ${loadStatus === "ready" ? "connected" : loadStatus === "error" ? "errored" : ""}`}>
+          <div
+            className={`status-badge ${loadStatus === "ready" ? "connected" : loadStatus === "error" ? "errored" : ""}`}
+          >
             <span className="dot" />
             {loadStatus === "loading" && "Connecting…"}
             {loadStatus === "ready" && `${templates.length} templates · Esmeralda testnet`}
@@ -55,11 +54,7 @@ export function App() {
             title="Indexer URL — press Enter to reconnect"
             spellCheck={false}
           />
-          <button
-            className="btn-ghost small"
-            onClick={() => void reload()}
-            disabled={loadStatus === "loading"}
-          >
+          <button className="btn-ghost small" onClick={() => void reload()} disabled={loadStatus === "loading"}>
             {loadStatus === "loading" ? <Spinner /> : "Refresh"}
           </button>
         </div>
@@ -93,9 +88,7 @@ export function App() {
           )}
 
           {loadStatus === "ready" && filtered.length === 0 && (
-            <p className="empty-state">
-              {search ? "No templates match your filter." : "No templates found."}
-            </p>
+            <p className="empty-state">{search ? "No templates match your filter." : "No templates found."}</p>
           )}
 
           <div className="template-list">
@@ -140,9 +133,7 @@ export function App() {
                 </div>
               )}
 
-              {definition && !definitionLoading && (
-                <DefinitionView definition={definition} />
-              )}
+              {definition && !definitionLoading && <DefinitionView definition={definition} />}
             </>
           )}
         </main>
@@ -160,16 +151,11 @@ function TemplateRow({
 }: {
   template: TemplateListItem;
   selected: boolean;
-  onSelect(): void;
+  onSelect: () => void;
 }) {
   return (
-    <button
-      className={`template-row ${selected ? "selected" : ""}`}
-      onClick={onSelect}
-    >
-      <span className="template-name">
-        {template.name ?? "Unnamed"}
-      </span>
+    <button className={`template-row ${selected ? "selected" : ""}`} onClick={onSelect}>
+      <span className="template-name">{template.name ?? "Unnamed"}</span>
       <span className="template-addr mono" title={template.template_address}>
         {truncate(template.template_address, 8, 6)}
       </span>
@@ -197,9 +183,7 @@ function DefinitionView({ definition }: { definition: unknown }) {
   }
 
   // Fallback: raw JSON
-  return (
-    <pre className="json-view">{JSON.stringify(definition, null, 2)}</pre>
-  );
+  return <pre className="json-view">{JSON.stringify(definition, null, 2)}</pre>;
 }
 
 interface AbiFunction {
@@ -221,17 +205,9 @@ function FunctionCard({ fn }: { fn: AbiFunction }) {
     <div className={`fn-card ${fn.is_constructor ? "constructor" : ""}`}>
       <button className="fn-header" onClick={() => setExpanded((x) => !x)}>
         <div className="fn-sig">
-          {fn.is_constructor && (
-            <span className="fn-badge constructor">new</span>
-          )}
+          {fn.is_constructor && <span className="fn-badge constructor">new</span>}
           <span className="fn-name mono">{fn.name}</span>
-          <span className="fn-args-preview">
-            (
-            {(fn.arguments ?? [])
-              .map((a) => a.name ?? "_")
-              .join(", ")}
-            )
-          </span>
+          <span className="fn-args-preview">({(fn.arguments ?? []).map((a) => a.name ?? "_").join(", ")})</span>
         </div>
         <ChevronIcon expanded={expanded} />
       </button>
@@ -245,9 +221,7 @@ function FunctionCard({ fn }: { fn: AbiFunction }) {
                 {fn.arguments.map((arg, i) => (
                   <div key={i} className="arg-row">
                     <span className="arg-name mono">{arg.name ?? `arg${i}`}</span>
-                    <span className="arg-type mono">
-                      {typeToString(arg.arg_type)}
-                    </span>
+                    <span className="arg-type mono">{typeToString(arg.arg_type)}</span>
                   </div>
                 ))}
               </div>
@@ -261,10 +235,9 @@ function FunctionCard({ fn }: { fn: AbiFunction }) {
             </div>
           )}
 
-          {(!fn.arguments || fn.arguments.length === 0) &&
-            (fn.output === undefined || fn.output === null) && (
-              <p className="fn-empty">No arguments · no return value</p>
-            )}
+          {(!fn.arguments || fn.arguments.length === 0) && (fn.output === undefined || fn.output === null) && (
+            <p className="fn-empty">No arguments · no return value</p>
+          )}
         </div>
       )}
     </div>
@@ -313,9 +286,8 @@ function extractFunctions(def: unknown): AbiFunction[] {
   const d = def as Record<string, unknown>;
 
   // Common shapes: { template_definition: { functions: [...] } } or { functions: [...] }
-  const inner =
-    (d["template_definition"] as Record<string, unknown> | undefined) ?? d;
-  const fns = inner["functions"];
+  const inner = (d.template_definition as Record<string, unknown> | undefined) ?? d;
+  const fns = inner.functions;
   if (Array.isArray(fns)) return fns as AbiFunction[];
   return [];
 }
@@ -331,9 +303,9 @@ function typeToString(t: unknown): string {
     const val = o[key];
     if (val && typeof val === "object") {
       const inner = val as Record<string, unknown>;
-      if (inner["name"]) return String(inner["name"]);
+      return typeToString(inner);
     }
     return key;
   }
-  return String(t);
+  return Object.values(t).map(toString).join(",");
 }

@@ -13,14 +13,14 @@ export type LoadStatus = "idle" | "loading" | "ready" | "error";
 
 export interface UseTemplates {
   indexerUrl: string;
-  setIndexerUrl(url: string): void;
+  setIndexerUrl: (url: string) => void;
   loadStatus: LoadStatus;
   templates: TemplateListItem[];
   loadError: string | null;
-  reload(): Promise<void>;
+  reload: () => Promise<void>;
 
   selectedAddress: string | null;
-  selectTemplate(address: string): void;
+  selectTemplate: (address: string) => Promise<void>;
   definition: unknown;
   definitionLoading: boolean;
   definitionError: string | null;
@@ -76,9 +76,7 @@ export function useTemplates(): UseTemplates {
         const def = await client.getTemplateDefinition(address);
         setDefinition(def);
       } catch (err) {
-        setDefinitionError(
-          err instanceof Error ? err.message : "Failed to fetch template definition",
-        );
+        setDefinitionError(err instanceof Error ? err.message : "Failed to fetch template definition");
       } finally {
         setDefinitionLoading(false);
       }

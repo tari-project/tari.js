@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { IndexerProvider } from "@tari-project/ootle-indexer";
 import { Network } from "@tari-project/ootle";
-import type { ListSubstatesResponse } from "@tari-project/ootle";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
 
