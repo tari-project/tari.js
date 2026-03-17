@@ -24,8 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Claude Code
-.claude/
-stateless-launching-spark.md
+#.claude/
+#stateless-launching-spark.md
 
 # Editor directories and files
 .idea/
