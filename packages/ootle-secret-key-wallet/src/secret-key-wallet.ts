@@ -51,7 +51,7 @@ export class SecretKeyWallet implements Signer {
         "Use SecretKeyWallet.random() or implement the WASM export.",
     );
     // The throw above makes the rest unreachable — it will be removed once the WASM crate is ready.
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     void tempSign;
   }
 

@@ -12,18 +12,15 @@ function truncate(str: string, head = 10, tail = 8): string {
 }
 
 export function App() {
-  const { status, address, publicKey, error, connect, disconnect } =
-    useWalletDaemon();
+  const { status, address, publicKey, error, connect, disconnect } = useWalletDaemon();
 
   const [url, setUrl] = useState(DEFAULT_URL);
   const [authToken, setAuthToken] = useState("");
 
-  const handleConnect = () => {
-    void connect({ url: url.trim(), authToken: authToken.trim() });
-  };
+  const handleConnect = () => connect({ url: url.trim(), authToken: authToken.trim() });
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleConnect();
+    if (e.key === "Enter") handleConnect().catch((e) => console.error(e));
   };
 
   if (status === "connected" && address && publicKey) {
@@ -42,10 +39,7 @@ export function App() {
 
           <div className="account-icon">
             {/* deterministic color from address */}
-            <div
-              className="avatar"
-              style={{ background: addressToGradient(address) }}
-            />
+            <div className="avatar" style={{ background: addressToGradient(address) }} />
           </div>
 
           <div className="fields">
@@ -65,34 +59,23 @@ export function App() {
         </div>
 
         <h1 className="card-title">Connect Wallet</h1>
-        <p className="card-subtitle">
-          Connect to your Tari Wallet Daemon to view your account.
-        </p>
+        <p className="card-subtitle">Connect to your Tari Wallet Daemon to view your account.</p>
 
         <div className="prereqs">
           <p className="prereqs-title">Before you begin</p>
           <ol className="prereqs-list">
             <li>
               Download <strong>tari_ootle_walletd</strong> from the{" "}
-              <a
-                href="https://github.com/tari-project/tari-ootle/releases"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://github.com/tari-project/tari-ootle/releases" target="_blank" rel="noreferrer">
                 releases page
               </a>
             </li>
             <li>
-              Start it:{" "}
-              <code>./tari_ootle_walletd --network esme</code>
+              Start it: <code>./tari_ootle_walletd --network esme</code>
             </li>
             <li>
               Fund your account via the wallet UI at{" "}
-              <a
-                href="http://localhost:5100"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="http://localhost:5100" target="_blank" rel="noreferrer">
                 localhost:5100
               </a>
             </li>
@@ -135,11 +118,7 @@ export function App() {
           </div>
         )}
 
-        <button
-          className="btn-primary"
-          onClick={handleConnect}
-          disabled={status === "connecting" || !url}
-        >
+        <button className="btn-primary" onClick={(e) => handleConnect(e)} disabled={status === "connecting" || !url}>
           {status === "connecting" ? (
             <>
               <Spinner /> Connecting…
@@ -155,15 +134,7 @@ export function App() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
+function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -179,11 +150,7 @@ function Field({
         <span className={mono ? "mono value" : "value"} title={value}>
           {truncate(value)}
         </span>
-        <button
-          className="btn-copy"
-          onClick={() => void copy()}
-          title="Copy to clipboard"
-        >
+        <button className="btn-copy" onClick={() => void copy()} title="Copy to clipboard">
           {copied ? <CheckIcon /> : <CopyIcon />}
         </button>
       </div>

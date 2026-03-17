@@ -3,6 +3,7 @@
     "declaration": true,
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "composite": true
@@ -25,6 +26,9 @@
     },
     {
       "path": "docusaurus/tari-docs"
+    },
+    {
+      "path": "examples/connect-button"
     }
   ]
 }

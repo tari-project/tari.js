@@ -18,8 +18,7 @@ const NETWORKS: { label: string; value: Network }[] = [
 ];
 
 export function App() {
-  const { status, error, connect, disconnect, getSubstate, listSubstates } =
-    useIndexer();
+  const { status, error, connect, disconnect, getSubstate, listSubstates } = useIndexer();
 
   // Connection form state
   const [url, setUrl] = useState(DEFAULT_URL);
@@ -61,7 +60,7 @@ export function App() {
     }
   };
 
-  const loadSubstates = useCallback( async () => {
+  const loadSubstates = useCallback(async () => {
     setListLoading(true);
     setListError(null);
     try {
@@ -72,7 +71,7 @@ export function App() {
     } finally {
       setListLoading(false);
     }
-  },[listSubstates]);
+  }, []);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
@@ -84,8 +83,7 @@ export function App() {
           </div>
           <h1 className="card-title">Indexer Explorer</h1>
           <p className="card-subtitle">
-            Browse on-chain substates. The public Esmeralda testnet indexer is
-            pre-filled — no local setup required.
+            Browse on-chain substates. The public Esmeralda testnet indexer is pre-filled — no local setup required.
           </p>
 
           <div className="testnet-notice">
@@ -133,11 +131,7 @@ export function App() {
             </div>
           )}
 
-          <button
-            className="btn-primary"
-            onClick={handleConnect}
-            disabled={status === "connecting" || !url}
-          >
+          <button className="btn-primary" onClick={handleConnect} disabled={status === "connecting" || !url}>
             {status === "connecting" ? (
               <>
                 <Spinner /> Connecting…
@@ -197,20 +191,14 @@ export function App() {
             </div>
           )}
 
-          {lookupResult !== null && (
-            <pre className="json-view">{JSON.stringify(lookupResult, null, 2)}</pre>
-          )}
+          {lookupResult !== null && <pre className="json-view">{JSON.stringify(lookupResult, null, 2)}</pre>}
         </section>
 
         {/* Recent substates */}
         <section className="panel">
           <div className="panel-header">
             <h2 className="panel-title">Recent Substates</h2>
-            <button
-              className="btn-ghost small"
-              onClick={() => void loadSubstates()}
-              disabled={listLoading}
-            >
+            <button className="btn-ghost small" onClick={() => void loadSubstates()} disabled={listLoading}>
               {listLoading ? <Spinner /> : "Refresh"}
             </button>
           </div>
@@ -221,18 +209,12 @@ export function App() {
             </div>
           )}
 
-          {substates.length === 0 && !listLoading && !listError && (
-            <p className="empty-state">No substates found.</p>
-          )}
+          {substates.length === 0 && !listLoading && !listError && <p className="empty-state">No substates found.</p>}
 
           {substates.length > 0 && (
             <div className="substate-list">
               {substates.map((s) => (
-                <SubstateRow
-                  key={s.substate_id}
-                  substate={s}
-                  onSelect={(id) => setLookupId(id)}
-                />
+                <SubstateRow key={s.substate_id} substate={s} onSelect={(id) => setLookupId(id)} />
               ))}
             </div>
           )}
@@ -244,13 +226,7 @@ export function App() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SubstateRow({
-  substate,
-  onSelect,
-}: {
-  substate: SubstateEntry;
-  onSelect(id: string): void;
-}) {
+function SubstateRow({ substate, onSelect }: { substate: SubstateEntry; onSelect: (id: string) => void }) {
   const typeTag = substateType(substate.substate_id);
   return (
     <div className="substate-row">
@@ -266,9 +242,7 @@ function SubstateRow({
         >
           {truncate(substate.substate_id, 12, 10)}
         </span>
-        {substate.module_name && (
-          <span className="module-name">{substate.module_name}</span>
-        )}
+        {substate.module_name && <span className="module-name">{substate.module_name}</span>}
       </div>
       <div className="substate-row-right">
         <span className="version-badge">v{substate.version}</span>
@@ -284,13 +258,7 @@ function Spinner() {
 
 function TariLogo({ size = 40 }: { size?: number }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 40 40"
-      fill="none"
-      aria-hidden
-    >
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-hidden>
       <circle cx="20" cy="20" r="20" fill="#9d4edd" opacity="0.15" />
       <circle cx="20" cy="20" r="12" fill="#9d4edd" opacity="0.3" />
       <circle cx="20" cy="20" r="5" fill="#9d4edd" />
