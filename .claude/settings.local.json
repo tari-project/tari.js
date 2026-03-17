@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(pnpm:*)",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "Bash(grep:*)",
+      "Bash(for pkg:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/shanimal/Repos/tari/tari.js/packages/$pkg/**)",
+      "Bash(done)"
     ]
   }
 }

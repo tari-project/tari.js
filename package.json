@@ -35,8 +35,5 @@
     "lint": "pnpm -r lint",
     "knip": "knip"
   },
-  "packageManager": "pnpm@10.28.0",
-  "dependencies": {
-    "@tari-project/tarijs-types": "workspace:^"
-  }
+  "packageManager": "pnpm@10.28.0"
 }

@@ -9,10 +9,9 @@ const config: KnipConfig = {
     types: "warn",
     duplicates: "warn",
   },
-  ignoreBinaries: ["commitlint"],
+  ignoreBinaries: ["commitlint", "info"],
   ignoreExportsUsedInFile: true,
   ignore: ["docusaurus/**/*.ts"],
-  ignoreDependencies: ["@moonrepo/cli"],
 };
 
 export default config;
