@@ -3,12 +3,13 @@ packages:
   - apps/*
   - docusaurus/*
   - examples/*
-  - '!**/test/**'
+  - "!**/test/**"
 
 catalog:
-  '@eslint/js': ^10.0.1
-  '@tari-project/ootle-ts-bindings': ^1.29.3
-  '@types/node': ^25.5.0
+  "@eslint/js": ^10.0.1
+  "@tari-project/ootle-ts-bindings": ^1.29.3
+  ootle-wasm: ^0.1.3
+  "@types/node": ^25.5.0
   eslint: ^10.0.3
   eslint-config-prettier: ^10.1.8
   knip: ^5.87.0

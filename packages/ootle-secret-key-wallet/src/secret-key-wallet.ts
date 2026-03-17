@@ -7,7 +7,7 @@ import type {
 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "@tari-project/ootle";
 import { Network } from "@tari-project/ootle";
-import type { OotleWasm } from "@tari-project/ootle-wasm";
+import type { OotleWasm } from "ootle-wasm";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,
@@ -48,7 +48,7 @@ export class SecretKeyWallet implements Signer {
    */
   public static random(wasm: OotleWasm, network: Network | number): SecretKeyWallet {
     const keypair = wasm.generateKeypair();
-    const address = wasm.publicKeyToAddress(keypair.public_key, network as number);
+    const address = wasm.publicKeyToAddress(keypair.public_key, network);
     return new SecretKeyWallet(keypair.secret_key, null, keypair.public_key, address, wasm, network as Network);
   }
 
@@ -60,7 +60,7 @@ export class SecretKeyWallet implements Signer {
   public static randomWithViewKey(wasm: OotleWasm, network: Network | number): SecretKeyWallet {
     const accountKeypair = wasm.generateKeypair();
     const viewKeypair = wasm.generateKeypair();
-    const address = wasm.publicKeyToAddress(accountKeypair.public_key, network as number);
+    const address = wasm.publicKeyToAddress(accountKeypair.public_key, network);
     return new SecretKeyWallet(
       accountKeypair.secret_key,
       viewKeypair.secret_key,
@@ -82,7 +82,7 @@ export class SecretKeyWallet implements Signer {
     viewOnlySecretHex?: string,
   ): SecretKeyWallet {
     const publicKeyHex = wasm.derivePublicKey(accountSecretHex);
-    const address = wasm.publicKeyToAddress(publicKeyHex, network as number);
+    const address = wasm.publicKeyToAddress(publicKeyHex, network);
     return new SecretKeyWallet(
       accountSecretHex,
       viewOnlySecretHex ?? null,
@@ -104,7 +104,7 @@ export class SecretKeyWallet implements Signer {
     network: Network | number,
     viewOnlySecretHex?: string,
   ): SecretKeyWallet {
-    const address = wasm.publicKeyToAddress(publicKeyHex, network as number);
+    const address = wasm.publicKeyToAddress(publicKeyHex, network);
     return new SecretKeyWallet(
       accountSecretHex,
       viewOnlySecretHex ?? null,
