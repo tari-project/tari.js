@@ -1,11 +1,8 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type {
-  TransactionSignature,
-  UnsignedTransactionV1,
-} from "@tari-project/ootle-ts-bindings";
-import type { Signer } from "@tari-project/ootle";
+import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
+import { Network, Signer } from "@tari-project/ootle";
 import type { OotleWasm } from "@tari-project/ootle-wasm";
 
 /**
@@ -22,13 +19,17 @@ import type { OotleWasm } from "@tari-project/ootle-wasm";
  * ```
  */
 export class EphemeralKeySigner implements Signer {
+  private readonly address: string;
   private readonly secretKeyHex: string;
   private readonly publicKeyHex: string;
   private readonly wasm: OotleWasm;
+  public network: Network;
 
-  private constructor(secretKeyHex: string, publicKeyHex: string, wasm: OotleWasm) {
+  private constructor(secretKeyHex: string, publicKeyHex: string, address: string, wasm: OotleWasm, network: Network) {
+    this.address = address;
     this.secretKeyHex = secretKeyHex;
     this.publicKeyHex = publicKeyHex;
+    this.network = network;
     this.wasm = wasm;
   }
 
@@ -36,24 +37,25 @@ export class EphemeralKeySigner implements Signer {
    * Generates a fresh ephemeral keypair. The secret key exists only for the
    * lifetime of this object and is never persisted.
    */
-  public static generate(wasm: OotleWasm): EphemeralKeySigner {
+  public static generate(wasm: OotleWasm, network: Network): EphemeralKeySigner {
     const keypair = wasm.generateKeypair();
-    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key, wasm);
+    const address = wasm.publicKeyToAddress(keypair.public_key, network);
+    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key, address, wasm, network);
   }
 
   public async getAddress(): Promise<string> {
     // Ephemeral signers have no persistent address — return the public key as-is.
-    return this.publicKeyHex;
+    return Promise.resolve(this.address);
   }
 
   public async getPublicKey(): Promise<string> {
-    return this.publicKeyHex;
+    return Promise.resolve(this.publicKeyHex);
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = this.wasm.hashUnsignedTransaction(JSON.stringify(unsignedTx));
     const sig = this.wasm.schnorrSign(this.secretKeyHex, hashBytes);
-    return [
+    return Promise.resolve([
       {
         public_key: this.publicKeyHex,
         signature: {
@@ -61,6 +63,6 @@ export class EphemeralKeySigner implements Signer {
           signature: sig.signature,
         },
       },
-    ];
+    ]);
   }
 }

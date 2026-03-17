@@ -53,14 +53,14 @@ export class WalletDaemonSigner implements Signer {
     if (!this._address) {
       await this.fetchAccountInfo();
     }
-    return this._address!;
+    return this._address;
   }
 
   public async getPublicKey(): Promise<string> {
     if (!this._publicKey) {
       await this.fetchAccountInfo();
     }
-    return this._publicKey!;
+    return this._publicKey;
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {

@@ -22,7 +22,6 @@ export interface TransactionEncoder {
   /** BOR-encodes a signed Transaction and returns a base64 TransactionEnvelope string. */
   encode(transaction: Transaction): TransactionEnvelope;
 
-
   /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
   hashForSigning(unsignedTx: UnsignedTransactionV1): Uint8Array;
 }
@@ -54,13 +53,16 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
     signatures: allSignatures,
   };
 
+  // TODO! Sealing needs to be implemented this is just a temporary fix
+  const seal_signature = {
+    public_key: allSignatures[0].public_key,
+    signature: allSignatures[0].signature,
+  };
+
   return {
     V1: {
       body,
-      seal_signature: {
-        public_key: "",
-        signature: { public_nonce: "", signature: "" },
-      },
+      seal_signature,
     },
   };
 }

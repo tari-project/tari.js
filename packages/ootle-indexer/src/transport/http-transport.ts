@@ -73,7 +73,7 @@ export class FetchTransport implements HttpTransport {
     if (request.params) {
       for (const [key, value] of Object.entries(request.params)) {
         if (value !== undefined && value !== null) {
-          urlParams.append(key, String(value));
+          urlParams.append(key, JSON.stringify(value));
         }
       }
     }
@@ -91,26 +91,38 @@ export class FetchTransport implements HttpTransport {
       fqPath += `?${qs}`;
     }
 
-    const response = await fetch(fqPath, {
-      method: request.method,
-      headers,
-      body,
-      signal,
-    });
+    try {
+      const response = await fetch(fqPath, {
+        method: request.method,
+        headers,
+        body,
+        signal,
+      });
 
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-    }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${response.statusText}${text ? ` — ${text}` : ""}`);
-    }
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP ${response.status}: ${response.statusText}${text ? ` — ${text}` : ""}`);
+      }
 
-    const json = await response.json();
-    if (json && typeof json === "object" && "error" in json) {
-      throw new Error(`${json.error.code}: ${json.error.message}`);
+      const json = (await response.json()) as T;
+
+      if (json && typeof json === "object" && "error" in json) {
+        const err = (json as Record<string, unknown>).error;
+        const code = err && typeof err === "object" ? ((err as Record<string, unknown>).code ?? "UNKNOWN") : "UNKNOWN";
+        const msg =
+          err && typeof err === "object"
+            ? ((err as Record<string, unknown>).message ?? JSON.stringify(err))
+            : String(err);
+        throw new Error(`${JSON.stringify(code)}: ${JSON.stringify(msg)}`);
+      }
+
+      return json;
+    } finally {
+      if (timeoutId !== null) clearTimeout(timeoutId);
     }
-    return json as T;
   }
 }

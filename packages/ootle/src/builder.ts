@@ -206,7 +206,7 @@ export class TransactionBuilder {
   }
 
   public withFeeInstructions(instructions: Instruction[]): this {
-    this.unsignedTransaction.fee_instructions = instructions;
+    this.unsignedTransaction.fee_instructions.push(...instructions);
     return this;
   }
 
@@ -238,11 +238,19 @@ export class TransactionBuilder {
 
   public withUnsignedTransaction(unsignedTransaction: UnsignedTransactionV1): this {
     this.unsignedTransaction = unsignedTransaction;
+    // Reset Workspace State
+    this.allocatedIds = new Map();
+    this.currentId = 0;
     return this;
   }
 
   public buildUnsignedTransaction(): UnsignedTransactionV1 {
-    return this.unsignedTransaction;
+    return {
+      ...this.unsignedTransaction,
+      instructions: [...this.unsignedTransaction.instructions],
+      fee_instructions: [...this.unsignedTransaction.fee_instructions],
+      inputs: [...this.unsignedTransaction.inputs],
+    };
   }
 
   // Internal helpers

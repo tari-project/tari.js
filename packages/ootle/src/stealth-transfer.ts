@@ -1,12 +1,7 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type {
-  ComponentAddress,
-  ResourceAddress,
-  Amount,
-  UnsignedTransactionV1,
-} from "@tari-project/ootle-ts-bindings";
+import type { ComponentAddress, ResourceAddress, Amount, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { StealthOutputStatementFactory, StealthTransferStatement } from "./stealth";
 import { TransactionBuilder } from "./builder";
 import type { Network } from "./network";
@@ -19,6 +14,11 @@ import type { Network } from "./network";
 export interface StealthTransferSpec {
   unsignedTx: UnsignedTransactionV1;
   statement: StealthTransferStatement;
+}
+
+interface RecipientAmountPair {
+  recipient: string;
+  amounts: bigint[];
 }
 
 /**
@@ -44,6 +44,7 @@ export class StealthTransfer {
   private amounts: bigint[] = [];
   private sourceAccount: ComponentAddress | null = null;
   private resourceAddress: ResourceAddress | null = null;
+  private recipientPairs: RecipientAmountPair[] = [];
 
   constructor(network: Network | number, factory: StealthOutputStatementFactory) {
     this.txBuilder = TransactionBuilder.new(network);
@@ -64,8 +65,13 @@ export class StealthTransfer {
    * Multiple calls add multiple outputs; they all share the same recipient.
    */
   public to(recipientPublicKeyHex: string, amount: bigint): this {
+    if (this.recipientPublicKeyHex !== recipientPublicKeyHex) {
+      this.recipientPairs.push({ recipient: recipientPublicKeyHex, amounts: this.amounts });
+      this.amounts = [];
+    }
     this.recipientPublicKeyHex = recipientPublicKeyHex;
     this.amounts.push(amount);
+
     return this;
   }
 
@@ -97,22 +103,19 @@ export class StealthTransfer {
       throw new Error("StealthTransfer: no amounts specified. Call .to() with an amount.");
     }
 
-    const statement = await this.factory.generateOutputsStatement(
-      this.recipientPublicKeyHex,
-      this.amounts,
-    );
+    const statement = await this.factory.generateOutputsStatement(this.recipientPublicKeyHex, this.amounts);
 
     const totalAmount = this.amounts.reduce((a, b) => a + b, 0n);
     this.txBuilder
-      .callMethod(
-        { componentAddress: this.sourceAccount, methodName: "withdraw" },
-        [{ Literal: this.resourceAddress }, { Literal: String(totalAmount) }],
-      )
+      .callMethod({ componentAddress: this.sourceAccount, methodName: "withdraw" }, [
+        { Literal: this.resourceAddress },
+        { Literal: String(totalAmount) },
+      ])
       .saveVar("stealth_bucket")
-      .callMethod(
-        { componentAddress: this.sourceAccount, methodName: "deposit_stealth" },
-        [{ Workspace: "stealth_bucket" }, { Literal: JSON.stringify(statement) }],
-      );
+      .callMethod({ componentAddress: this.sourceAccount, methodName: "deposit_stealth" }, [
+        { Workspace: "stealth_bucket" },
+        { Literal: JSON.stringify(statement) },
+      ]);
 
     const unsignedTx = this.txBuilder.buildUnsignedTransaction();
     return { unsignedTx, statement };
