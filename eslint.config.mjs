@@ -1,12 +1,13 @@
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,
+  globalIgnores(["**/dist/"]),
   {
     rules: {
       // "no-console": ["warn", { allow: ["info", "warn", "debug", "error"] }],
@@ -22,7 +23,6 @@ export default defineConfig(
         },
       ],
     },
-    ignores: ["**/*.config.js", "!**/eslint.config.js"],
     languageOptions: {
       parserOptions: {
         projectService: true,
