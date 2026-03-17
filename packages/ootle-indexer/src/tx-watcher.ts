@@ -79,6 +79,11 @@ export class TransactionWatcher {
     });
   }
 
+  /** Internal: remove a pending waiter (e.g. on timeout) to prevent memory leaks. */
+  public unregister(txId: string): void {
+    this.pending.delete(txId);
+  }
+
   private async run(signal: AbortSignal): Promise<void> {
     const url = `${this.baseUrl}/events`;
 
@@ -160,7 +165,10 @@ export class PendingTransaction {
       return result;
     }
 
-    // SSE timed out — fall back to a single REST poll.
+    // SSE timed out — clean up the pending entry to prevent memory leaks.
+    this.watcher.unregister(this.txId);
+
+    // Fall back to a single REST poll.
     return this.pollOnce();
   }
 

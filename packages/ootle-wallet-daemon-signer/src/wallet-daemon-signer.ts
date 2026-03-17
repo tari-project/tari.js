@@ -4,6 +4,13 @@
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "@tari-project/ootle";
 
+interface JrpcResponse<T = unknown> {
+  jsonrpc: string;
+  id: number;
+  result?: T;
+  error?: { code: number | string; message: string };
+}
+
 export interface WalletDaemonSignerOptions {
   /** Base URL of the wallet daemon HTTP endpoint, e.g. "http://localhost:18103" */
   url: string;
@@ -25,6 +32,7 @@ export class WalletDaemonSigner implements Signer {
   private options: WalletDaemonSignerOptions;
   private _publicKey: string | null = null;
   private _address: string | null = null;
+  private requestId = 0;
 
   private constructor(options: WalletDaemonSignerOptions) {
     this.options = options;
@@ -64,6 +72,9 @@ export class WalletDaemonSigner implements Signer {
 
   private async fetchAccountInfo(): Promise<void> {
     const info = await this.jrpcCall<{ public_key: string; address: string }>("accounts.get_default", {});
+    if (!info.public_key || !info.address) {
+      throw new Error("Wallet daemon response missing public_key or address");
+    }
     this._publicKey = info.public_key;
     this._address = info.address;
   }
@@ -77,7 +88,7 @@ export class WalletDaemonSigner implements Signer {
       },
       body: JSON.stringify({
         jsonrpc: "2.0",
-        id: 1,
+        id: ++this.requestId,
         method,
         params,
       }),
@@ -88,10 +99,13 @@ export class WalletDaemonSigner implements Signer {
       throw new Error(`HTTP ${response.status}: ${response.statusText}${text ? ` — ${text}` : ""}`);
     }
 
-    const json = await response.json();
+    const json = (await response.json()) as JrpcResponse<T>;
     if (json.error) {
       throw new Error(`JRPC error ${json.error.code}: ${json.error.message}`);
     }
-    return json.result as T;
+    if (json.result === undefined) {
+      throw new Error(`JRPC response missing 'result' field for method "${method}"`);
+    }
+    return json.result;
   }
 }

@@ -2,20 +2,20 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type {
+  GetSubstatesResponse,
+  GetTemplateDefinitionResponse,
   IndexerGetSubstateResponse,
   IndexerGetTransactionResultResponse,
   IndexerSubmitTransactionResponse,
-  GetSubstatesResponse,
-  TransactionEnvelope,
-  SubstateRequirement,
   SubstateId,
-  GetTemplateDefinitionResponse,
+  SubstateRequirement,
+  TransactionEnvelope,
 } from "@tari-project/ootle-ts-bindings";
-import type { Provider, ListSubstatesRequest, ListSubstatesResponse } from "@tari-project/ootle";
+import type { ListSubstatesRequest, ListSubstatesResponse, Provider } from "@tari-project/ootle";
 import { Network } from "@tari-project/ootle";
 import { IndexerClient } from "./transport/indexer-client";
 import { FetchTransport } from "./transport/http-transport";
-import { TransactionWatcher, PendingTransaction } from "./tx-watcher";
+import { PendingTransaction, TransactionWatcher } from "./tx-watcher";
 
 export interface IndexerProviderOptions {
   /** Base URL of the indexer REST API, e.g. "http://localhost:18300" */
@@ -32,12 +32,7 @@ export class IndexerProvider implements Provider {
   private _watcher: TransactionWatcher | null = null;
   readonly defaultTransactionTimeoutMs: number;
 
-  private constructor(
-    client: IndexerClient,
-    network: Network,
-    url: string,
-    defaultTransactionTimeoutMs: number,
-  ) {
+  private constructor(client: IndexerClient, network: Network, url: string, defaultTransactionTimeoutMs: number) {
     this.client = client;
     this._network = network;
     this._url = url;
@@ -50,12 +45,7 @@ export class IndexerProvider implements Provider {
   public static async connect(options: IndexerProviderOptions): Promise<IndexerProvider> {
     const client = IndexerClient.new(FetchTransport.new(options.url));
     await client.identityGet();
-    return new IndexerProvider(
-      client,
-      options.network,
-      options.url,
-      options.defaultTransactionTimeoutMs ?? 60_000,
-    );
+    return new IndexerProvider(client, options.network, options.url, options.defaultTransactionTimeoutMs ?? 60_000);
   }
 
   /** Exposes the underlying IndexerClient for advanced use (e.g. resolveWantInputs). */
@@ -122,7 +112,7 @@ export class IndexerProvider implements Provider {
   }
 
   public async resolveInputs(inputs: SubstateRequirement[]): Promise<SubstateRequirement[]> {
-    const resolved = await Promise.all(
+    return await Promise.all(
       inputs.map(async (req): Promise<SubstateRequirement> => {
         if (req.version !== null) {
           return req;
@@ -133,13 +123,16 @@ export class IndexerProvider implements Provider {
             local_search_only: false,
           });
           return { substate_id: req.substate_id, version: substate.version };
-        } catch {
-          // If we can't resolve the version, leave it as unversioned
-          return req;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          // Only tolerate 404-style "not found" errors — rethrow everything else
+          if (/not found/i.test(message) || message.includes("404")) {
+            return req;
+          }
+          throw new Error(`Failed to resolve input "${req.substate_id}": ${message}`, { cause: error });
         }
       }),
     );
-    return resolved;
   }
 
   public async listSubstates(params: ListSubstatesRequest): Promise<ListSubstatesResponse> {

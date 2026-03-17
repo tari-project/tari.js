@@ -22,6 +22,7 @@ export interface TransactionEncoder {
   /** BOR-encodes a signed Transaction and returns a base64 TransactionEnvelope string. */
   encode(transaction: Transaction): TransactionEnvelope;
 
+
   /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
   hashForSigning(unsignedTx: UnsignedTransactionV1): Uint8Array;
 }
@@ -41,10 +42,7 @@ export async function resolveTransaction(
 /**
  * Collects signatures from all provided signers and assembles a signed Transaction.
  */
-export async function signTransaction(
-  signers: Signer[],
-  unsignedTx: UnsignedTransactionV1,
-): Promise<Transaction> {
+export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTransactionV1): Promise<Transaction> {
   const allSignatures: TransactionSignature[] = [];
   for (const signer of signers) {
     const sigs = await signer.signTransaction(unsignedTx);
@@ -77,10 +75,7 @@ export function encodeTransaction(encoder: TransactionEncoder, transaction: Tran
 /**
  * Submits an encoded transaction envelope and returns the transaction ID.
  */
-export async function submitTransaction(
-  provider: Provider,
-  envelope: TransactionEnvelope,
-): Promise<string> {
+export async function submitTransaction(provider: Provider, envelope: TransactionEnvelope): Promise<string> {
   const response = await provider.submitTransaction(envelope);
   return response.transaction_id;
 }
@@ -94,9 +89,7 @@ export async function submitTransaction(
  *
  * Returns `null` if the result is still pending.
  */
-export function classifyOutcome(
-  result: IndexerTransactionFinalizedResult,
-): TransactionOutcome | null {
+export function classifyOutcome(result: IndexerTransactionFinalizedResult): TransactionOutcome | null {
   if (result === "Pending") return null;
   if (!("Finalized" in result)) return null;
 
@@ -117,7 +110,7 @@ export function classifyOutcome(
     return { status: "Reject", reason };
   }
 
-  return { status: "Commit" };
+  throw new Error(`Unexpected final_decision variant: ${JSON.stringify(decision)}`);
 }
 
 /**
@@ -146,9 +139,7 @@ export async function watchTransaction(
         throw new Error(`Transaction ${txId} was rejected: ${outcome.reason}`);
       }
       if (outcome?.status === "OnlyFeeCommit") {
-        throw new Error(
-          `Transaction ${txId} only committed fees (execution aborted): ${outcome.reason}`,
-        );
+        throw new Error(`Transaction ${txId} only committed fees (execution aborted): ${outcome.reason}`);
       }
       return response;
     }

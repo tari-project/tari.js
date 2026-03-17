@@ -22,10 +22,7 @@ export type WantInput =
  *
  * Mirrors `TransactionInputResolver` from the Rust ootle-rs crate.
  */
-export async function resolveWantInputs(
-  client: IndexerClient,
-  wants: WantInput[],
-): Promise<SubstateRequirement[]> {
+export async function resolveWantInputs(client: IndexerClient, wants: WantInput[]): Promise<SubstateRequirement[]> {
   return Promise.all(
     wants.map(async (want): Promise<SubstateRequirement> => {
       if (want.type === "SpecificSubstate") {
@@ -39,17 +36,17 @@ export async function resolveWantInputs(
         return { substate_id: want.substateId, version: substate.version };
       }
 
-      // VaultForResource: list substates filtered by the resource template and
-      // find the vault component that owns this resource.
+      // VaultForResource: list substates filtered by the resource address and
+      // find the vault component that holds this resource.
       const result = await client.listSubstates({
-        filter_by_template: null,
+        filter_by_template: want.resourceAddress,
         filter_by_type: "Vault",
-        limit: null,
+        limit: 1,
         offset: null,
       });
 
       const match = result.substates.find(
-        (s) => s.template_address === want.resourceAddress || s.substate_id.includes(want.resourceAddress),
+        (s) => s.template_address === want.resourceAddress || s.substate_id === want.resourceAddress,
       );
 
       if (!match) {

@@ -51,18 +51,12 @@ export class AccountInvokeBuilder {
     destinationAddress: string,
   ): this {
     this.builder
-      .callMethod(
-        { componentAddress: sourceAccount, methodName: "withdraw" },
-        [{ Literal: resourceAddress }, { Literal: String(amount) }],
-      )
+      .callMethod({ componentAddress: sourceAccount, methodName: "withdraw" }, [
+        { Literal: resourceAddress },
+        { Literal: String(amount) },
+      ])
       .saveVar("bucket")
-      .callMethod(
-        { componentAddress: sourceAccount, methodName: "deposit" },
-        [{ Workspace: "bucket" }],
-      );
-    // Note: this is a simplified transfer. Full cross-account transfer requires
-    // calling deposit on the destination account component.
-    void destinationAddress;
+      .callMethod({ componentAddress: destinationAddress, methodName: "deposit" }, [{ Workspace: "bucket" }]);
     return this;
   }
 
@@ -70,17 +64,10 @@ export class AccountInvokeBuilder {
    * Publishes a compiled template WASM blob from the account.
    * Mirrors `AccountInvokeBuilder::publish_template` from ootle-rs.
    */
-  public publishTemplate(
-    sourceAccount: ComponentAddress,
-    templateBinaryHex: string,
-    workspaceBucket?: string,
-  ): this {
+  public publishTemplate(sourceAccount: ComponentAddress, templateBinaryHex: string, workspaceBucket?: string): this {
     const bucket = workspaceBucket ?? "template";
     this.builder
-      .callMethod(
-        { componentAddress: sourceAccount, methodName: "publish_template" },
-        [{ Literal: templateBinaryHex }],
-      )
+      .callMethod({ componentAddress: sourceAccount, methodName: "publish_template" }, [{ Literal: templateBinaryHex }])
       .saveVar(bucket);
     return this;
   }
@@ -122,15 +109,11 @@ export class FaucetInvokeBuilder {
    */
   public takeFaucetFunds(destinationAccount: ComponentAddress, amount: Amount): this {
     this.builder
-      .callMethod(
-        { componentAddress: this.faucetAddress, methodName: "take_free_coins" },
-        [{ Literal: String(amount) }],
-      )
+      .callMethod({ componentAddress: this.faucetAddress, methodName: "take_free_coins" }, [
+        { Literal: String(amount) },
+      ])
       .saveVar("faucet_bucket")
-      .callMethod(
-        { componentAddress: destinationAccount, methodName: "deposit" },
-        [{ Workspace: "faucet_bucket" }],
-      );
+      .callMethod({ componentAddress: destinationAccount, methodName: "deposit" }, [{ Workspace: "faucet_bucket" }]);
     return this;
   }
 
@@ -140,15 +123,9 @@ export class FaucetInvokeBuilder {
    */
   public takeMaxFaucetFunds(destinationAccount: ComponentAddress): this {
     this.builder
-      .callMethod(
-        { componentAddress: this.faucetAddress, methodName: "take_max_free_coins" },
-        [],
-      )
+      .callMethod({ componentAddress: this.faucetAddress, methodName: "take_max_free_coins" }, [])
       .saveVar("faucet_bucket")
-      .callMethod(
-        { componentAddress: destinationAccount, methodName: "deposit" },
-        [{ Workspace: "faucet_bucket" }],
-      );
+      .callMethod({ componentAddress: destinationAccount, methodName: "deposit" }, [{ Workspace: "faucet_bucket" }]);
     return this;
   }
 
@@ -158,12 +135,7 @@ export class FaucetInvokeBuilder {
    */
   public publishTemplate(templateAddress: PublishedTemplateAddress, workspaceBucket?: string): this {
     const bucket = workspaceBucket ?? "template";
-    this.builder
-      .callFunction(
-        { templateAddress, functionName: "new" },
-        [],
-      )
-      .saveVar(bucket);
+    this.builder.callFunction({ templateAddress, functionName: "new" }, []).saveVar(bucket);
     return this;
   }
 

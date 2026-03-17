@@ -65,7 +65,7 @@ export class TransactionBuilder {
 
   constructor(network: Network | number) {
     this.unsignedTransaction = {
-      network: network as number,
+      network: network,
       fee_instructions: [],
       instructions: [],
       inputs: [],
@@ -94,9 +94,12 @@ export class TransactionBuilder {
   }
 
   public callMethod<T extends TariMethodDefinition>(method: T, args: Exclude<T["args"], undefined>): this {
+    if (!method.componentAddress && !method.fromWorkspace) {
+      throw new Error("callMethod requires either componentAddress or fromWorkspace");
+    }
     const call = method.componentAddress
       ? { Address: method.componentAddress }
-      : { Workspace: this.getNamedId(method.fromWorkspace!)! };
+      : { Workspace: this.requireNamedId(method.fromWorkspace!) };
     const resolvedArgs = this.resolveArgs(args);
     return this.addInstruction({
       CallMethod: {
@@ -255,6 +258,14 @@ export class TransactionBuilder {
     return this.allocatedIds.get(name);
   }
 
+  private requireNamedId(name: string): number {
+    const id = this.allocatedIds.get(name);
+    if (id === undefined) {
+      throw new Error(`No workspace variable named "${name}" has been defined`);
+    }
+    return id;
+  }
+
   private getOffsetIdFromWorkspaceName(name: string): WorkspaceOffsetId {
     const parsed = parseWorkspaceStringKey(name);
     const id = this.getNamedId(parsed.name);
@@ -266,7 +277,12 @@ export class TransactionBuilder {
 
   private resolveArgs(args: NamedArg[]): InstructionArg[] {
     return args.map((arg): InstructionArg => {
-      if (typeof arg === "object" && arg !== null && "Workspace" in arg && typeof (arg as { Workspace: unknown }).Workspace === "string") {
+      if (
+        typeof arg === "object" &&
+        arg !== null &&
+        "Workspace" in arg &&
+        typeof (arg as { Workspace: unknown }).Workspace === "string"
+      ) {
         const workspaceId = this.getOffsetIdFromWorkspaceName((arg as { Workspace: string }).Workspace);
         return { Workspace: workspaceId };
       }
