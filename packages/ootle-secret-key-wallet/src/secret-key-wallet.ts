@@ -35,27 +35,6 @@ export class SecretKeyWallet implements Signer {
   }
 
   /**
-   * Creates a wallet from an existing hex-encoded secret key.
-   */
-  public static fromSecretKey(secretKeyHex: string, wasm: OotleWasm, network: number): SecretKeyWallet {
-    // Derive public key by signing a dummy message — the WASM module provides generateKeypair
-    // but not a dedicated derivation function. We embed a workaround: sign an empty message
-    // and extract the public nonce as the public key placeholder.
-    // TODO: expose a `derivePublicKey(secretKeyHex)` in the WASM crate.
-    const tempSign = wasm.schnorrSign(secretKeyHex, new Uint8Array(32));
-    // The public_nonce from a Schnorr signature is not the public key.
-    // For now we require the caller to also supply the public key, or we derive it via a known trick.
-    // This is a known limitation until the WASM crate exposes key derivation.
-    throw new Error(
-      "fromSecretKey requires a WASM export `derivePublicKey(secretKeyHex)` which is not yet available. " +
-        "Use SecretKeyWallet.random() or implement the WASM export.",
-    );
-    // The throw above makes the rest unreachable — it will be removed once the WASM crate is ready.
-     
-    void tempSign;
-  }
-
-  /**
    * Creates a wallet directly from a secret key and its corresponding public key.
    * Use this overload if you already have both keys (e.g. from key storage).
    */
