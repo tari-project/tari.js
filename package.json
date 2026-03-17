@@ -19,7 +19,7 @@
   "author": "The Tari Community",
   "license": "ISC",
   "engines": {
-    "node": "24.14.0"
+    "node": ">=22.0.0"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",

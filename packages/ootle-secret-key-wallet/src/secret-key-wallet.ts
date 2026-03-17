@@ -3,24 +3,22 @@
 
 import type {
   TransactionSignature,
-  TransactionSealSignature,
   UnsignedTransactionV1,
-  Transaction,
 } from "@tari-project/ootle-ts-bindings";
-import type { Signer, TransactionSealSigner } from "@tari-project/ootle";
+import type { Signer } from "@tari-project/ootle";
 import { Network } from "@tari-project/ootle";
 import type { OotleWasm } from "@tari-project/ootle-wasm";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,
- * using the WASM module for transaction hashing, Schnorr signing, and sealing.
+ * using the WASM module for transaction hashing and Schnorr signing.
  *
  * Mirrors `OotleSecretKey` / `PrivateKeyProvider` from the Rust ootle-rs crate.
  *
  * For production use, prefer `WalletDaemonSigner` so the secret key never lives
  * in JavaScript memory.
  */
-export class SecretKeyWallet implements Signer, TransactionSealSigner {
+export class SecretKeyWallet implements Signer {
   private readonly accountSecretHex: string;
   private readonly viewOnlySecretHex: string | null;
   private readonly publicKeyHex: string;
@@ -145,22 +143,5 @@ export class SecretKeyWallet implements Signer, TransactionSealSigner {
         },
       },
     ];
-  }
-
-  /**
-   * Applies the seal signature to a transaction using the account secret key.
-   * Called last in the signing flow when `is_seal_signer_authorized = true`.
-   */
-  public async sealTransaction(transaction: Transaction): Promise<TransactionSealSignature> {
-    const txJson = JSON.stringify(transaction);
-    const hashBytes = this.wasm.hashUnsignedTransaction(txJson);
-    const sig = this.wasm.schnorrSign(this.accountSecretHex, hashBytes);
-    return {
-      public_key: this.publicKeyHex,
-      signature: {
-        public_nonce: sig.public_nonce,
-        signature: sig.signature,
-      },
-    };
   }
 }

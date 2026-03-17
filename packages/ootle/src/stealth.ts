@@ -1,7 +1,7 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type { TransactionSealSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
+import type { UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 
 /**
  * Represents a stealth output to be created, with a one-time address and
@@ -67,42 +67,16 @@ export interface InputDecryptor {
 }
 
 /**
- * Signs a transaction using a stealth key (derived from a one-time key exchange).
- * Mirrors `StealthKeyPrehashSigner` from the Rust ootle-rs crate.
- */
-export interface StealthKeySigner {
-  /**
-   * Signs a pre-hashed message using the stealth key derived for the given
-   * one-time public key.
-   *
-   * @param oneTimePublicKeyHex - The one-time key that identifies which stealth key to use.
-   * @param prehash - The message hash bytes to sign.
-   */
-  signWithStealthKey(
-    oneTimePublicKeyHex: string,
-    prehash: Uint8Array,
-  ): Promise<{ public_nonce: string; signature: string }>;
-}
-
-/**
- * Full stealth-capable signer: combines regular signing, stealth key signing,
- * output statement generation, and input decryption.
+ * Full stealth-capable signer: combines regular signing, output statement
+ * generation, and input decryption.
  *
  * Mirrors the combined `WalletKeyProvider` supertrait from ootle-rs.
  */
-export interface StealthSigner extends StealthOutputStatementFactory, InputDecryptor, StealthKeySigner {
+export interface StealthSigner extends StealthOutputStatementFactory, InputDecryptor {
   /**
    * Signs the transaction body using the account key (for authorization).
    */
   signTransaction(unsignedTx: UnsignedTransactionV1): Promise<
     Array<{ public_key: string; signature: { public_nonce: string; signature: string } }>
   >;
-
-  /**
-   * Seals the transaction using either the stealth key or account key
-   * depending on the signature requirements.
-   */
-  sealTransaction(
-    transaction: import("@tari-project/ootle-ts-bindings").Transaction,
-  ): Promise<TransactionSealSignature>;
 }

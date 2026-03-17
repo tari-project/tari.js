@@ -16,21 +16,19 @@ export {
   sendDryRun,
   classifyOutcome,
 } from "./transaction";
-export type { TransactionEncoder, TransactionSealSigner } from "./transaction";
+export type { TransactionEncoder } from "./transaction";
 export type {
   Amount,
   WatchOptions,
   ListSubstatesRequest,
   ListSubstatesResponse,
   TransactionOutcome,
-  Signed,
   ToAccountAddress,
   UnsignedTransactionV1,
   Transaction,
   TransactionV1,
   UnsealedTransactionV1,
   TransactionSignature,
-  TransactionSealSignature,
   Instruction,
   InstructionArg,
   SubstateRequirement,
@@ -59,11 +57,10 @@ export type {
   StealthTransferStatement,
   StealthOutputStatementFactory,
   InputDecryptor,
-  StealthKeySigner,
   StealthSigner,
 } from "./stealth";
 export { StealthTransfer } from "./stealth-transfer";
-export type { SignatureRequirements, StealthTransferSpec } from "./stealth-transfer";
+export type { StealthTransferSpec } from "./stealth-transfer";
 export { OotleWallet } from "./wallet";
 export type { TransactionAuthorization } from "./wallet";
 export { WalletStealthAuthorizer } from "./wallet-stealth-authorizer";

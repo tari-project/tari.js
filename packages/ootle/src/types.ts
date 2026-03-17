@@ -8,7 +8,6 @@ export type {
   TransactionV1,
   UnsealedTransactionV1,
   TransactionSignature,
-  TransactionSealSignature,
   Instruction,
   InstructionArg,
   SubstateRequirement,
@@ -47,15 +46,6 @@ export type TransactionOutcome =
   | { status: "Commit" }
   | { status: "OnlyFeeCommit"; reason: string }
   | { status: "Reject"; reason: string };
-
-/**
- * A value paired with its seal signature.
- * Mirrors `Signed<T>` from the Rust ootle-rs crate.
- */
-export interface Signed<T> {
-  inner: T;
-  sealSignature: import("@tari-project/ootle-ts-bindings").TransactionSealSignature;
-}
 
 /**
  * Implemented by types that can produce a component address string.

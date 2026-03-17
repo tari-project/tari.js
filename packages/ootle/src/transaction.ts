@@ -5,7 +5,6 @@ import type {
   UnsignedTransactionV1,
   Transaction,
   TransactionSignature,
-  TransactionSealSignature,
   TransactionEnvelope,
   IndexerGetTransactionResultResponse,
   UnsealedTransactionV1,
@@ -28,17 +27,6 @@ export interface TransactionEncoder {
 }
 
 /**
- * Applies the seal signature to a signed transaction.
- * The seal signer is invoked last, after all regular signers, when
- * `is_seal_signer_authorized` is true on the unsigned transaction.
- *
- * Mirrors `TransactionSealSigner` from the Rust ootle-rs crate.
- */
-export interface TransactionSealSigner {
-  sealTransaction(transaction: Transaction): Promise<TransactionSealSignature>;
-}
-
-/**
  * Resolves unversioned inputs in the unsigned transaction by fetching their current
  * version from the provider.
  */
@@ -52,23 +40,11 @@ export async function resolveTransaction(
 
 /**
  * Collects signatures from all provided signers and assembles a signed Transaction.
- *
- * If the unsigned transaction has `is_seal_signer_authorized = true`, a
- * `TransactionSealSigner` must be supplied — it is called last and its output
- * is placed in `seal_signature`. When sealing is not required the field is
- * left as a null/empty placeholder as the network expects.
  */
 export async function signTransaction(
   signers: Signer[],
   unsignedTx: UnsignedTransactionV1,
-  sealSigner?: TransactionSealSigner,
 ): Promise<Transaction> {
-  if (unsignedTx.is_seal_signer_authorized && !sealSigner) {
-    throw new Error(
-      "Transaction requires a seal signer (is_seal_signer_authorized = true) but none was provided.",
-    );
-  }
-
   const allSignatures: TransactionSignature[] = [];
   for (const signer of signers) {
     const sigs = await signer.signTransaction(unsignedTx);
@@ -80,7 +56,7 @@ export async function signTransaction(
     signatures: allSignatures,
   };
 
-  const unsealedTx: Transaction = {
+  return {
     V1: {
       body,
       seal_signature: {
@@ -89,18 +65,6 @@ export async function signTransaction(
       },
     },
   };
-
-  if (sealSigner) {
-    const sealSig = await sealSigner.sealTransaction(unsealedTx);
-    return {
-      V1: {
-        body,
-        seal_signature: sealSig,
-      },
-    };
-  }
-
-  return unsealedTx;
 }
 
 /**
@@ -202,14 +166,13 @@ export async function watchTransaction(
  */
 export async function sendTransaction(
   provider: Provider,
-  signer: Signer,
+  signers: Signer | Signer[],
   encoder: TransactionEncoder,
   unsignedTx: UnsignedTransactionV1,
   watchOpts?: WatchOptions,
-  sealSigner?: TransactionSealSigner,
 ): Promise<IndexerGetTransactionResultResponse> {
   const resolved = await resolveTransaction(provider, unsignedTx);
-  const signed = await signTransaction([signer], resolved, sealSigner);
+  const signed = await signTransaction(Array.isArray(signers) ? signers : [signers], resolved);
   const envelope = encodeTransaction(encoder, signed);
   const txId = await submitTransaction(provider, envelope);
   return watchTransaction(provider, txId, watchOpts);
@@ -218,23 +181,13 @@ export async function sendTransaction(
 /**
  * Like `sendTransaction` but sets `dry_run = true` on the transaction before
  * submitting, so the network simulates execution without committing state.
- *
- * Mirrors `sign_and_send_dry_run` from the Rust ootle-rs `IndexerProvider`.
  */
 export async function sendDryRun(
   provider: Provider,
-  signer: Signer,
+  signers: Signer | Signer[],
   encoder: TransactionEncoder,
   unsignedTx: UnsignedTransactionV1,
   watchOpts?: WatchOptions,
-  sealSigner?: TransactionSealSigner,
 ): Promise<IndexerGetTransactionResultResponse> {
-  return sendTransaction(
-    provider,
-    signer,
-    encoder,
-    { ...unsignedTx, dry_run: true },
-    watchOpts,
-    sealSigner,
-  );
+  return sendTransaction(provider, signers, encoder, { ...unsignedTx, dry_run: true }, watchOpts);
 }

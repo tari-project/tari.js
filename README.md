@@ -95,16 +95,12 @@ Implemented by `SecretKeyWallet`, `WalletDaemonSigner`, and `EphemeralKeySigner`
 - `getAddress()` / `getPublicKey()`
 - `signTransaction(unsignedTx)`
 
-For transactions that require a seal (when `is_seal_signer_authorized = true`), the signer also implements `TransactionSealSigner`:
-
-- `sealTransaction(transaction)`
-
 ### Transaction flow
 
 ```
 unsignedTx
   → resolveTransaction(provider, …)   // fill in substate versions
-  → signTransaction(signers, …)        // collect signatures, apply seal
+  → signTransaction(signers, …)        // collect Schnorr signatures
   → encodeTransaction(encoder, …)      // BOR-encode to envelope
   → submitTransaction(provider, …)     // submit to network
   → watchTransaction(provider, txId)   // wait for finalization
@@ -191,7 +187,7 @@ Key methods:
 ```ts
 // Individual steps
 const resolved = await resolveTransaction(provider, unsignedTx);
-const signed   = await signTransaction([signer], resolved, sealSigner?);
+const signed   = await signTransaction([signer], resolved);
 const envelope = encodeTransaction(encoder, signed);
 const txId     = await submitTransaction(provider, envelope);
 const receipt  = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
@@ -365,7 +361,7 @@ import { SecretKeyWallet, EphemeralKeySigner } from "@tari-project/ootle-secret-
 
 #### `SecretKeyWallet`
 
-Implements both `Signer` and `TransactionSealSigner`. Holds an account secret key and an optional view-only key (required for stealth output scanning).
+Implements `Signer`. Holds an account secret key and an optional view-only key (required for stealth output scanning).
 
 ```ts
 // Generate a new random wallet
@@ -383,11 +379,8 @@ const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Net
 // With view-only key for stealth
 const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Network.LocalNet, viewOnlySecretHex);
 
-// Use as Signer
+// Sign a transaction
 const signatures = await wallet.signTransaction(unsignedTx);
-
-// Use as TransactionSealSigner
-const sealSig = await wallet.sealTransaction(transaction);
 
 // Access view-only key (for scanning stealth outputs)
 const viewKey = wallet.getViewOnlySecret();
@@ -395,11 +388,11 @@ const viewKey = wallet.getViewOnlySecret();
 
 #### `EphemeralKeySigner`
 
-Generates a one-time throwaway keypair. Used in pure-stealth transactions where no link to the sender's identity should exist. The key is discarded when the object is garbage-collected.
+Generates a one-time throwaway keypair. Used in privacy-preserving transactions where no link to the sender's identity should exist. The key is discarded when the object is garbage-collected.
 
 ```ts
 const signer = EphemeralKeySigner.generate(wasm);
-const sealSig = await signer.sealTransaction(transaction);
+const signed = await signTransaction([signer], unsignedTx);
 ```
 
 ---
@@ -465,13 +458,12 @@ The `OotleWasm` interface:
 
 ## Stealth transfers
 
-ootle.ts includes full support for stealth (privacy-preserving) transfers, mirroring the `stealth` module in the Rust `ootle-rs` crate.
+ootle.ts includes support for stealth (privacy-preserving) transfers, mirroring the `stealth` module in the Rust `ootle-rs` crate.
 
 Stealth transfers produce outputs with one-time public keys — only the recipient (who holds the matching view-only key) can scan and spend them.
 
 ```ts
-import { StealthTransfer, WalletStealthAuthorizer, OotleWallet } from "@tari-project/ootle";
-import { EphemeralKeySigner } from "@tari-project/ootle-secret-key-wallet";
+import { StealthTransfer, WalletStealthAuthorizer, OotleWallet, signTransaction, resolveTransaction, encodeTransaction, submitTransaction } from "@tari-project/ootle";
 
 // 1. Build the stealth transfer
 const spec = await new StealthTransfer(Network.Esmeralda, factory)
@@ -480,18 +472,16 @@ const spec = await new StealthTransfer(Network.Esmeralda, factory)
   .feeFrom(feeAccount, 1000n)
   .build();
 
-// 2. Create the authorizer, using an ephemeral key for the seal (fully unlinkable)
+// 2. Create the authorizer (signs with the account key)
 const wallet = new OotleWallet();
 wallet.registerKeyProvider(senderAddress, secretKeyWallet);
 wallet.setDefaultSigner(senderAddress);
 
-const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec, {
-  ephemeralSealSigner: EphemeralKeySigner.generate(wasm),
-});
+const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec);
 
-// 3. Sign and submit as normal
+// 3. Sign and submit
 const resolved = await resolveTransaction(provider, spec.unsignedTx);
-const signed = await signTransaction([authorizer], resolved, authorizer);
+const signed = await signTransaction([authorizer], resolved);
 const envelope = encodeTransaction(encoder, signed);
 const txId = await submitTransaction(provider, envelope);
 ```
@@ -500,7 +490,6 @@ const txId = await submitTransaction(provider, envelope);
 
 - `StealthOutputStatementFactory` — generates output statements (proofs + encrypted data)
 - `InputDecryptor` — decrypts stealth inputs owned by your key
-- `StealthKeySigner` — signs with a derived stealth key
 - `OutputMaskProvider` — provides fresh output masks (blinding factors)
 - `DiffieHellmanKdfKeyProvider` — derives shared secrets for output encryption
 

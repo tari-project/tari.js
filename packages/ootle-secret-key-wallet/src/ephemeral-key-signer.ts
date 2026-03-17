@@ -3,16 +3,14 @@
 
 import type {
   TransactionSignature,
-  TransactionSealSignature,
   UnsignedTransactionV1,
-  Transaction,
 } from "@tari-project/ootle-ts-bindings";
-import type { Signer, TransactionSealSigner } from "@tari-project/ootle";
+import type { Signer } from "@tari-project/ootle";
 import type { OotleWasm } from "@tari-project/ootle-wasm";
 
 /**
  * A one-shot signer that generates a fresh throwaway keypair, signs once,
- * and exposes no way to reuse the key. Used for pure-stealth transactions
+ * and exposes no way to reuse the key. Used for privacy-preserving transactions
  * where the sender wants no link between the transaction and their identity.
  *
  * Mirrors `EphemeralKeySigner` from the Rust ootle-rs crate.
@@ -20,10 +18,10 @@ import type { OotleWasm } from "@tari-project/ootle-wasm";
  * @example
  * ```ts
  * const signer = EphemeralKeySigner.generate(wasm);
- * const signed = await signTransaction([], unsignedTx, signer); // seal-only
+ * const signed = await signTransaction([signer], unsignedTx);
  * ```
  */
-export class EphemeralKeySigner implements Signer, TransactionSealSigner {
+export class EphemeralKeySigner implements Signer {
   private readonly secretKeyHex: string;
   private readonly publicKeyHex: string;
   private readonly wasm: OotleWasm;
@@ -64,18 +62,5 @@ export class EphemeralKeySigner implements Signer, TransactionSealSigner {
         },
       },
     ];
-  }
-
-  public async sealTransaction(transaction: Transaction): Promise<TransactionSealSignature> {
-    const txJson = JSON.stringify(transaction);
-    const hashBytes = this.wasm.hashUnsignedTransaction(txJson);
-    const sig = this.wasm.schnorrSign(this.secretKeyHex, hashBytes);
-    return {
-      public_key: this.publicKeyHex,
-      signature: {
-        public_nonce: sig.public_nonce,
-        signature: sig.signature,
-      },
-    };
   }
 }

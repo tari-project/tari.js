@@ -8,34 +8,17 @@ import type {
   UnsignedTransactionV1,
 } from "@tari-project/ootle-ts-bindings";
 import type { StealthOutputStatementFactory, StealthTransferStatement } from "./stealth";
-import type { TransactionSealSigner } from "./transaction";
 import { TransactionBuilder } from "./builder";
 import type { Network } from "./network";
 
 /**
- * Signature requirements collected while building a stealth transfer.
- * Tracks which key must be used for sealing and authorization.
- * Mirrors `SignatureRequirements` from the Rust ootle-rs crate.
- */
-export interface SignatureRequirements {
-  /** The account key must sign for at least one input. */
-  mustSignWithAccountKey: boolean;
-  /** The one-time stealth key must be used to seal the transaction. */
-  sealWithStealthKey: boolean;
-  /** If true, use an ephemeral key for sealing (no account key link). */
-  useEphemeralSeal: boolean;
-}
-
-/**
- * The result of building a `StealthTransfer`: an unsigned transaction and
- * the signature requirements that the `WalletStealthAuthorizer` needs to
- * correctly seal it.
+ * The result of building a `StealthTransfer`: the unsigned transaction and
+ * the generated stealth output statement.
  * Mirrors `StealthTransferSpec` from the Rust ootle-rs crate.
  */
 export interface StealthTransferSpec {
   unsignedTx: UnsignedTransactionV1;
   statement: StealthTransferStatement;
-  requirements: SignatureRequirements;
 }
 
 /**
@@ -101,7 +84,7 @@ export class StealthTransfer {
 
   /**
    * Generates the stealth output statement and returns a `StealthTransferSpec`
-   * containing the unsigned transaction and signature requirements.
+   * containing the unsigned transaction ready for signing.
    */
   public async build(): Promise<StealthTransferSpec> {
     if (!this.recipientPublicKeyHex) {
@@ -114,13 +97,11 @@ export class StealthTransfer {
       throw new Error("StealthTransfer: no amounts specified. Call .to() with an amount.");
     }
 
-    // Generate stealth output statement via the factory (e.g. LocalKeyProvider).
     const statement = await this.factory.generateOutputsStatement(
       this.recipientPublicKeyHex,
       this.amounts,
     );
 
-    // Build the withdraw + stealth deposit instructions.
     const totalAmount = this.amounts.reduce((a, b) => a + b, 0n);
     this.txBuilder
       .callMethod(
@@ -134,14 +115,6 @@ export class StealthTransfer {
       );
 
     const unsignedTx = this.txBuilder.buildUnsignedTransaction();
-
-    // Stealth transfers always seal with the stealth key so they're unlinkable.
-    const requirements: SignatureRequirements = {
-      mustSignWithAccountKey: true,
-      sealWithStealthKey: true,
-      useEphemeralSeal: false,
-    };
-
-    return { unsignedTx, statement, requirements };
+    return { unsignedTx, statement };
   }
 }

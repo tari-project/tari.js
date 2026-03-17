@@ -3,12 +3,9 @@
 
 import type {
   TransactionSignature,
-  TransactionSealSignature,
   UnsignedTransactionV1,
-  Transaction,
 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "./signer";
-import type { TransactionSealSigner } from "./transaction";
 import type { WalletKeyProvider } from "./key-provider";
 
 /**
@@ -22,7 +19,7 @@ export interface TransactionAuthorization {
 
 /**
  * A wallet that manages multiple key providers (one per component address) and
- * can sign and seal transactions on behalf of any registered signer.
+ * can sign transactions on behalf of any registered signer.
  *
  * Mirrors `OotleWallet` from the Rust ootle-rs crate.
  *
@@ -35,8 +32,8 @@ export interface TransactionAuthorization {
  * const signed = await wallet.authorizeTransaction(unsignedTx);
  * ```
  */
-export class OotleWallet implements Signer, TransactionSealSigner {
-  private keyProviders: Map<string, WalletKeyProvider & Signer & TransactionSealSigner>;
+export class OotleWallet implements Signer {
+  private keyProviders: Map<string, WalletKeyProvider & Signer>;
   private defaultSignerAddress: string | null = null;
 
   constructor() {
@@ -45,19 +42,18 @@ export class OotleWallet implements Signer, TransactionSealSigner {
 
   /**
    * Registers a key provider for the given component address.
-   * The provider must implement `Signer`, `TransactionSealSigner`, and `WalletKeyProvider`.
+   * The provider must implement `Signer` and `WalletKeyProvider`.
    */
   public registerKeyProvider(
     address: string,
-    provider: WalletKeyProvider & Signer & TransactionSealSigner,
+    provider: WalletKeyProvider & Signer,
   ): this {
     this.keyProviders.set(address, provider);
     return this;
   }
 
   /**
-   * Sets the address used when `signTransaction` or `sealTransaction` is called
-   * without specifying a signer.
+   * Sets the address used when `signTransaction` is called without specifying a signer.
    */
   public setDefaultSigner(address: string): this {
     if (!this.keyProviders.has(address)) {
@@ -86,13 +82,6 @@ export class OotleWallet implements Signer, TransactionSealSigner {
    */
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     return this.getSignerOrThrow().signTransaction(unsignedTx);
-  }
-
-  /**
-   * Seals using the default signer.
-   */
-  public async sealTransaction(transaction: Transaction): Promise<TransactionSealSignature> {
-    return this.getSignerOrThrow().sealTransaction(transaction);
   }
 
   /**
@@ -126,7 +115,7 @@ export class OotleWallet implements Signer, TransactionSealSigner {
   /**
    * Returns the key provider for a specific address, if registered.
    */
-  public getKeyProvider(address: string): (WalletKeyProvider & Signer & TransactionSealSigner) | undefined {
+  public getKeyProvider(address: string): (WalletKeyProvider & Signer) | undefined {
     return this.keyProviders.get(address);
   }
 
@@ -137,7 +126,7 @@ export class OotleWallet implements Signer, TransactionSealSigner {
     return [...this.keyProviders.keys()];
   }
 
-  private getSignerOrThrow(): WalletKeyProvider & Signer & TransactionSealSigner {
+  private getSignerOrThrow(): WalletKeyProvider & Signer {
     if (!this.defaultSignerAddress) {
       throw new Error("No default signer address set. Call setDefaultSigner() first.");
     }
