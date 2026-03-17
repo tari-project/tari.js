@@ -16,7 +16,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:indexer.esmeralda.tari.com)",
       "Bash(npx knip:*)",
-      "Bash(pnpm knip:*)"
+      "Bash(pnpm knip:*)",
+      "Bash(gh api:*)"
     ]
   }
 }

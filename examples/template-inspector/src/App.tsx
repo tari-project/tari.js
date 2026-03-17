@@ -38,7 +38,7 @@ export function App() {
           <div className={`status-badge ${loadStatus === "ready" ? "connected" : loadStatus === "error" ? "errored" : ""}`}>
             <span className="dot" />
             {loadStatus === "loading" && "Connecting…"}
-            {loadStatus === "ready" && `${templates.length} templates · Igor testnet`}
+            {loadStatus === "ready" && `${templates.length} templates · Esmeralda testnet`}
             {loadStatus === "error" && "Connection error"}
             {loadStatus === "idle" && "Idle"}
           </div>

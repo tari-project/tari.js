@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { IndexerClient } from "@tari-project/ootle-indexer";
 
-const IGOR_INDEXER = "http://18.217.22.26:12502";
+const ESME_INDEXER = "http://217.182.93.35:50124";
 
 // Minimal shape we care about from ListTemplatesResponse
 export interface TemplateListItem {
@@ -34,7 +34,7 @@ export interface UseTemplates {
  * Provider interface doesn't expose the template list endpoint.
  */
 export function useTemplates(): UseTemplates {
-  const [indexerUrl, setIndexerUrl] = useState(IGOR_INDEXER);
+  const [indexerUrl, setIndexerUrl] = useState(ESME_INDEXER);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
   const [templates, setTemplates] = useState<TemplateListItem[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);

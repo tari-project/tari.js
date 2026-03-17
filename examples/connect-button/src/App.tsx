@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useWalletDaemon } from "./hooks/useWalletDaemon";
 import "./App.css";
 
-// The wallet daemon JRPC endpoint. Start with: ./tari_ootle_walletd --network igor
+// The wallet daemon JRPC endpoint. Start with: ./tari_ootle_walletd --network esme
 const DEFAULT_URL = "http://127.0.0.1:9000/json_rpc";
 
 /** Shorten a hex string to start…end form, preserving enough to identify it. */
@@ -84,7 +84,7 @@ export function App() {
             </li>
             <li>
               Start it:{" "}
-              <code>./tari_ootle_walletd --network igor</code>
+              <code>./tari_ootle_walletd --network esme</code>
             </li>
             <li>
               Fund your account via the wallet UI at{" "}

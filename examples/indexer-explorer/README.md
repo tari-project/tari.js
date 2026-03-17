@@ -1,45 +1,135 @@
 # indexer-explorer
 
-Browse on-chain substates using the Ootle indexer REST API. No wallet or signing required — this is a pure read example.
+Browse on-chain substates using the Ootle indexer. No wallet, no signing, no local services — this is a pure **read** example that connects to the public Esmeralda testnet out of the box.
 
-## What it demonstrates
+---
 
-- Connecting to an indexer with `IndexerProvider`
-- Looking up a specific substate by ID
-- Listing recent substates with type badges
-- The `useIndexer` React hook pattern
+## What is this?
 
-## Prerequisites
+Tari Ootle is a smart contract platform. Every piece of on-chain state (accounts, vaults, component instances, resources) is stored as a **substate** — a key/value entry identified by a unique ID.
 
-No local services needed. The example defaults to the **public Igor testnet indexer**.
+The **indexer** is a service that watches the network and indexes those substates so web apps can query them over HTTP. This example shows you how to:
 
-| Network | Indexer URL |
-|---------|------------|
-| Igor testnet (public) | `http://18.217.22.26:12502` |
-| Local dev | `http://localhost:18300` |
+- Connect to an indexer using the `IndexerProvider` from `@tari-project/ootle`
+- Look up a specific substate by ID
+- List recent substates and browse them by type
 
-To run a local indexer, see the [tari-ootle releases](https://github.com/tari-project/tari-ootle/releases).
+Think of the indexer like a blockchain explorer (e.g. Etherscan) — read-only, no wallet required.
+
+---
+
+## What you'll learn
+
+- How to connect to the Ootle indexer from a React app
+- How to query a substate by ID
+- How to list and paginate recent substates
+- The `useIndexer` React hook pattern used across Ootle dApp examples
+
+---
+
+## Before you start
+
+### Install Node.js
+
+You need **Node.js 18 or newer**. Check if you have it:
+
+```bash
+node --version
+```
+
+If not, download it from [nodejs.org](https://nodejs.org) (choose the LTS version).
+
+### Install pnpm
+
+This project uses [pnpm](https://pnpm.io) instead of npm. Install it via:
+
+```bash
+npm install -g pnpm
+```
+
+That's it — no local daemon or wallet required for this example.
+
+---
 
 ## Run the example
+
+In a terminal, from this directory:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-The public Igor testnet URL and network are pre-filled — just click **Connect to Indexer**.
+The public Esmeralda testnet indexer URL is pre-filled. Click **Connect to Indexer** — you should immediately start seeing recent substates.
 
-## Key files
+---
 
-| File | Purpose |
-|------|---------|
-| `src/hooks/useIndexer.ts` | Wraps `IndexerProvider`, exposes `getSubstate` and `listSubstates` |
-| `src/App.tsx` | Connect form, substate lookup panel, recent substates list |
+## What you'll see
+
+**Connect panel** — Shows the indexer URL and a "Esmeralda testnet · live" badge once connected. You can change the URL to point at a local indexer if you're running one.
+
+**Substate lookup** — Enter any substate ID (e.g. `component_...` or `resource_...`) and click **Look up** to fetch and display it as formatted JSON.
+
+**Recent substates list** — A table of the latest substates indexed, with coloured type badges:
+- `component` — a deployed smart contract instance
+- `resource` — a token type or other on-chain resource definition
+- `vault` — a container holding tokens
+
+Click any row to copy its ID into the lookup panel.
+
+---
+
+## Network information
+
+| Network | Indexer URL |
+|---------|------------|
+| Esmeralda testnet (public) | `http://217.182.93.35:50124` |
+| Local dev | `http://localhost:12500` |
+
+To run a local indexer, see the [tari-ootle releases](https://github.com/tari-project/tari-ootle/releases).
+
+---
+
+## Troubleshooting
+
+**"Connection failed" or network error**
+The public indexer may be temporarily unavailable, or your network blocks HTTP (non-HTTPS) requests. Try refreshing after a moment. If you are behind a strict firewall or corporate VPN, the request to `217.182.93.35` may be blocked.
+
+**CORS error in browser console**
+Some browser configurations block cross-origin HTTP requests. Try a different browser, or run a local indexer at `http://localhost:12500` instead.
+
+**Empty substate list**
+The indexer may have just restarted and is catching up. Wait a moment and click **Connect** again.
+
+**Substate lookup returns "not found"**
+Substate IDs are case-sensitive and must be complete (no partial IDs). Double-check the ID you entered. You can find valid IDs by looking at the recent substates list or in the [Ootle explorer](https://ootle.tari.com).
+
+---
+
+## Project structure
+
+```
+indexer-explorer/
+├── src/
+│   ├── hooks/
+│   │   └── useIndexer.ts    # Wraps IndexerProvider; exposes getSubstate, listSubstates
+│   ├── App.tsx              # Connect form, substate lookup panel, recent substates list
+│   ├── App.css              # Styles
+│   ├── index.css            # CSS variables and reset
+│   └── main.tsx             # React entry point
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
+
+---
 
 ## Learn more
 
-- [Ootle docs](https://ootle.tari.com)
+- [Ootle documentation](https://ootle.tari.com)
 - [Indexer API reference](https://ootle.tari.com/indexer/indexer-api.html)
+- [`@tari-project/ootle`](../../packages/ootle/) — the package this example uses
 - [`@tari-project/ootle-indexer`](../../packages/ootle-indexer/)

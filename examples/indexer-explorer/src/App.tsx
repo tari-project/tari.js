@@ -4,13 +4,13 @@ import { useIndexer } from "./hooks/useIndexer";
 import type { SubstateEntry } from "./hooks/useIndexer";
 import "./App.css";
 
-// Public Igor testnet indexer — no local setup required.
+// Public Esmeralda testnet indexer — no local setup required.
 // Swap for http://localhost:18300 when using a local indexer.
-const DEFAULT_URL = "http://18.217.22.26:12502";
-const DEFAULT_NETWORK = Network.Igor;
+const DEFAULT_URL = "http://217.182.93.35:50124";
+const DEFAULT_NETWORK = Network.Esmeralda;
 
 const NETWORKS: { label: string; value: Network }[] = [
-  { label: "Igor testnet (public)", value: Network.Igor },
+  { label: "Esmeralda testnet (public)", value: Network.Esmeralda },
   { label: "LocalNet", value: Network.LocalNet },
   { label: "StageNet", value: Network.StageNet },
   { label: "NextNet", value: Network.NextNet },
@@ -84,13 +84,13 @@ export function App() {
           </div>
           <h1 className="card-title">Indexer Explorer</h1>
           <p className="card-subtitle">
-            Browse on-chain substates. The public Igor testnet indexer is
+            Browse on-chain substates. The public Esmeralda testnet indexer is
             pre-filled — no local setup required.
           </p>
 
           <div className="testnet-notice">
             <span className="testnet-dot" />
-            Igor testnet is live · public indexer pre-configured
+            Esmeralda testnet is live · public indexer pre-configured
           </div>
 
           <div className="form">
