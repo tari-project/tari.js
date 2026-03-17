@@ -25,48 +25,6 @@
     },
     {
       "path": "docusaurus/tari-docs"
-    },
-    {
-      "path": "packages/builders"
-    },
-    {
-      "path": "packages/indexer_provider"
-    },
-    {
-      "path": "packages/metamask_signer"
-    },
-    {
-      "path": "packages/permissions"
-    },
-    {
-      "path": "packages/react-mui-connect-button"
-    },
-    {
-      "path": "packages/permissions"
-    },
-    {
-      "path": "packages/tari_provider"
-    },
-    {
-      "path": "packages/tari_signer"
-    },
-    {
-      "path": "packages/tari_universe"
-    },
-    {
-      "path": "packages/tarijs"
-    },
-    {
-      "path": "packages/tarijs_types"
-    },
-    {
-      "path": "packages/tarijs_types"
-    },
-    {
-      "path": "packages/wallet_daemon"
-    },
-    {
-      "path": "packages/walletconnect"
     }
   ]
 }

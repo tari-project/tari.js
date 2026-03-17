@@ -3,18 +3,21 @@ packages:
   - apps/*
   - docusaurus/*
   - examples/*
-  - "!**/test/**"
+  - '!**/test/**'
 
 catalog:
-  typescript: ^5.9.3
-  vitest: ^4.1.0
-  "@types/node": ^25.5.0
-  "@eslint/js": ^10.0.1
+  '@eslint/js': ^10.0.1
+  '@tari-project/ootle-ts-bindings': ^1.29.3
+  '@types/node': ^25.5.0
   eslint: ^10.0.3
+  eslint-config-prettier: ^10.1.8
   knip: ^5.87.0
+  prettier: ^3.8.1
   typedoc: ^0.28.17
   typedoc-plugin-markdown: ^4.10.0
+  typescript: ^5.9.3
   typescript-eslint: ^8.57.0
+  vitest: ^4.1.0
 
 onlyBuiltDependencies:
   - core-js

@@ -19,12 +19,14 @@
   "author": "The Tari Community",
   "license": "ISC",
   "engines": {
-    "node": "22.19.0"
+    "node": "24.14.0"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
     "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
     "knip": "catalog:",
+    "prettier": "catalog:",
     "typedoc": "catalog:",
     "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Network } from "@tari-project/ootle";
 import { useIndexer } from "./hooks/useIndexer";
 import type { SubstateEntry } from "./hooks/useIndexer";
@@ -40,7 +40,7 @@ export function App() {
   useEffect(() => {
     if (status !== "connected") return;
     void loadSubstates();
-  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const handleConnect = () => {
     void connect(url, network);
@@ -61,7 +61,7 @@ export function App() {
     }
   };
 
-  const loadSubstates = async () => {
+  const loadSubstates = useCallback( async () => {
     setListLoading(true);
     setListError(null);
     try {
@@ -72,7 +72,7 @@ export function App() {
     } finally {
       setListLoading(false);
     }
-  };
+  },[listSubstates]);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
