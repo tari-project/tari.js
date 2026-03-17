@@ -187,10 +187,10 @@ Key methods:
 ```ts
 // Individual steps
 const resolved = await resolveTransaction(provider, unsignedTx);
-const signed   = await signTransaction([signer], resolved);
+const signed = await signTransaction([signer], resolved);
 const envelope = encodeTransaction(encoder, signed);
-const txId     = await submitTransaction(provider, envelope);
-const receipt  = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
+const txId = await submitTransaction(provider, envelope);
+const receipt = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
 
 // All-in-one
 const receipt = await sendTransaction(provider, signer, encoder, unsignedTx);
@@ -463,7 +463,15 @@ ootle.ts includes support for stealth (privacy-preserving) transfers, mirroring 
 Stealth transfers produce outputs with one-time public keys — only the recipient (who holds the matching view-only key) can scan and spend them.
 
 ```ts
-import { StealthTransfer, WalletStealthAuthorizer, OotleWallet, signTransaction, resolveTransaction, encodeTransaction, submitTransaction } from "@tari-project/ootle";
+import {
+  StealthTransfer,
+  WalletStealthAuthorizer,
+  OotleWallet,
+  signTransaction,
+  resolveTransaction,
+  encodeTransaction,
+  submitTransaction,
+} from "@tari-project/ootle";
 
 // 1. Build the stealth transfer
 const spec = await new StealthTransfer(Network.Esmeralda, factory)
@@ -549,10 +557,6 @@ pnpm --filter @tari-project/ootle build
 # Lint all packages
 pnpm -r lint
 ```
-
-### Prerequisites
-
-The `@tari-project/ootle-ts-bindings` package (Rust-generated TypeScript types) is loaded from a local path at `../../../../localnet/ootle/bindings`. To generate it, follow the setup instructions in the [tari-ootle](https://github.com/tari-project/tari-ootle) repository.
 
 ---
 

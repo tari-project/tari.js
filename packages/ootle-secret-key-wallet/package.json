@@ -17,7 +17,7 @@
   "dependencies": {
     "@tari-project/ootle": "workspace:*",
     "@tari-project/ootle-wasm": "workspace:*",
-    "@tari-project/ootle-ts-bindings": "file:../../../../localnet/ootle/bindings"
+    "@tari-project/ootle-ts-bindings": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
