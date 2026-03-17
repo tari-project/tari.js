@@ -4,6 +4,11 @@
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "@tari-project/ootle";
 
+interface AccountInfo {
+  public_key: string;
+  address: string;
+}
+
 interface JrpcResponse<T = unknown> {
   jsonrpc: string;
   id: number;
@@ -51,14 +56,17 @@ export class WalletDaemonSigner implements Signer {
 
   public async getAddress(): Promise<string> {
     if (!this._address) {
-      await this.fetchAccountInfo();
+      const { address } = await this.fetchAccountInfo();
+      return address;
+    } else {
+      return this._address;
     }
-    return this._address;
   }
 
   public async getPublicKey(): Promise<string> {
     if (!this._publicKey) {
-      await this.fetchAccountInfo();
+      const { public_key } = await this.fetchAccountInfo();
+      return public_key;
     }
     return this._publicKey;
   }
@@ -70,13 +78,18 @@ export class WalletDaemonSigner implements Signer {
     return response.signatures;
   }
 
-  private async fetchAccountInfo(): Promise<void> {
+  private async fetchAccountInfo(): Promise<AccountInfo> {
     const info = await this.jrpcCall<{ public_key: string; address: string }>("accounts.get_default", {});
     if (!info.public_key || !info.address) {
       throw new Error("Wallet daemon response missing public_key or address");
     }
     this._publicKey = info.public_key;
     this._address = info.address;
+
+    return {
+      address: info.address,
+      public_key: info.public_key,
+    };
   }
 
   private async jrpcCall<T>(method: string, params: unknown): Promise<T> {

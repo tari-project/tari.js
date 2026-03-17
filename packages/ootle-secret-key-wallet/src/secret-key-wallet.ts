@@ -1,13 +1,9 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type {
-  TransactionSignature,
-  UnsignedTransactionV1,
-} from "@tari-project/ootle-ts-bindings";
+import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "@tari-project/ootle";
-import { Network } from "@tari-project/ootle";
-import type { OotleWasm } from "ootle-wasm";
+import { generateKeypair, hashUnsignedTransaction, publicKeyFromSecretKey, schnorrSign } from "ootle-wasm";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,
@@ -22,34 +18,11 @@ export class SecretKeyWallet implements Signer {
   private readonly accountSecretHex: string;
   private readonly viewOnlySecretHex: string | null;
   private readonly publicKeyHex: string;
-  private readonly address: string;
-  private readonly wasm: OotleWasm;
-  readonly network: Network;
 
-  private constructor(
-    accountSecretHex: string,
-    viewOnlySecretHex: string | null,
-    publicKeyHex: string,
-    address: string,
-    wasm: OotleWasm,
-    network: Network,
-  ) {
+  private constructor(accountSecretHex: string, viewOnlySecretHex: string | null, publicKeyHex: string) {
     this.accountSecretHex = accountSecretHex;
     this.viewOnlySecretHex = viewOnlySecretHex;
     this.publicKeyHex = publicKeyHex;
-    this.address = address;
-    this.wasm = wasm;
-    this.network = network;
-  }
-
-  /**
-   * Generates a fresh random account keypair and derives the component address.
-   * The view-only key is not set; use `randomWithViewKey` if you need stealth support.
-   */
-  public static random(wasm: OotleWasm, network: Network | number): SecretKeyWallet {
-    const keypair = wasm.generateKeypair();
-    const address = wasm.publicKeyToAddress(keypair.public_key, network);
-    return new SecretKeyWallet(keypair.secret_key, null, keypair.public_key, address, wasm, network as Network);
   }
 
   /**
@@ -57,40 +30,19 @@ export class SecretKeyWallet implements Signer {
    * The view-only key is used for stealth/confidential output scanning.
    * Mirrors `OotleSecretKey { account_secret, view_only_secret }` from ootle-rs.
    */
-  public static randomWithViewKey(wasm: OotleWasm, network: Network | number): SecretKeyWallet {
-    const accountKeypair = wasm.generateKeypair();
-    const viewKeypair = wasm.generateKeypair();
-    const address = wasm.publicKeyToAddress(accountKeypair.public_key, network);
-    return new SecretKeyWallet(
-      accountKeypair.secret_key,
-      viewKeypair.secret_key,
-      accountKeypair.public_key,
-      address,
-      wasm,
-      network as Network,
-    );
+  public static randomWithViewKey(): SecretKeyWallet {
+    const accountKeypair = generateKeypair() as { secret_key: string; public_key: string };
+    const viewKeypair = generateKeypair() as { secret_key: string; public_key: string };
+    return new SecretKeyWallet(accountKeypair.secret_key, viewKeypair.secret_key, accountKeypair.public_key);
   }
 
   /**
    * Creates a wallet from an existing hex-encoded account secret key.
    * The public key is derived via `wasm.derivePublicKey`.
    */
-  public static fromSecretKey(
-    accountSecretHex: string,
-    wasm: OotleWasm,
-    network: Network | number,
-    viewOnlySecretHex?: string,
-  ): SecretKeyWallet {
-    const publicKeyHex = wasm.derivePublicKey(accountSecretHex);
-    const address = wasm.publicKeyToAddress(publicKeyHex, network);
-    return new SecretKeyWallet(
-      accountSecretHex,
-      viewOnlySecretHex ?? null,
-      publicKeyHex,
-      address,
-      wasm,
-      network as Network,
-    );
+  public static fromSecretKey(accountSecretHex: string, viewOnlySecretHex?: string): SecretKeyWallet {
+    const publicKeyHex = publicKeyFromSecretKey(accountSecretHex);
+    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
   }
 
   /**
@@ -100,27 +52,17 @@ export class SecretKeyWallet implements Signer {
   public static fromKeypair(
     accountSecretHex: string,
     publicKeyHex: string,
-    wasm: OotleWasm,
-    network: Network | number,
     viewOnlySecretHex?: string,
   ): SecretKeyWallet {
-    const address = wasm.publicKeyToAddress(publicKeyHex, network);
-    return new SecretKeyWallet(
-      accountSecretHex,
-      viewOnlySecretHex ?? null,
-      publicKeyHex,
-      address,
-      wasm,
-      network as Network,
-    );
+    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
   }
 
   public async getAddress(): Promise<string> {
-    return this.address;
+    return Promise.resolve(this.publicKeyHex);
   }
 
   public async getPublicKey(): Promise<string> {
-    return this.publicKeyHex;
+    return Promise.resolve(this.publicKeyHex);
   }
 
   /**
@@ -132,9 +74,9 @@ export class SecretKeyWallet implements Signer {
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
-    const hashBytes = this.wasm.hashUnsignedTransaction(JSON.stringify(unsignedTx));
-    const sig = this.wasm.schnorrSign(this.accountSecretHex, hashBytes);
-    return [
+    const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
+    const sig = schnorrSign(this.accountSecretHex, hashBytes) as { public_nonce: string; signature: string };
+    return Promise.resolve([
       {
         public_key: this.publicKeyHex,
         signature: {
@@ -142,6 +84,6 @@ export class SecretKeyWallet implements Signer {
           signature: sig.signature,
         },
       },
-    ];
+    ]);
   }
 }
