@@ -13,17 +13,27 @@ import type {
 import type { Provider } from "./provider";
 import type { Signer } from "./signer";
 import type { TransactionOutcome, WatchOptions } from "./types";
+import { borEncodeTransaction, hashUnsignedTransaction, schnorrSign } from "ootle-wasm";
 
 /**
  * Handles BOR encoding of transactions and hashing for signing.
  * The canonical implementation is provided by `@tari-project/ootle-wasm`.
  */
-export interface TransactionEncoder {
+export interface Encoder {
   /** BOR-encodes a signed Transaction and returns a base64 TransactionEnvelope string. */
   encode(transaction: Transaction): TransactionEnvelope;
 
   /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
-  hashForSigning(unsignedTx: UnsignedTransactionV1): Uint8Array;
+  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: string): Uint8Array;
+}
+
+export class TransactionEncoder implements Encoder {
+  encode(transaction: Transaction): TransactionEnvelope {
+    return borEncodeTransaction(JSON.stringify(transaction));
+  }
+  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: string): Uint8Array {
+    return hashUnsignedTransaction(JSON.stringify(unsignedTx), public_key_hex);
+  }
 }
 
 /**
@@ -52,17 +62,17 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
     transaction: unsignedTx,
     signatures: allSignatures,
   };
+  const pub_key = await signers[0]?.getPublicKey();
+  const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), pub_key);
 
   // TODO! Sealing needs to be implemented this is just a temporary fix
-  const seal_signature = {
-    public_key: allSignatures[0].public_key,
-    signature: allSignatures[0].signature,
-  };
+  // pub_key should be secret_key_hex!!
+  const sig = schnorrSign(pub_key, hashBytes) as { public_nonce: string; signature: string };
 
   return {
     V1: {
       body,
-      seal_signature,
+      seal_signature: { public_key: pub_key, signature: sig },
     },
   };
 }

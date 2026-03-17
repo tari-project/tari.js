@@ -15,7 +15,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tari-project/ootle-ts-bindings": "catalog:"
+    "@tari-project/ootle-ts-bindings": "catalog:",
+    "ootle-wasm": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
