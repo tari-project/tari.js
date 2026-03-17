@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm:*)"
+      "Bash(pnpm:*)",
+      "Bash(npm view:*)"
     ]
   }
 }

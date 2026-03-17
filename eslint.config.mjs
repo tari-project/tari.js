@@ -20,7 +20,8 @@ export default tseslint.config(eslint.configs.recommended, tseslint.configs.reco
   },
   languageOptions: {
     parserOptions: {
-      tsconfigRootDir: "./",
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
     },
   },
 });
