@@ -173,6 +173,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.7.0(vite@6.4.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.43.1)(yaml@2.8.2))
+      eslint:
+        specifier: 'catalog:'
+        version: 10.0.3(jiti@2.6.1)
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.1
+        version: 7.0.1(eslint@10.0.3(jiti@2.6.1))
       typescript:
         specifier: ~5.8.0
         version: 5.8.3
@@ -201,6 +207,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.7.0(vite@6.4.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.43.1)(yaml@2.8.2))
+      eslint:
+        specifier: 'catalog:'
+        version: 10.0.3(jiti@2.6.1)
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.1
+        version: 7.0.1(eslint@10.0.3(jiti@2.6.1))
       typescript:
         specifier: ~5.8.0
         version: 5.8.3
