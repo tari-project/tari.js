@@ -20,7 +20,7 @@ export function App() {
   const handleConnect = () => connect({ url: url.trim(), authToken: authToken.trim() });
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleConnect().catch((e) => console.error(e));
+    if (e.key === "Enter") handleConnect().catch((err) => console.error(err));
   };
 
   if (status === "connected" && address && publicKey) {
@@ -118,7 +118,7 @@ export function App() {
           </div>
         )}
 
-        <button className="btn-primary" onClick={void handleConnect} disabled={status === "connecting" || !url}>
+        <button className="btn-primary" onClick={() => void handleConnect()} disabled={status === "connecting" || !url}>
           {status === "connecting" ? (
             <>
               <Spinner /> Connecting…

@@ -5,6 +5,7 @@ import type {
   UnsignedTransactionV1,
   Transaction,
   TransactionSignature,
+  TransactionSealSignature,
   TransactionEnvelope,
   IndexerGetTransactionResultResponse,
   UnsealedTransactionV1,
@@ -12,7 +13,7 @@ import type {
 } from "@tari-project/ootle-ts-bindings";
 import type { Provider } from "./provider";
 import type { Signer } from "./signer";
-import type { WatchOptions } from "./types";
+import type { TransactionOutcome, WatchOptions } from "./types";
 
 /**
  * Handles BOR encoding of transactions and hashing for signing.
@@ -24,6 +25,17 @@ export interface TransactionEncoder {
 
   /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
   hashForSigning(unsignedTx: UnsignedTransactionV1): Uint8Array;
+}
+
+/**
+ * Applies the seal signature to a signed transaction.
+ * The seal signer is invoked last, after all regular signers, when
+ * `is_seal_signer_authorized` is true on the unsigned transaction.
+ *
+ * Mirrors `TransactionSealSigner` from the Rust ootle-rs crate.
+ */
+export interface TransactionSealSigner {
+  sealTransaction(transaction: Transaction): Promise<TransactionSealSignature>;
 }
 
 /**
@@ -40,11 +52,23 @@ export async function resolveTransaction(
 
 /**
  * Collects signatures from all provided signers and assembles a signed Transaction.
+ *
+ * If the unsigned transaction has `is_seal_signer_authorized = true`, a
+ * `TransactionSealSigner` must be supplied — it is called last and its output
+ * is placed in `seal_signature`. When sealing is not required the field is
+ * left as a null/empty placeholder as the network expects.
  */
 export async function signTransaction(
   signers: Signer[],
   unsignedTx: UnsignedTransactionV1,
+  sealSigner?: TransactionSealSigner,
 ): Promise<Transaction> {
+  if (unsignedTx.is_seal_signer_authorized && !sealSigner) {
+    throw new Error(
+      "Transaction requires a seal signer (is_seal_signer_authorized = true) but none was provided.",
+    );
+  }
+
   const allSignatures: TransactionSignature[] = [];
   for (const signer of signers) {
     const sigs = await signer.signTransaction(unsignedTx);
@@ -56,17 +80,27 @@ export async function signTransaction(
     signatures: allSignatures,
   };
 
-  return {
+  const unsealedTx: Transaction = {
     V1: {
       body,
-      // The seal signature is applied by the seal signer (if is_seal_signer_authorized = true).
-      // When not required, use empty placeholder values.
       seal_signature: {
         public_key: "",
         signature: { public_nonce: "", signature: "" },
       },
     },
   };
+
+  if (sealSigner) {
+    const sealSig = await sealSigner.sealTransaction(unsealedTx);
+    return {
+      V1: {
+        body,
+        seal_signature: sealSig,
+      },
+    };
+  }
+
+  return unsealedTx;
 }
 
 /**
@@ -88,9 +122,46 @@ export async function submitTransaction(
 }
 
 /**
+ * Classifies a finalized transaction result into a `TransactionOutcome`.
+ *
+ * - `Commit` — all instructions committed.
+ * - `OnlyFeeCommit` — fee instructions committed but execution was aborted.
+ * - `Reject` — the entire transaction was rejected.
+ *
+ * Returns `null` if the result is still pending.
+ */
+export function classifyOutcome(
+  result: IndexerTransactionFinalizedResult,
+): TransactionOutcome | null {
+  if (result === "Pending") return null;
+  if (!("Finalized" in result)) return null;
+
+  const finalized = result.Finalized;
+  const decision = finalized.final_decision;
+
+  if (decision === "Commit") {
+    return { status: "Commit" };
+  }
+
+  if (typeof decision === "object" && "Abort" in decision) {
+    const reason = finalized.abort_details ?? JSON.stringify(decision.Abort);
+    // OnlyFeeCommit: fees were paid (fee_decision === "Commit") but execution aborted.
+    const feeDecision = (finalized as Record<string, unknown>).fee_decision;
+    if (feeDecision === "Commit") {
+      return { status: "OnlyFeeCommit", reason };
+    }
+    return { status: "Reject", reason };
+  }
+
+  return { status: "Commit" };
+}
+
+/**
  * Polls the provider until a transaction reaches a finalized state, then returns the result.
  *
- * Throws if the transaction is rejected or the optional timeout is exceeded.
+ * Throws for `Reject` outcomes. `OnlyFeeCommit` (fees paid, execution aborted) also
+ * throws with a distinct message so callers can distinguish it from a full rejection.
+ * Use `classifyOutcome` on the raw result for non-throwing outcome inspection.
  */
 export async function watchTransaction(
   provider: Provider,
@@ -106,11 +177,13 @@ export async function watchTransaction(
     const result: IndexerTransactionFinalizedResult = response.result;
 
     if (result !== "Pending" && "Finalized" in result) {
-      const decision = result.Finalized.final_decision;
-      // Decision = "Commit" | { Abort: AbortReason }
-      if (typeof decision === "object" && "Abort" in decision) {
+      const outcome = classifyOutcome(result);
+      if (outcome?.status === "Reject") {
+        throw new Error(`Transaction ${txId} was rejected: ${outcome.reason}`);
+      }
+      if (outcome?.status === "OnlyFeeCommit") {
         throw new Error(
-          `Transaction ${txId} was aborted: ${result.Finalized.abort_details ?? JSON.stringify(decision.Abort)}`,
+          `Transaction ${txId} only committed fees (execution aborted): ${outcome.reason}`,
         );
       }
       return response;
@@ -133,10 +206,35 @@ export async function sendTransaction(
   encoder: TransactionEncoder,
   unsignedTx: UnsignedTransactionV1,
   watchOpts?: WatchOptions,
+  sealSigner?: TransactionSealSigner,
 ): Promise<IndexerGetTransactionResultResponse> {
   const resolved = await resolveTransaction(provider, unsignedTx);
-  const signed = await signTransaction([signer], resolved);
+  const signed = await signTransaction([signer], resolved, sealSigner);
   const envelope = encodeTransaction(encoder, signed);
   const txId = await submitTransaction(provider, envelope);
   return watchTransaction(provider, txId, watchOpts);
+}
+
+/**
+ * Like `sendTransaction` but sets `dry_run = true` on the transaction before
+ * submitting, so the network simulates execution without committing state.
+ *
+ * Mirrors `sign_and_send_dry_run` from the Rust ootle-rs `IndexerProvider`.
+ */
+export async function sendDryRun(
+  provider: Provider,
+  signer: Signer,
+  encoder: TransactionEncoder,
+  unsignedTx: UnsignedTransactionV1,
+  watchOpts?: WatchOptions,
+  sealSigner?: TransactionSealSigner,
+): Promise<IndexerGetTransactionResultResponse> {
+  return sendTransaction(
+    provider,
+    signer,
+    encoder,
+    { ...unsignedTx, dry_run: true },
+    watchOpts,
+    sealSigner,
+  );
 }

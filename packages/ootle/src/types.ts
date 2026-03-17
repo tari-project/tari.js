@@ -35,6 +35,36 @@ export interface WatchOptions {
   timeoutMs?: number;
 }
 
+/**
+ * The outcome of a finalized transaction.
+ * Mirrors `TransactionOutcome` from the Rust ootle-rs crate.
+ *
+ * - `Commit` — transaction fully committed (fees + execution).
+ * - `OnlyFeeCommit` — fees paid but execution was rejected (partial commit).
+ * - `Reject` — entire transaction rejected (no state changes).
+ */
+export type TransactionOutcome =
+  | { status: "Commit" }
+  | { status: "OnlyFeeCommit"; reason: string }
+  | { status: "Reject"; reason: string };
+
+/**
+ * A value paired with its seal signature.
+ * Mirrors `Signed<T>` from the Rust ootle-rs crate.
+ */
+export interface Signed<T> {
+  inner: T;
+  sealSignature: import("@tari-project/ootle-ts-bindings").TransactionSealSignature;
+}
+
+/**
+ * Implemented by types that can produce a component address string.
+ * Mirrors the `ToAccountAddress` trait from ootle-rs.
+ */
+export interface ToAccountAddress {
+  toAccountAddress(): string;
+}
+
 export interface ListSubstatesRequest {
   filterByTemplate?: string | null;
   filterByType?: string | null;

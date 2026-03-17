@@ -13,13 +13,18 @@ export {
   submitTransaction,
   watchTransaction,
   sendTransaction,
+  sendDryRun,
+  classifyOutcome,
 } from "./transaction";
-export type { TransactionEncoder } from "./transaction";
+export type { TransactionEncoder, TransactionSealSigner } from "./transaction";
 export type {
   Amount,
   WatchOptions,
   ListSubstatesRequest,
   ListSubstatesResponse,
+  TransactionOutcome,
+  Signed,
+  ToAccountAddress,
   UnsignedTransactionV1,
   Transaction,
   TransactionV1,
@@ -46,3 +51,19 @@ export type {
 } from "./types";
 export { parseWorkspaceStringKey } from "./helpers/workspace";
 export type { ParsedWorkspaceKey } from "./helpers/workspace";
+export { defaultIndexerUrl } from "./helpers/network";
+export type { OutputMaskProvider, DiffieHellmanKdfKeyProvider, WalletKeyProvider } from "./key-provider";
+export { AccountInvokeBuilder, FaucetInvokeBuilder } from "./builtin-templates";
+export type {
+  StealthOutput,
+  StealthTransferStatement,
+  StealthOutputStatementFactory,
+  InputDecryptor,
+  StealthKeySigner,
+  StealthSigner,
+} from "./stealth";
+export { StealthTransfer } from "./stealth-transfer";
+export type { SignatureRequirements, StealthTransferSpec } from "./stealth-transfer";
+export { OotleWallet } from "./wallet";
+export type { TransactionAuthorization } from "./wallet";
+export { WalletStealthAuthorizer } from "./wallet-stealth-authorizer";

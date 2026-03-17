@@ -37,6 +37,12 @@ export interface OotleWasm {
   generateKeypair(): { secret_key: string; public_key: string };
 
   /**
+   * Derives the public key from a hex-encoded secret key.
+   * Must be implemented in the WASM crate (tari_crypto scalar multiplication).
+   */
+  derivePublicKey(secretKeyHex: string): string;
+
+  /**
    * Derives the component address from a public key and network byte.
    */
   publicKeyToAddress(publicKey: string, network: number): string;

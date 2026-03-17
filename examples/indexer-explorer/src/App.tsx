@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { Network } from "@tari-project/ootle";
+import { Network, defaultIndexerUrl } from "@tari-project/ootle";
 import { useIndexer } from "./hooks/useIndexer";
 import type { SubstateEntry } from "./hooks/useIndexer";
 import "./App.css";
 
 // Public Esmeralda testnet indexer — no local setup required.
-// Swap for http://localhost:18300 when using a local indexer.
-const DEFAULT_URL = "http://217.182.93.35:50124";
+// Swap for http://localhost:18300 (with Network.LocalNet) when using a local indexer.
 const DEFAULT_NETWORK = Network.Esmeralda;
+const DEFAULT_URL = defaultIndexerUrl(DEFAULT_NETWORK);
 
 const NETWORKS: { label: string; value: Network }[] = [
   { label: "Esmeralda testnet (public)", value: Network.Esmeralda },

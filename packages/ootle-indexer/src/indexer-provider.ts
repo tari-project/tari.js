@@ -15,20 +15,33 @@ import type { Provider, ListSubstatesRequest, ListSubstatesResponse } from "@tar
 import { Network } from "@tari-project/ootle";
 import { IndexerClient } from "./transport/indexer-client";
 import { FetchTransport } from "./transport/http-transport";
+import { TransactionWatcher, PendingTransaction } from "./tx-watcher";
 
 export interface IndexerProviderOptions {
   /** Base URL of the indexer REST API, e.g. "http://localhost:18300" */
   url: string;
   network: Network;
+  /** Default timeout for `watchTransaction`, in milliseconds. Defaults to 60000ms. */
+  defaultTransactionTimeoutMs?: number;
 }
 
 export class IndexerProvider implements Provider {
   private client: IndexerClient;
   private _network: Network;
+  private readonly _url: string;
+  private _watcher: TransactionWatcher | null = null;
+  readonly defaultTransactionTimeoutMs: number;
 
-  private constructor(client: IndexerClient, network: Network) {
+  private constructor(
+    client: IndexerClient,
+    network: Network,
+    url: string,
+    defaultTransactionTimeoutMs: number,
+  ) {
     this.client = client;
     this._network = network;
+    this._url = url;
+    this.defaultTransactionTimeoutMs = defaultTransactionTimeoutMs;
   }
 
   /**
@@ -37,7 +50,48 @@ export class IndexerProvider implements Provider {
   public static async connect(options: IndexerProviderOptions): Promise<IndexerProvider> {
     const client = IndexerClient.new(FetchTransport.new(options.url));
     await client.identityGet();
-    return new IndexerProvider(client, options.network);
+    return new IndexerProvider(
+      client,
+      options.network,
+      options.url,
+      options.defaultTransactionTimeoutMs ?? 60_000,
+    );
+  }
+
+  /** Exposes the underlying IndexerClient for advanced use (e.g. resolveWantInputs). */
+  public getClient(): IndexerClient {
+    return this.client;
+  }
+
+  /**
+   * Returns a `PendingTransaction` that resolves via SSE when the network
+   * finalises the transaction, falling back to REST polling on timeout.
+   *
+   * The `TransactionWatcher` SSE loop is created lazily on the first call
+   * and reused for all subsequent calls on this provider instance.
+   * Mirrors `IndexerProvider::get_tx_watcher` + `PendingTransaction` from ootle-rs.
+   *
+   * @example
+   * ```ts
+   * const txId = await submitTransaction(provider, envelope);
+   * const outcome = await provider.watchTransactionSSE(txId).watch();
+   * ```
+   */
+  public watchTransactionSSE(txId: string, timeoutMs?: number): PendingTransaction {
+    if (!this._watcher) {
+      this._watcher = new TransactionWatcher(this._url);
+      this._watcher.start();
+    }
+    return this._watcher.watch(txId, this.client, timeoutMs ?? this.defaultTransactionTimeoutMs);
+  }
+
+  /**
+   * Stops the SSE `TransactionWatcher` if one is running.
+   * Call this when the provider is no longer needed to release the connection.
+   */
+  public stopWatcher(): void {
+    this._watcher?.stop();
+    this._watcher = null;
   }
 
   public network(): Network {

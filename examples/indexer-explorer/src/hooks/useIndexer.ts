@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { IndexerProvider } from "@tari-project/ootle-indexer";
+import { ProviderBuilder, IndexerProvider } from "@tari-project/ootle-indexer";
 import { Network } from "@tari-project/ootle";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
@@ -15,8 +15,8 @@ export interface SubstateEntry {
 /**
  * Manages a read-only connection to an Ootle indexer.
  *
- * IndexerProvider.connect() fetches the indexer identity to verify the URL
- * is reachable before returning. All subsequent calls go through the provider.
+ * Uses `ProviderBuilder` to construct the provider fluently. The builder
+ * verifies connectivity (fetches indexer identity) before resolving.
  *
  * Usage:
  *   const { status, connect, getSubstate, listSubstates } = useIndexer()
@@ -31,7 +31,7 @@ export function useIndexer() {
     setStatus("connecting");
     setError(null);
     try {
-      const p = await IndexerProvider.connect({ url: url.trim(), network });
+      const p = await ProviderBuilder.new().withNetwork(network).withUrl(url.trim()).connect();
       setProvider(p);
       setStatus("connected");
     } catch (err) {
