@@ -2,7 +2,7 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import type { Signer } from "@tari-project/ootle";
+import { Network, Signer } from "@tari-project/ootle";
 import type { OotleWasm } from "@tari-project/ootle-wasm";
 
 /**
@@ -17,12 +17,14 @@ export class SecretKeyWallet implements Signer {
   private publicKeyHex: string;
   private address: string;
   private wasm: OotleWasm;
+  private network: Network;
 
-  private constructor(secretKeyHex: string, publicKeyHex: string, address: string, wasm: OotleWasm) {
+  private constructor(secretKeyHex: string, publicKeyHex: string, address: string, wasm: OotleWasm, network: Network) {
     this.secretKeyHex = secretKeyHex;
     this.publicKeyHex = publicKeyHex;
     this.address = address;
     this.wasm = wasm;
+    this.network = network;
   }
 
   /**
@@ -31,7 +33,7 @@ export class SecretKeyWallet implements Signer {
   public static random(wasm: OotleWasm, network: number): SecretKeyWallet {
     const keypair = wasm.generateKeypair();
     const address = wasm.publicKeyToAddress(keypair.public_key, network);
-    return new SecretKeyWallet(keypair.secret_key, keypair.public_key, address, wasm);
+    return new SecretKeyWallet(keypair.secret_key, keypair.public_key, address, wasm, network);
   }
 
   /**
@@ -45,21 +47,21 @@ export class SecretKeyWallet implements Signer {
     network: number,
   ): SecretKeyWallet {
     const address = wasm.publicKeyToAddress(publicKeyHex, network);
-    return new SecretKeyWallet(secretKeyHex, publicKeyHex, address, wasm);
+    return new SecretKeyWallet(secretKeyHex, publicKeyHex, address, wasm, network);
   }
 
   public async getAddress(): Promise<string> {
-    return this.address;
+    return Promise.resolve(this.address);
   }
 
   public async getPublicKey(): Promise<string> {
-    return this.publicKeyHex;
+    return Promise.resolve(this.publicKeyHex);
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = this.wasm.hashUnsignedTransaction(JSON.stringify(unsignedTx));
     const sig = this.wasm.schnorrSign(this.secretKeyHex, hashBytes);
-    return [
+    return Promise.resolve([
       {
         public_key: this.publicKeyHex,
         signature: {
@@ -67,6 +69,6 @@ export class SecretKeyWallet implements Signer {
           signature: sig.signature,
         },
       },
-    ];
+    ]);
   }
 }

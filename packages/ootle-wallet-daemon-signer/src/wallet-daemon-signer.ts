@@ -56,18 +56,14 @@ export class WalletDaemonSigner implements Signer {
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
-    const response = await this.jrpcCall<{ signatures: TransactionSignature[] }>(
-      "transactions.sign",
-      { transaction: unsignedTx },
-    );
+    const response = await this.jrpcCall<{ signatures: TransactionSignature[] }>("transactions.sign", {
+      transaction: unsignedTx,
+    });
     return response.signatures;
   }
 
   private async fetchAccountInfo(): Promise<void> {
-    const info = await this.jrpcCall<{ public_key: string; address: string }>(
-      "accounts.get_default",
-      {},
-    );
+    const info = await this.jrpcCall<{ public_key: string; address: string }>("accounts.get_default", {});
     this._publicKey = info.public_key;
     this._address = info.address;
   }
