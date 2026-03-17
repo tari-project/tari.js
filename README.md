@@ -1,264 +1,578 @@
-# tari.js
+# ootle.ts
 
-> **🚀 The complete TypeScript toolkit for building on Tari** — Connect any wallet, query the blockchain, and create powerful dApps with confidence.
+> TypeScript SDK for building on the [Tari Ootle](https://github.com/tari-project/tari-ootle) network.
 
-[![npm version](https://badge.fury.io/js/@tari-project%2Ftarijs.svg)](https://badge.fury.io/js/@tari-project%2Ftarijs)
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
-[![Documentation](https://img.shields.io/badge/docs-tari--project.github.io-brightgreen)](https://tari-project.github.io/tari.js/)
 
-**✨ What makes tari.js special?**
-- **🔌 Universal Wallet Support** — MetaMask, Wallet Daemon, Universe, WalletConnect — all with one API
-- **🛡️ Privacy-First** — Built-in confidential transactions and zero-knowledge proofs
-- **📱 Developer Friendly** — Full TypeScript support, intuitive APIs, comprehensive docs
-- **⚡ Production Ready** — Battle-tested, optimized, and actively maintained
-
-## Installing Tari.js
-
-Tari.js provides the following packages:
-
-| Package Name                           | Description                                                |
-|----------------------------------------|------------------------------------------------------------|
-| @tari-project/tarijs-all               | Everything: core, signers, providers, builders, permissions|
-| @tari-project/tarijs                   | Core Tari.js types and helpers                             |
-| @tari-project/tarijs-builders          | Transaction builder (fluent API)                           |
-| @tari-project/indexer-provider         | Read-only blockchain provider                              |
-| @tari-project/wallet-daemon-signer     | Wallet Daemon signer & provider                            |
-| @tari-project/metamask-signer          | MetaMask signer                                            |
-| @tari-project/tari-universe-signer     | Tari Universe wallet signer                                |
-| @tari-project/wallet-connect-signer    | WalletConnect signer                                       |
-| @tari-project/tari-permissions         | Permissions utility                                        |
-| @tari-project/typescript-bindings      | TypeScript type definitions and low-level structures       |
-| @tari-project/tarijs-types             | Re-exports typescript-bindings while adding tari.js specific types |
-
-### Recommended: Use the Main Package
-
-This installs everything (providers, signers, core modules, builders, types and permissions) with one package:
-
-```sh
-npm install @tari-project/tarijs
-```
-
-You can then import any of the required packages in your application:
-
-```typescript
-import {
-  IndexerProvider,
-  WalletDaemonTariSigner,
-  TariUniverseSigner,
-  WalletConnectTariSigner,
-  TransactionBuilder,
-  TariPermissions,
-} from "@tari-project/tarijs";
-```
-
-If you are interested in development on the bleeding edge, you can install the following:
-
-```sh
-npm install @tari-project/tarijs-all
-```
-
-This will install ALL tari.js modules. Some of these may be under active development, experimental or not properly documented.
-
-### Optional: Install only the modules you require
-
-If you require a minimal or custom setup, you can install the packages individually. This is not recommended unless you have a firm understanding of the purpose and function of the different packages.
-
-Example of dependencies if you just wish to query Ootle states on the chain:
-
-```sh
-npm install @tari-project/indexer-provider
-npm install @tari-project/wallet-daemon-signer   # Only if you need wallet data models/types
-```
-
-#### Core Packages
-
-- **@tari-project/tarijs-builders**  
-  ```sh
-  npm install @tari-project/tarijs-builders
-  ```
-
-#### Providers
-- **@tari-project/indexer-provider**  
-  ```sh
-  npm install @tari-project/indexer-provider
-  ```
-
-- **@tari-project/wallet-daemon-signer**  
-  ```sh
-  npm install @tari-project/wallet-daemon-signer
-  ```
-
-#### Signers
-- **@tari-project/metamask-signer**  
-  ```sh
-  npm install @tari-project/metamask-signer
-  ```
-
-- **@tari-project/tari-universe-signer**  
-  ```sh
-  npm install @tari-project/tari-universe-signer
-  ```
-
-- **@tari-project/wallet-connect-signer**  
-  ```sh
-  npm install @tari-project/wallet-connect-signer
-  ```
-
-### Helpers
-
-- **@tari-project/tari-permissions**  
-  ```sh
-  npm install @tari-project/tari-permissions
-  ```
-
-
-## 🎯 Quick Start (5 minutes)
-
-Get your first Tari app running in minutes:
-
-```bash
-# Install tari.js
-npm install @tari-project/tarijs-all
-
-# Run your first connection test
-node -e "
-import { WalletDaemonTariSigner, TariPermissions } from '@tari-project/tarijs-all';
-const wallet = await WalletDaemonTariSigner.buildFetchSigner({
-  serverUrl: 'http://localhost:18103',
-  permissions: new TariPermissions()
-});
-console.log('Connected to Tari!');
-"
-```
-
-**👉 [Complete Installation Guide](https://tari-project.github.io/tari.js/docs/installation) | [5-Minute Tutorial](https://tari-project.github.io/tari.js/docs/guides/getting-started-tutorial)**
-
-## 🏗️ What You Can Build
-
-### 🪙 **DeFi Applications**
-```typescript
-// Transfer tokens
-const transaction = new TransactionBuilder()
-  .feeTransactionPayFromComponent(account.address, "100")
-  .callMethod({
-    componentAddress: account.address,
-    methodName: 'withdraw'
-  }, [{ type: 'Amount', value: '1000' }])
-  .build();
-```
-
-### 🎮 **Gaming & NFTs**  
-```typescript
-// Call a smart contract function
-const transaction = new TransactionBuilder()
-  .feeTransactionPayFromComponent(account.address, "100")
-  .callFunction({
-    templateAddress: nftTemplate.address,
-    functionName: 'mint_nft'
-  }, [{ name: 'metadata', value: { name: "Epic Sword", rarity: "legendary" } }])
-  .build();
-```
-
-### 💼 **Enterprise Solutions**
-```typescript
-// Multiple operations in one transaction
-const transaction = new TransactionBuilder()
-  .feeTransactionPayFromComponent(account.address, "100")
-  .callMethod({ componentAddress: account1, methodName: 'withdraw' }, [amount1])
-  .callMethod({ componentAddress: account2, methodName: 'withdraw' }, [amount2])
-  .build();
-```
-
-## 🔗 Supported Wallets
-
-| Wallet | Best For | Status |
-|--------|----------|--------|
-| **🖥️ [Tari Wallet Daemon](https://tari-project.github.io/tari.js/docs/signers/wallet-daemon)** | Servers, advanced features | ✅ Production |
-| **🦊 [MetaMask](https://tari-project.github.io/tari.js/docs/signers/metamask)** | Browser apps, familiar UX | ✅ Production |
-| **🌌 [Tari Universe](https://tari-project.github.io/tari.js/docs/signers/tari-universe)** | Mobile, native experience | ✅ Production |
-| **📱 [WalletConnect](https://tari-project.github.io/tari.js/docs/signers/wallet-connect)** | Cross-platform, mobile-first | ✅ Production |
-
-## 📚 Documentation Hub
-
-### 🚀 **Get Started**
-- **[Installation Guide](https://tari-project.github.io/tari.js/docs/installation)** — Set up your development environment
-- **[First App Tutorial](https://tari-project.github.io/tari.js/docs/guides/getting-started-tutorial)** — Build a working wallet app
-- **[Provider vs Signer](https://tari-project.github.io/tari.js/docs/provider-vs-signer)** — Understand the core concepts
-
-### 📖 **Guides & Examples**
-- **[Wallet Integration](https://tari-project.github.io/tari.js/category/signers)** — Connect different wallet types
-- **[Transaction Building](https://tari-project.github.io/tari.js/docs/wallet/submit-transaction/transaction-builder/)** — Create complex transactions
-- **[Production Deployment](https://tari-project.github.io/tari.js/docs/guides/production-deployment)** — Go live with confidence
-
-### 🔧 **Reference**
-- **[Complete API Reference](https://tari-project.github.io/tari.js/docs/api-reference)** — Every method documented
-- **[Troubleshooting](https://tari-project.github.io/tari.js/docs/troubleshooting)** — Common issues & solutions
-- **[Templates & Examples](https://github.com/tari-project/tari.js/tree/main/examples)** — Copy-paste code snippets
+ootle.ts is a modular, strongly-typed SDK that lets you connect to wallets, query chain state, build transactions, and submit them to the Tari Ootle network — all from TypeScript or JavaScript.
 
 ---
 
-## 🛠️ Contributing & Development  
+## Packages
 
-**Want to contribute?** We'd love your help! Here's how to get started:
+The SDK is split into five focused packages. Install only what you need.
 
-### 🚀 **Quick Development Setup**
+| Package                                                                               | Description                                                      |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [`@tari-project/ootle`](#tari-projectootle)                                           | Core interfaces, transaction builder, and flow helpers           |
+| [`@tari-project/ootle-indexer`](#tari-projectootle-indexer)                           | Indexer REST provider — read chain state and submit transactions |
+| [`@tari-project/ootle-secret-key-wallet`](#tari-projectootle-secret-key-wallet)       | Local in-memory signer backed by the WASM crypto module          |
+| [`@tari-project/ootle-wallet-daemon-signer`](#tari-projectootle-wallet-daemon-signer) | Remote signer — delegates signing to a running wallet daemon     |
+| [`@tari-project/ootle-wasm`](#tari-projectootle-wasm)                                 | WASM cryptographic primitives (BOR encoding, Schnorr signing)    |
 
-```bash
-# 1. Clone with required dependencies
-git clone https://github.com/tari-project/tari.js
-git clone https://github.com/tari-project/tari-ootle ../tari-ootle
+---
 
-# 2. Install toolchain
-curl -fsSL https://moonrepo.dev/install/proto.sh | bash
-proto use
+## Quick start
 
-# 3. Build everything
+### 1. Connect to the Esmeralda testnet and read a substate
+
+```ts
+import { ProviderBuilder, Network } from "@tari-project/ootle-indexer";
+
+const provider = await ProviderBuilder.new().withNetwork(Network.Esmeralda).connect(); // uses the default public indexer URL
+
+const substate = await provider.getSubstate("component_0x…");
+console.log(substate);
+```
+
+### 2. Build and submit a transaction (wallet daemon)
+
+```ts
+import { TransactionBuilder, sendTransaction, Network } from "@tari-project/ootle";
+import { ProviderBuilder } from "@tari-project/ootle-indexer";
+import { WalletDaemonSigner } from "@tari-project/ootle-wallet-daemon-signer";
+import { createWasmEncoder } from "@tari-project/ootle-wasm";
+
+const provider = await ProviderBuilder.new().withNetwork(Network.LocalNet).connect();
+const signer = await WalletDaemonSigner.connect({ url: "http://localhost:18103", authToken: "…" });
+const encoder = createWasmEncoder(wasmModule); // your compiled WASM module
+
+const unsignedTx = TransactionBuilder.new(Network.LocalNet)
+  .feeTransactionPayFromComponent(await signer.getAddress(), 1000n)
+  .callMethod({ componentAddress: accountAddress, methodName: "withdraw" }, [
+    { Literal: resourceAddress },
+    { Literal: "500" },
+  ])
+  .saveVar("bucket")
+  .callMethod({ componentAddress: recipientAddress, methodName: "deposit" }, [{ Workspace: "bucket" }])
+  .buildUnsignedTransaction();
+
+const result = await sendTransaction(provider, signer, encoder, unsignedTx);
+```
+
+### 3. Local signing (testing / scripting)
+
+```ts
+import { SecretKeyWallet } from "@tari-project/ootle-secret-key-wallet";
+
+// Generate a fresh wallet
+const wallet = SecretKeyWallet.random(wasmModule, Network.LocalNet);
+
+// Or restore from an existing key
+const wallet = SecretKeyWallet.fromSecretKey(secretKeyHex, wasmModule, Network.LocalNet);
+```
+
+---
+
+## Architecture
+
+ootle.ts uses two core abstractions:
+
+### `Provider` — reads chain state
+
+Implemented by `IndexerProvider`. Provides:
+
+- `getSubstate(id)` / `fetchSubstates(ids)`
+- `resolveInputs(inputs)` — fills in missing versions before signing
+- `submitTransaction(envelope)`
+- `getTransactionResult(txId)`
+- `listSubstates(params)` / `getTemplateDefinition(address)`
+
+### `Signer` — produces signatures
+
+Implemented by `SecretKeyWallet`, `WalletDaemonSigner`, and `EphemeralKeySigner`. Provides:
+
+- `getAddress()` / `getPublicKey()`
+- `signTransaction(unsignedTx)`
+
+For transactions that require a seal (when `is_seal_signer_authorized = true`), the signer also implements `TransactionSealSigner`:
+
+- `sealTransaction(transaction)`
+
+### Transaction flow
+
+```
+unsignedTx
+  → resolveTransaction(provider, …)   // fill in substate versions
+  → signTransaction(signers, …)        // collect signatures, apply seal
+  → encodeTransaction(encoder, …)      // BOR-encode to envelope
+  → submitTransaction(provider, …)     // submit to network
+  → watchTransaction(provider, txId)   // wait for finalization
+```
+
+Or use the `sendTransaction` / `sendDryRun` convenience helpers which chain all steps.
+
+---
+
+## Package Reference
+
+### `@tari-project/ootle`
+
+Core package. Everything else depends on it.
+
+```ts
+import {
+  Network,
+  TransactionBuilder,
+  literalArg,
+  resolveTransaction,
+  signTransaction,
+  encodeTransaction,
+  submitTransaction,
+  watchTransaction,
+  sendTransaction,
+  sendDryRun,
+  classifyOutcome,
+  OotleWallet,
+  WalletStealthAuthorizer,
+  StealthTransfer,
+  AccountInvokeBuilder,
+  FaucetInvokeBuilder,
+  defaultIndexerUrl,
+} from "@tari-project/ootle";
+```
+
+#### `Network`
+
+```ts
+enum Network {
+  MainNet = 0x00,
+  StageNet = 0x01,
+  NextNet = 0x02,
+  LocalNet = 0x10,
+  Igor = 0x24,
+  Esmeralda = 0x26,
+}
+```
+
+#### `TransactionBuilder`
+
+Fluent builder for `UnsignedTransactionV1`.
+
+```ts
+const unsignedTx = TransactionBuilder.new(Network.Esmeralda)
+  .feeTransactionPayFromComponent(accountAddress, 1000n)
+  .callFunction({ templateAddress, functionName: "new" }, [literalArg("hello")])
+  .saveVar("component")
+  .callMethod({ componentAddress, methodName: "do_something" }, [{ Workspace: "component" }])
+  .withMinEpoch(10)
+  .addInput({ substate_id: vaultId, version: 3 })
+  .buildUnsignedTransaction();
+```
+
+Key methods:
+
+| Method                                                    | Description                                    |
+| --------------------------------------------------------- | ---------------------------------------------- |
+| `callFunction(func, args)`                                | Call a template function                       |
+| `callMethod(method, args)`                                | Call a component method                        |
+| `createAccount(ownerPublicKey)`                           | Create a new account component                 |
+| `saveVar(name)`                                           | Save last output to a named workspace variable |
+| `feeTransactionPayFromComponent(addr, amount)`            | Add fee instruction                            |
+| `feeTransactionPayFromComponentConfidential(addr, proof)` | Confidential fee                               |
+| `claimBurn(claim, output_data)`                           | Claim a Minotari burn                          |
+| `allocateAddress(type, name)`                             | Pre-allocate an address                        |
+| `addInput(req)` / `withInputs(reqs)`                      | Add substate inputs                            |
+| `withMinEpoch(n)` / `withMaxEpoch(n)`                     | Set epoch bounds                               |
+| `buildUnsignedTransaction()`                              | Return the finished `UnsignedTransactionV1`    |
+
+#### Transaction flow functions
+
+```ts
+// Individual steps
+const resolved = await resolveTransaction(provider, unsignedTx);
+const signed   = await signTransaction([signer], resolved, sealSigner?);
+const envelope = encodeTransaction(encoder, signed);
+const txId     = await submitTransaction(provider, envelope);
+const receipt  = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
+
+// All-in-one
+const receipt = await sendTransaction(provider, signer, encoder, unsignedTx);
+
+// Dry-run (simulates without committing)
+const result = await sendDryRun(provider, signer, encoder, unsignedTx);
+
+// Inspect the outcome
+const outcome = classifyOutcome(receipt.result);
+// outcome: { status: "Commit" }
+//        | { status: "OnlyFeeCommit"; reason: string }
+//        | { status: "Reject"; reason: string }
+```
+
+#### `OotleWallet`
+
+Multi-signer wallet that manages multiple key providers — one per address. Useful when a transaction requires authorizations from several components.
+
+```ts
+import { OotleWallet } from "@tari-project/ootle";
+
+const wallet = new OotleWallet();
+wallet.registerKeyProvider(address, secretKeyWallet);
+wallet.setDefaultSigner(address);
+
+// Sign on behalf of any registered signer
+const auth = await wallet.authorizeTransaction(address, unsignedTx);
+
+// Sign with the default signer
+const signatures = await wallet.signTransaction(unsignedTx);
+```
+
+#### Builtin template helpers
+
+Pre-built builders for the standard account and faucet templates.
+
+```ts
+import { AccountInvokeBuilder, FaucetInvokeBuilder } from "@tari-project/ootle";
+
+// Withdraw from account
+const tx = new AccountInvokeBuilder(Network.Esmeralda, accountAddress)
+  .feeTransactionPayFromComponent(accountAddress, 1000n)
+  .publicTransfer(accountAddress, resourceAddress, 500n, recipientAddress)
+  .build();
+
+// Take faucet funds
+const tx = new FaucetInvokeBuilder(Network.Esmeralda, faucetAddress)
+  .feeTransactionPayFromComponent(accountAddress, 1000n)
+  .takeFaucetFunds(accountAddress, 10_000n)
+  .build();
+```
+
+#### `defaultIndexerUrl(network)`
+
+Returns the well-known indexer URL for a network. Currently returns URLs for `LocalNet` and `Esmeralda`; throws for others.
+
+```ts
+import { defaultIndexerUrl, Network } from "@tari-project/ootle";
+
+const url = defaultIndexerUrl(Network.Esmeralda);
+// "http://217.182.93.35:50124"
+```
+
+---
+
+### `@tari-project/ootle-indexer`
+
+Provider implementation backed by the indexer REST API.
+
+```ts
+import {
+  IndexerProvider,
+  ProviderBuilder,
+  IndexerClient,
+  FetchTransport,
+  TransactionWatcher,
+  PendingTransaction,
+  resolveWantInputs,
+} from "@tari-project/ootle-indexer";
+import type { WantInput } from "@tari-project/ootle-indexer";
+```
+
+#### `ProviderBuilder`
+
+Fluent factory for `IndexerProvider`. Falls back to `defaultIndexerUrl` when no URL is set.
+
+```ts
+const provider = await ProviderBuilder.new()
+  .withNetwork(Network.Esmeralda)
+  .withUrl("http://my-indexer:18300") // optional — defaults to known URL
+  .withTransactionTimeoutMs(60_000)
+  .connect();
+```
+
+#### `IndexerProvider`
+
+```ts
+// Connect
+const provider = await IndexerProvider.connect({ url, network });
+
+// Read chain state
+const substate = await provider.getSubstate("component_0x…");
+const substates = await provider.fetchSubstates([id1, id2]);
+const template = await provider.getTemplateDefinition(templateAddress);
+const list = await provider.listSubstates({ filterByType: "Component", limit: 50 });
+
+// Submit
+const { transaction_id } = await provider.submitTransaction(envelope);
+
+// Watch for finalization via SSE (falls back to polling on timeout)
+const outcome = await provider.watchTransactionSSE(transaction_id).watch();
+
+// Full receipt (after watching)
+const receipt = await provider.watchTransactionSSE(transaction_id).getReceipt();
+
+// Stop the SSE watcher when done
+provider.stopWatcher();
+```
+
+#### `TransactionWatcher` and `PendingTransaction`
+
+The `TransactionWatcher` maintains a persistent SSE connection to the indexer's `/events` endpoint and routes `TransactionFinalized` events to registered waiters. It starts lazily on the first `watch()` call and can be shared across many transactions.
+
+```ts
+import { TransactionWatcher } from "@tari-project/ootle-indexer";
+
+const watcher = new TransactionWatcher("http://localhost:18300");
+watcher.start();
+
+// Submit your transaction, then:
+const pending = watcher.watch(txId, client, 32_000);
+const outcome = await pending.watch(); // SSE-first, poll fallback
+const receipt = await pending.getReceipt(); // raw indexer response
+
+watcher.stop();
+```
+
+`PendingTransaction.watch()` returns a `TransactionOutcome` and does **not** throw on `OnlyFeeCommit` or `Reject` — the caller decides how to handle each outcome.
+
+#### `WantInput` and `resolveWantInputs`
+
+Lazily resolve inputs by querying the indexer rather than supplying exact versions upfront.
+
+```ts
+import { resolveWantInputs } from "@tari-project/ootle-indexer";
+import type { WantInput } from "@tari-project/ootle-indexer";
+
+const wants: WantInput[] = [
+  { type: "SpecificSubstate", substateId: "component_0x…" },
+  { type: "VaultForResource", resourceAddress: "resource_0x…" },
+];
+
+const inputs = await resolveWantInputs(provider.getClient(), wants);
+// inputs: SubstateRequirement[] with versions filled in
+```
+
+---
+
+### `@tari-project/ootle-secret-key-wallet`
+
+Local signer that holds secret key material in JavaScript memory and uses the WASM module for all cryptographic operations.
+
+> **Warning:** The secret key lives unencrypted in memory. For production use, prefer `WalletDaemonSigner` so the key never touches JavaScript.
+
+```ts
+import { SecretKeyWallet, EphemeralKeySigner } from "@tari-project/ootle-secret-key-wallet";
+```
+
+#### `SecretKeyWallet`
+
+Implements both `Signer` and `TransactionSealSigner`. Holds an account secret key and an optional view-only key (required for stealth output scanning).
+
+```ts
+// Generate a new random wallet
+const wallet = SecretKeyWallet.random(wasm, Network.LocalNet);
+
+// Generate with a separate view-only key (for stealth support)
+const wallet = SecretKeyWallet.randomWithViewKey(wasm, Network.LocalNet);
+
+// Restore from a stored secret key
+const wallet = SecretKeyWallet.fromSecretKey(secretKeyHex, wasm, Network.LocalNet);
+
+// Restore from both keys (e.g. from a keystore)
+const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Network.LocalNet);
+
+// With view-only key for stealth
+const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Network.LocalNet, viewOnlySecretHex);
+
+// Use as Signer
+const signatures = await wallet.signTransaction(unsignedTx);
+
+// Use as TransactionSealSigner
+const sealSig = await wallet.sealTransaction(transaction);
+
+// Access view-only key (for scanning stealth outputs)
+const viewKey = wallet.getViewOnlySecret();
+```
+
+#### `EphemeralKeySigner`
+
+Generates a one-time throwaway keypair. Used in pure-stealth transactions where no link to the sender's identity should exist. The key is discarded when the object is garbage-collected.
+
+```ts
+const signer = EphemeralKeySigner.generate(wasm);
+const sealSig = await signer.sealTransaction(transaction);
+```
+
+---
+
+### `@tari-project/ootle-wallet-daemon-signer`
+
+Delegates signing to a running `tari_ootle_walletd` process. The secret key never enters JavaScript memory.
+
+```ts
+import { WalletDaemonSigner } from "@tari-project/ootle-wallet-daemon-signer";
+import type { WalletDaemonSignerOptions } from "@tari-project/ootle-wallet-daemon-signer";
+```
+
+```ts
+const options: WalletDaemonSignerOptions = {
+  url: "http://localhost:18103",
+  authToken: "your-auth-token",
+};
+
+// Connect and cache account info
+const signer = await WalletDaemonSigner.connect(options);
+
+const address = await signer.getAddress();
+const publicKey = await signer.getPublicKey();
+
+// Sign a transaction — the daemon returns signatures, the key stays on the daemon
+const signatures = await signer.signTransaction(unsignedTx);
+```
+
+To start the wallet daemon:
+
+```sh
+./tari_ootle_walletd --network esme
+```
+
+---
+
+### `@tari-project/ootle-wasm`
+
+Provides the `OotleWasm` interface that the WASM binary must implement, and a factory for creating a `TransactionEncoder` from an initialized module.
+
+```ts
+import { createWasmEncoder } from "@tari-project/ootle-wasm";
+import type { OotleWasm } from "@tari-project/ootle-wasm";
+
+// Initialize your compiled WASM binary (framework-specific)
+const wasmModule: OotleWasm = await initWasm();
+const encoder = createWasmEncoder(wasmModule);
+```
+
+The `OotleWasm` interface:
+
+| Method                                      | Description                                            |
+| ------------------------------------------- | ------------------------------------------------------ |
+| `generateKeypair()`                         | Generate a random `{ secret_key, public_key }` keypair |
+| `derivePublicKey(secretKeyHex)`             | Derive the public key from a secret key                |
+| `publicKeyToAddress(publicKeyHex, network)` | Derive a component address                             |
+| `schnorrSign(secretKeyHex, message)`        | Schnorr-sign a message hash                            |
+| `hashUnsignedTransaction(unsignedTxJson)`   | Canonical transaction hash for signing                 |
+| `borEncodeTransaction(transactionJson)`     | BOR-encode a signed transaction to a base64 envelope   |
+
+---
+
+## Stealth transfers
+
+ootle.ts includes full support for stealth (privacy-preserving) transfers, mirroring the `stealth` module in the Rust `ootle-rs` crate.
+
+Stealth transfers produce outputs with one-time public keys — only the recipient (who holds the matching view-only key) can scan and spend them.
+
+```ts
+import { StealthTransfer, WalletStealthAuthorizer, OotleWallet } from "@tari-project/ootle";
+import { EphemeralKeySigner } from "@tari-project/ootle-secret-key-wallet";
+
+// 1. Build the stealth transfer
+const spec = await new StealthTransfer(Network.Esmeralda, factory)
+  .from(sourceAccount, resourceAddress)
+  .to(recipientPublicKeyHex, 1_000_000n)
+  .feeFrom(feeAccount, 1000n)
+  .build();
+
+// 2. Create the authorizer, using an ephemeral key for the seal (fully unlinkable)
+const wallet = new OotleWallet();
+wallet.registerKeyProvider(senderAddress, secretKeyWallet);
+wallet.setDefaultSigner(senderAddress);
+
+const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec, {
+  ephemeralSealSigner: EphemeralKeySigner.generate(wasm),
+});
+
+// 3. Sign and submit as normal
+const resolved = await resolveTransaction(provider, spec.unsignedTx);
+const signed = await signTransaction([authorizer], resolved, authorizer);
+const envelope = encodeTransaction(encoder, signed);
+const txId = await submitTransaction(provider, envelope);
+```
+
+**Interfaces for implementing your own stealth providers:**
+
+- `StealthOutputStatementFactory` — generates output statements (proofs + encrypted data)
+- `InputDecryptor` — decrypts stealth inputs owned by your key
+- `StealthKeySigner` — signs with a derived stealth key
+- `OutputMaskProvider` — provides fresh output masks (blinding factors)
+- `DiffieHellmanKdfKeyProvider` — derives shared secrets for output encryption
+
+---
+
+## Examples
+
+Three React + Vite example apps are included under `examples/`.
+
+### connect-button
+
+Minimal wallet connection UI. Connects to a running wallet daemon and displays the account address and public key.
+
+```sh
+cd examples/connect-button
+pnpm dev
+```
+
+Requires `tari_ootle_walletd` running locally. Default endpoint: `http://127.0.0.1:9000/json_rpc`.
+
+### indexer-explorer
+
+Browse on-chain substates. Look up components and resources by ID, or browse recent substates from the indexer.
+
+```sh
+cd examples/indexer-explorer
+pnpm dev
+```
+
+Pre-configured to connect to the public Esmeralda testnet indexer. No local setup required.
+
+### template-inspector
+
+Browse published template ABIs. Lists all templates cached by the indexer and renders their function definitions, argument types, and return values.
+
+```sh
+cd examples/template-inspector
+pnpm dev
+```
+
+---
+
+## Development
+
+This repo uses [pnpm](https://pnpm.io/) workspaces.
+
+```sh
+# Install dependencies
 pnpm install
-moon :build
 
-# or target individual packages with 
-moon <package>:build
+# Build all packages
+pnpm -r build
+
+# Build a specific package
+pnpm --filter @tari-project/ootle build
+
+# Lint all packages
+pnpm -r lint
 ```
 
-### 🧪 **Run the Example App**
-```bash
-cd packages/tarijs/example
-cp .env.example .env    # Configure your wallet endpoints
-pnpm run dev           # Start development server
-```
+### Prerequisites
 
-### 📦 **Docker Development**
-```bash
-docker build -t tarijs .
-docker create --name tarijs-build tarijs
-docker cp tarijs-build:/app/combined_dist/ ./dist
-```
+The `@tari-project/ootle-ts-bindings` package (Rust-generated TypeScript types) is loaded from a local path at `../../../../localnet/ootle/bindings`. To generate it, follow the setup instructions in the [tari-ootle](https://github.com/tari-project/tari-ootle) repository.
 
-### 📖 **Documentation Development**
-```bash
-moon tari-docs:start   # http://localhost:3000/tari.js/
-```
+---
 
-**Need help getting started?** Check our **[Contributing Guide](https://tari-project.github.io/tari.js/docs/contributing)** or ask in [GitHub Discussions](https://github.com/tari-project/tari.js/discussions).
+## License
 
-## 🤝 Community & Support
-
-- **📚 [Complete Documentation](https://tari-project.github.io/tari.js/)** — Everything you need to know
-- **💬 [GitHub Discussions](https://github.com/tari-project/tari.js/discussions)** — Ask questions, share ideas  
-- **🐛 [Issue Tracker](https://github.com/tari-project/tari.js/issues)** — Report bugs, request features
-- **🔧 [Troubleshooting Guide](https://tari-project.github.io/tari.js/troubleshooting)** — Common issues & solutions
-- **🎮 [Example Apps](https://github.com/tari-project/tari.js/tree/main/examples)** — See tari.js in action
-
-## 📄 License
-
-This project is licensed under the **BSD 3-Clause License** — see the [LICENSE](LICENSE) file for details.
+BSD 3-Clause — see [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
-
-**Built with ❤️ by the [Tari Project](https://tari.com)**
-
-[Website](https://tari.com) • [Blog](https://blog.tari.com) • [Twitter](https://twitter.com/tari) • [Discord](https://discord.gg/tari)
-
+Built with the <a href="https://tari.com">Tari Project</a>
 </div>
