@@ -7,7 +7,16 @@
       "Bash(for pkg:*)",
       "Bash(do echo:*)",
       "Read(//Users/shanimal/Repos/tari/tari.js/packages/$pkg/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(cd:*)",
+      "WebFetch(domain:ootle.tari.com)",
+      "WebFetch(domain:docs.tari.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:indexer.esmeralda.tari.com)",
+      "Bash(npx knip:*)",
+      "Bash(pnpm knip:*)"
     ]
   }
 }
