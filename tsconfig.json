@@ -29,6 +29,12 @@
     },
     {
       "path": "examples/connect-button"
+    },
+    {
+      "path": "examples/indexer-explorer"
+    },
+    {
+      "path": "examples/template-inspector"
     }
   ]
 }

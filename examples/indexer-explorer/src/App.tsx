@@ -35,11 +35,24 @@ export function App() {
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
 
+  const loadSubstates = useCallback(async () => {
+    setListLoading(true);
+    setListError(null);
+    try {
+      const response = await listSubstates({ limit: 20 });
+      setSubstates(response.substates);
+    } catch (err) {
+      setListError(err instanceof Error ? err.message : "Failed to list substates");
+    } finally {
+      setListLoading(false);
+    }
+  }, [listSubstates]);
+
   // Auto-load recent substates when connected
   useEffect(() => {
     if (status !== "connected") return;
     void loadSubstates();
-  }, [status]);
+  }, [loadSubstates, status]);
 
   const handleConnect = () => {
     void connect(url, network);
@@ -59,19 +72,6 @@ export function App() {
       setLookupLoading(false);
     }
   };
-
-  const loadSubstates = useCallback(async () => {
-    setListLoading(true);
-    setListError(null);
-    try {
-      const response = await listSubstates({ limit: 20 });
-      setSubstates(response.substates);
-    } catch (err) {
-      setListError(err instanceof Error ? err.message : "Failed to list substates");
-    } finally {
-      setListLoading(false);
-    }
-  }, []);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
