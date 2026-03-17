@@ -1,8 +1,5 @@
 import { useState, useCallback } from "react";
-import {
-  WalletDaemonSigner,
-  type WalletDaemonSignerOptions,
-} from "@tari-project/ootle-wallet-daemon-signer";
+import { WalletDaemonSigner, type WalletDaemonSignerOptions } from "@tari-project/ootle-wallet-daemon-signer";
 
 export type WalletStatus = "disconnected" | "connecting" | "connected";
 
@@ -15,8 +12,8 @@ export interface WalletState {
 }
 
 export interface UseWalletDaemon extends WalletState {
-  connect(options: WalletDaemonSignerOptions): Promise<void>;
-  disconnect(): void;
+  connect: (options: WalletDaemonSignerOptions) => Promise<void>;
+  disconnect: () => void;
 }
 
 const INITIAL: WalletState = {
@@ -46,10 +43,7 @@ export function useWalletDaemon(): UseWalletDaemon {
       // WalletDaemonSigner.connect() reaches out to the daemon, fetches the
       // default account's public key and address, and caches them.
       const signer = await WalletDaemonSigner.connect(options);
-      const [address, publicKey] = await Promise.all([
-        signer.getAddress(),
-        signer.getPublicKey(),
-      ]);
+      const [address, publicKey] = await Promise.all([signer.getAddress(), signer.getPublicKey()]);
       setState({ status: "connected", signer, address, publicKey, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Connection failed";
