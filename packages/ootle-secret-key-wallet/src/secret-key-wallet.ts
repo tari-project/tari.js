@@ -3,7 +3,7 @@
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "@tari-project/ootle";
-import { generateKeypair, hashUnsignedTransaction, publicKeyFromSecretKey, schnorrSign } from "ootle-wasm";
+import { generateKeypair, hashUnsignedTransaction, publicKeyFromSecretKey, schnorrSign } from "@tari-project/ootle-wasm";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,

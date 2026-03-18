@@ -13,7 +13,7 @@ import type {
 import type { Provider } from "./provider";
 import type { Signer } from "./signer";
 import type { TransactionOutcome, WatchOptions } from "./types";
-import { borEncodeTransaction, hashUnsignedTransaction, schnorrSign } from "ootle-wasm";
+import { borEncodeTransaction, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
 
 /**
  * Handles BOR encoding of transactions and hashing for signing.

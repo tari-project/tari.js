@@ -41,7 +41,7 @@ console.log(substate);
 import { TransactionBuilder, sendTransaction, Network } from "@tari-project/ootle";
 import { ProviderBuilder } from "@tari-project/ootle-indexer";
 import { WalletDaemonSigner } from "@tari-project/ootle-wallet-daemon-signer";
-import { createWasmEncoder } from "ootle-wasm";
+import { createWasmEncoder } from "@tari-project/ootle-wasm";
 
 const provider = await ProviderBuilder.new().withNetwork(Network.LocalNet).connect();
 const signer = await WalletDaemonSigner.connect({ url: "http://localhost:18103", authToken: "…" });
@@ -435,8 +435,8 @@ To start the wallet daemon:
 Provides the `OotleWasm` interface that the WASM binary must implement, and a factory for creating a `TransactionEncoder` from an initialized module.
 
 ```ts
-import { createWasmEncoder } from "ootle-wasm";
-import type { OotleWasm } from "ootle-wasm";
+import { createWasmEncoder } from "@tari-project/ootle-wasm";
+import type { OotleWasm } from "@tari-project/ootle-wasm";
 
 // Initialize your compiled WASM binary (framework-specific)
 const wasmModule: OotleWasm = await initWasm();

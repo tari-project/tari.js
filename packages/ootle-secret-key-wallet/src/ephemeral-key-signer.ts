@@ -3,7 +3,7 @@
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import { Signer } from "@tari-project/ootle";
-import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "ootle-wasm";
+import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
 
 /**
  * A one-shot signer that generates a fresh throwaway keypair, signs once,
