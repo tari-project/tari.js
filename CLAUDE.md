@@ -40,14 +40,19 @@ This is a pnpm monorepo using [Moon](https://moonrepo.dev) for build orchestrati
 ### Package dependency graph
 
 ```
-@tari-project/ootle-ts-bindings  (Rust FFI types — external npm package)
-@tari-project/ootle-wasm          (WASM crypto functions — external npm package)
-         ↑               ↑
+External npm packages (not in this repo):
+  @tari-project/ootle-ts-bindings    Rust FFI type definitions
+  @tari-project/ootle-wasm           WASM crypto functions
+  @tari-project/indexer-client       Indexer REST API client
+  @tari-project/wallet_jrpc_client   Wallet daemon JRPC client
+
+         ↑ (all used as dependencies)
+
 @tari-project/ootle               core: builder, transaction types, provider/signer interfaces, OotleWallet
     ↑               ↑                  ↑
 ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
-(REST provider) (in-memory signer,         (JSON-RPC signer,
-                 for testing)               for production)
+(wraps           (in-memory signer,         (wraps
+ indexer-client)  for testing)               wallet_jrpc_client)
 ```
 
 ### Key abstractions in `packages/ootle`

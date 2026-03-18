@@ -1,11 +1,11 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type { IndexerGetTransactionResultResponse } from "@tari-project/ootle-ts-bindings";
+import type { IndexerGetTransactionResultResponse, IndexerTransactionFinalizedResult } from "@tari-project/ootle-ts-bindings";
 import type { TransactionOutcome } from "@tari-project/ootle";
 import { classifyOutcome } from "@tari-project/ootle";
 import { openEventStream } from "./event-stream";
-import type { IndexerClient } from "./transport/indexer-client";
+import type { IndexerClient } from "@tari-project/indexer-client";
 
 /** Shape of a `TransactionFinalized` SSE event payload from the indexer. */
 interface TransactionFinalizedPayload {
@@ -98,17 +98,17 @@ export class TransactionWatcher {
 
       // Map the SSE payload to a TransactionOutcome using the same
       // classifyOutcome logic used by watchTransaction polling.
-      const outcome = classifyOutcome({
+      // The SSE payload doesn't carry the full FinalizeResult — only the fields
+      // classifyOutcome needs (final_decision, fee_decision, abort_details).
+      const sseResult = {
         Finalized: {
           final_decision: payload.final_decision,
           fee_decision: payload.fee_decision ?? "Commit",
           abort_details: payload.abort_details ?? undefined,
-          // The SSE payload doesn't carry the full FinalizeResult — the fields
-          // classifyOutcome needs are final_decision, fee_decision, abort_details.
-          // Cast as any to satisfy the type without importing the full binding shape.
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any,
-      });
+        },
+      } as unknown as IndexerTransactionFinalizedResult;
+
+      const outcome = classifyOutcome(sseResult);
 
       if (outcome) {
         waiter.resolve(outcome);

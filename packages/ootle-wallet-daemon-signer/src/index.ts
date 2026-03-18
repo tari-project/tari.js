@@ -3,3 +3,6 @@
 
 export { WalletDaemonSigner } from "./wallet-daemon-signer";
 export type { WalletDaemonSignerOptions } from "./wallet-daemon-signer";
+
+// Re-export from @tari-project/wallet_jrpc_client so consumers don't need a direct dependency
+export { WalletDaemonClient } from "@tari-project/wallet_jrpc_client";

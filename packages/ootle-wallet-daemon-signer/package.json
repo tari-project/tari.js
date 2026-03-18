@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@tari-project/ootle": "workspace:*",
-    "@tari-project/ootle-ts-bindings": "catalog:"
+    "@tari-project/ootle-ts-bindings": "catalog:",
+    "@tari-project/wallet_jrpc_client": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

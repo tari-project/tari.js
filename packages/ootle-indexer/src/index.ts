@@ -3,9 +3,10 @@
 
 export { IndexerProvider } from "./indexer-provider";
 export type { IndexerProviderOptions } from "./indexer-provider";
-export { IndexerClient } from "./transport/indexer-client";
-export { FetchTransport } from "./transport/http-transport";
-export type { HttpTransport, TransportOptions } from "./transport/http-transport";
+
+// Re-export from @tari-project/indexer-client so consumers don't need a direct dependency
+export { IndexerClient, transports } from "@tari-project/indexer-client";
+
 export { ProviderBuilder } from "./provider-builder";
 export { resolveWantInputs } from "./want-input";
 export type { WantInput } from "./want-input";

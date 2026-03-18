@@ -10,11 +10,11 @@ import type {
   SubstateId,
   SubstateRequirement,
   TransactionEnvelope,
+  ListSubstateItem,
 } from "@tari-project/ootle-ts-bindings";
 import type { ListSubstatesRequest, ListSubstatesResponse, Provider } from "@tari-project/ootle";
 import { Network } from "@tari-project/ootle";
-import { IndexerClient } from "./transport/indexer-client";
-import { FetchTransport } from "./transport/http-transport";
+import { IndexerClient } from "@tari-project/indexer-client";
 import { PendingTransaction, TransactionWatcher } from "./tx-watcher";
 
 export interface IndexerProviderOptions {
@@ -43,7 +43,7 @@ export class IndexerProvider implements Provider {
    * Creates an IndexerProvider and verifies connectivity by fetching the indexer identity.
    */
   public static async connect(options: IndexerProviderOptions): Promise<IndexerProvider> {
-    const client = IndexerClient.new(FetchTransport.new(options.url));
+    const client = IndexerClient.usingFetchTransport(options.url);
     await client.identityGet();
     return new IndexerProvider(client, options.network, options.url, options.defaultTransactionTimeoutMs ?? 60_000);
   }
@@ -59,13 +59,6 @@ export class IndexerProvider implements Provider {
    *
    * The `TransactionWatcher` SSE loop is created lazily on the first call
    * and reused for all subsequent calls on this provider instance.
-   * Mirrors `IndexerProvider::get_tx_watcher` + `PendingTransaction` from ootle-rs.
-   *
-   * @example
-   * ```ts
-   * const txId = await submitTransaction(provider, envelope);
-   * const outcome = await provider.watchTransactionSSE(txId).watch();
-   * ```
    */
   public watchTransactionSSE(txId: string, timeoutMs?: number): PendingTransaction {
     if (!this._watcher) {
@@ -100,11 +93,19 @@ export class IndexerProvider implements Provider {
   }
 
   public async getTemplateDefinition(templateAddress: string): Promise<GetTemplateDefinitionResponse> {
-    return this.client.getTemplateDefinition(templateAddress);
+    // The external IndexerClient.templatesGet() is typed as returning TemplatesGetResponse
+    // (wallet type), but the indexer REST endpoint actually returns GetTemplateDefinitionResponse.
+    return this.client.templatesGet(templateAddress) as unknown as Promise<GetTemplateDefinitionResponse>;
   }
 
   public async submitTransaction(envelope: TransactionEnvelope): Promise<IndexerSubmitTransactionResponse> {
-    return this.client.submitTransaction({ transaction: envelope });
+    // The external IndexerClient.submitTransaction() is typed as TransactionSubmitRequest
+    // (wallet type with seal_signer, etc.), but the indexer REST endpoint accepts
+    // IndexerSubmitTransactionRequest ({ transaction: TransactionEnvelope }).
+    // Use the transport directly to send the correct request shape.
+    return this.client
+      .getTransport()
+      .sendPost<IndexerSubmitTransactionResponse>("transactions", { transaction: envelope });
   }
 
   public async getTransactionResult(transactionId: string): Promise<IndexerGetTransactionResultResponse> {
@@ -125,7 +126,6 @@ export class IndexerProvider implements Provider {
           return { substate_id: req.substate_id, version: substate.version };
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
-          // Only tolerate 404-style "not found" errors — rethrow everything else
           if (/not found/i.test(message) || message.includes("404")) {
             return req;
           }
@@ -136,12 +136,15 @@ export class IndexerProvider implements Provider {
   }
 
   public async listSubstates(params: ListSubstatesRequest): Promise<ListSubstatesResponse> {
-    const result = await this.client.listSubstates({
-      filter_by_template: params.filterByTemplate ?? null,
-      filter_by_type: params.filterByType ?? null,
-      limit: params.limit ?? null,
-      offset: params.offset ?? null,
-    });
+    // The external IndexerClient does not expose a listSubstates method.
+    // Use the transport directly to hit GET /substates with query filters.
+    const query: Record<string, unknown> = {};
+    if (params.filterByTemplate != null) query["filter_by_template"] = params.filterByTemplate;
+    if (params.filterByType != null) query["filter_by_type"] = params.filterByType;
+    if (params.limit != null) query["limit"] = params.limit;
+    if (params.offset != null) query["offset"] = params.offset;
+
+    const result = await this.client.getTransport().sendGet<{ substates: ListSubstateItem[] }>("substates", query);
 
     return {
       substates: result.substates.map((s) => ({

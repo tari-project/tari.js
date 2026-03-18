@@ -1,8 +1,8 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type { SubstateRequirement } from "@tari-project/ootle-ts-bindings";
-import type { IndexerClient } from "./transport/indexer-client";
+import type { SubstateRequirement, ListSubstateItem } from "@tari-project/ootle-ts-bindings";
+import type { IndexerClient } from "@tari-project/indexer-client";
 
 /**
  * Lazily describes an input the transaction needs, resolved by querying the indexer.
@@ -38,12 +38,13 @@ export async function resolveWantInputs(client: IndexerClient, wants: WantInput[
 
       // VaultForResource: list substates filtered by the resource address and
       // find the vault component that holds this resource.
-      const result = await client.listSubstates({
+      // The external IndexerClient has no listSubstates method — use the transport directly.
+      const query: Record<string, unknown> = {
         filter_by_template: want.resourceAddress,
         filter_by_type: "Vault",
         limit: 1,
-        offset: null,
-      });
+      };
+      const result = await client.getTransport().sendGet<{ substates: ListSubstateItem[] }>("substates", query);
 
       const match = result.substates.find(
         (s) => s.template_address === want.resourceAddress || s.substate_id === want.resourceAddress,

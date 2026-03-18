@@ -256,14 +256,13 @@ const url = defaultIndexerUrl(Network.Esmeralda);
 
 ### `@tari-project/ootle-indexer`
 
-Provider implementation backed by the indexer REST API.
+Provider implementation backed by the indexer REST API. Wraps [`@tari-project/indexer-client`](https://www.npmjs.com/package/@tari-project/indexer-client) with the SDK's `Provider` interface and adds SSE-based transaction watching.
 
 ```ts
 import {
   IndexerProvider,
   ProviderBuilder,
   IndexerClient,
-  FetchTransport,
   TransactionWatcher,
   PendingTransaction,
   resolveWantInputs,
@@ -397,7 +396,7 @@ const signed = await signTransaction([signer], unsignedTx);
 
 ### `@tari-project/ootle-wallet-daemon-signer`
 
-Delegates signing to a running `tari_ootle_walletd` process. The secret key never enters JavaScript memory.
+Delegates signing to a running `tari_ootle_walletd` process via [`@tari-project/wallet_jrpc_client`](https://www.npmjs.com/package/@tari-project/wallet_jrpc_client). The secret key never enters JavaScript memory.
 
 ```ts
 import { WalletDaemonSigner } from "@tari-project/ootle-wallet-daemon-signer";
@@ -425,8 +424,6 @@ To start the wallet daemon:
 ```sh
 ./tari_ootle_walletd --network esme
 ```
-
----
 
 ---
 
