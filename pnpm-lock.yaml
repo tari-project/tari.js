@@ -25,8 +25,8 @@ catalogs:
       specifier: ^5.87.0
       version: 5.87.0
     ootle-wasm:
-      specifier: ^0.1.3
-      version: 0.1.3
+      specifier: ^0.2.0
+      version: 0.2.0
     prettier:
       specifier: ^3.8.1
       version: 3.8.1
@@ -233,7 +233,7 @@ importers:
         version: 1.29.3
       ootle-wasm:
         specifier: 'catalog:'
-        version: 0.1.3
+        version: 0.2.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -274,7 +274,7 @@ importers:
         version: 1.29.3
       ootle-wasm:
         specifier: 'catalog:'
-        version: 0.1.3
+        version: 0.2.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -4541,8 +4541,8 @@ packages:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
     engines: {node: '>=6'}
 
-  ootle-wasm@0.1.3:
-    resolution: {integrity: sha512-aGMPFrGtbsGwyHraxY8udvMbCx5iowygKCnb1fK+Rg5vK5ErX/jwGKECyFYUQAAMlRg4I+e+xNh8bXwQBthMog==}
+  ootle-wasm@0.2.0:
+    resolution: {integrity: sha512-5kXng247iH9cqtiSleRqj+cJOpC64p4VLCAssK4VEpiznwODdJkxKJEunVwSLsWtyjJKFcnoh3qv8KrLgUijoA==}
 
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
@@ -11639,7 +11639,7 @@ snapshots:
     dependencies:
       mimic-fn: 2.1.0
 
-  ootle-wasm@0.1.3: {}
+  ootle-wasm@0.2.0: {}
 
   open@8.4.2:
     dependencies:

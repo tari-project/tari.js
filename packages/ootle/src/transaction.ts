@@ -24,14 +24,14 @@ export interface Encoder {
   encode(transaction: Transaction): TransactionEnvelope;
 
   /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
-  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: string): Uint8Array;
+  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: Uint8Array): Uint8Array;
 }
 
 export class TransactionEncoder implements Encoder {
   encode(transaction: Transaction): TransactionEnvelope {
     return borEncodeTransaction(JSON.stringify(transaction));
   }
-  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: string): Uint8Array {
+  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: Uint8Array): Uint8Array {
     return hashUnsignedTransaction(JSON.stringify(unsignedTx), public_key_hex);
   }
 }
@@ -67,7 +67,7 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
 
   // TODO! Sealing needs to be implemented this is just a temporary fix
   // pub_key should be secret_key_hex!!
-  const sig = schnorrSign(pub_key, hashBytes) as { public_nonce: string; signature: string };
+  const sig = schnorrSign(pub_key, hashBytes);
 
   return {
     V1: {

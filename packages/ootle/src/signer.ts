@@ -12,7 +12,7 @@ export interface Signer {
   getAddress(): Promise<string>;
 
   /** Returns the hex-encoded public key for this signer. */
-  getPublicKey(): Promise<string>;
+  getPublicKey(): Promise<Uint8Array>;
 
   /** Signs the given unsigned transaction and returns the resulting signatures. */
   signTransaction(transaction: UnsignedTransactionV1): Promise<TransactionSignature[]>;

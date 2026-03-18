@@ -19,10 +19,10 @@ import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "ootle-was
  * ```
  */
 export class EphemeralKeySigner implements Signer {
-  private readonly secretKeyHex: string;
-  private readonly publicKeyHex: string;
+  private readonly secretKeyHex: Uint8Array;
+  private readonly publicKeyHex: Uint8Array;
 
-  private constructor(secretKeyHex: string, publicKeyHex: string) {
+  private constructor(secretKeyHex: Uint8Array, publicKeyHex: Uint8Array) {
     this.secretKeyHex = secretKeyHex;
     this.publicKeyHex = publicKeyHex;
   }
@@ -32,22 +32,23 @@ export class EphemeralKeySigner implements Signer {
    * lifetime of this object and is never persisted.
    */
   public static generate(): EphemeralKeySigner {
-    const keypair = generateKeypair() as { secret_key: string; public_key: string };
+    const keypair = generateKeypair();
     return new EphemeralKeySigner(keypair.secret_key, keypair.public_key);
   }
 
   public async getAddress(): Promise<string> {
     // Ephemeral signers have no persistent address — return the public key as-is.
-    return Promise.resolve(this.publicKeyHex);
+    // TODO - fix this when keys -> address is ready
+    return Promise.resolve(this.publicKeyHex.toString());
   }
 
-  public async getPublicKey(): Promise<string> {
+  public async getPublicKey(): Promise<Uint8Array> {
     return Promise.resolve(this.publicKeyHex);
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
-    const sig = schnorrSign(this.secretKeyHex, hashBytes) as { public_nonce: string; signature: string };
+    const sig = schnorrSign(this.secretKeyHex, hashBytes);
     return Promise.resolve([
       {
         public_key: this.publicKeyHex,

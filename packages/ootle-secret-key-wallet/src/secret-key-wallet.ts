@@ -15,11 +15,11 @@ import { generateKeypair, hashUnsignedTransaction, publicKeyFromSecretKey, schno
  * in JavaScript memory.
  */
 export class SecretKeyWallet implements Signer {
-  private readonly accountSecretHex: string;
-  private readonly viewOnlySecretHex: string | null;
-  private readonly publicKeyHex: string;
+  private readonly accountSecretHex: Uint8Array;
+  private readonly viewOnlySecretHex: Uint8Array | null;
+  private readonly publicKeyHex: Uint8Array;
 
-  private constructor(accountSecretHex: string, viewOnlySecretHex: string | null, publicKeyHex: string) {
+  private constructor(accountSecretHex: Uint8Array, viewOnlySecretHex: Uint8Array | null, publicKeyHex: Uint8Array) {
     this.accountSecretHex = accountSecretHex;
     this.viewOnlySecretHex = viewOnlySecretHex;
     this.publicKeyHex = publicKeyHex;
@@ -31,8 +31,8 @@ export class SecretKeyWallet implements Signer {
    * Mirrors `OotleSecretKey { account_secret, view_only_secret }` from ootle-rs.
    */
   public static randomWithViewKey(): SecretKeyWallet {
-    const accountKeypair = generateKeypair() as { secret_key: string; public_key: string };
-    const viewKeypair = generateKeypair() as { secret_key: string; public_key: string };
+    const accountKeypair = generateKeypair();
+    const viewKeypair = generateKeypair();
     return new SecretKeyWallet(accountKeypair.secret_key, viewKeypair.secret_key, accountKeypair.public_key);
   }
 
@@ -40,7 +40,7 @@ export class SecretKeyWallet implements Signer {
    * Creates a wallet from an existing hex-encoded account secret key.
    * The public key is derived via `wasm.derivePublicKey`.
    */
-  public static fromSecretKey(accountSecretHex: string, viewOnlySecretHex?: string): SecretKeyWallet {
+  public static fromSecretKey(accountSecretHex: Uint8Array, viewOnlySecretHex?: Uint8Array): SecretKeyWallet {
     const publicKeyHex = publicKeyFromSecretKey(accountSecretHex);
     return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
   }
@@ -50,18 +50,18 @@ export class SecretKeyWallet implements Signer {
    * Use this overload if you already have both keys (e.g. from key storage).
    */
   public static fromKeypair(
-    accountSecretHex: string,
-    publicKeyHex: string,
-    viewOnlySecretHex?: string,
+    accountSecretHex: Uint8Array,
+    publicKeyHex: Uint8Array,
+    viewOnlySecretHex?: Uint8Array,
   ): SecretKeyWallet {
     return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
   }
 
   public async getAddress(): Promise<string> {
-    return Promise.resolve(this.publicKeyHex);
+    return Promise.resolve(this.publicKeyHex.toString());
   }
 
-  public async getPublicKey(): Promise<string> {
+  public async getPublicKey(): Promise<Uint8Array> {
     return Promise.resolve(this.publicKeyHex);
   }
 
@@ -69,16 +69,16 @@ export class SecretKeyWallet implements Signer {
    * Returns the view-only secret key, if one was set.
    * Used for stealth/confidential output scanning.
    */
-  public getViewOnlySecret(): string | null {
+  public getViewOnlySecret(): Uint8Array | null {
     return this.viewOnlySecretHex;
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
-    const sig = schnorrSign(this.accountSecretHex, hashBytes) as { public_nonce: string; signature: string };
+    const sig = schnorrSign(this.accountSecretHex, hashBytes);
     return Promise.resolve([
       {
-        public_key: this.publicKeyHex,
+        public_key: this.publicKeyHex.toString(),
         signature: {
           public_nonce: sig.public_nonce,
           signature: sig.signature,
