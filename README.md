@@ -10,15 +10,16 @@ ootle.ts is a modular, strongly-typed SDK that lets you connect to wallets, quer
 
 ## Packages
 
-The SDK is split into five focused packages. Install only what you need.
+The SDK is split into four focused packages — each will be published to npm under the `@tari-project` scope. Install only what you need.
 
 | Package                                                                               | Description                                                      |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [`@tari-project/ootle`](#tari-projectootle)                                           | Core interfaces, transaction builder, and flow helpers           |
 | [`@tari-project/ootle-indexer`](#tari-projectootle-indexer)                           | Indexer REST provider — read chain state and submit transactions |
-| [`@tari-project/ootle-secret-key-wallet`](#tari-projectootle-secret-key-wallet)       | Local in-memory signer backed by the WASM crypto module          |
+| [`@tari-project/ootle-secret-key-wallet`](#tari-projectootle-secret-key-wallet)       | Local in-memory signer backed by WASM crypto                     |
 | [`@tari-project/ootle-wallet-daemon-signer`](#tari-projectootle-wallet-daemon-signer) | Remote signer — delegates signing to a running wallet daemon     |
-| [`@tari-project/ootle-wasm`](#tari-projectootle-wasm)                                 | WASM cryptographic primitives (BOR encoding, Schnorr signing)    |
+
+Cryptographic operations (key generation, Schnorr signing, BOR encoding) are provided by [`@tari-project/ootle-wasm`](https://www.npmjs.com/package/@tari-project/ootle-wasm), an external dependency used internally by `ootle` and `ootle-secret-key-wallet`.
 
 ---
 
@@ -41,11 +42,9 @@ console.log(substate);
 import { TransactionBuilder, sendTransaction, Network } from "@tari-project/ootle";
 import { ProviderBuilder } from "@tari-project/ootle-indexer";
 import { WalletDaemonSigner } from "@tari-project/ootle-wallet-daemon-signer";
-import { createWasmEncoder } from "@tari-project/ootle-wasm";
 
 const provider = await ProviderBuilder.new().withNetwork(Network.LocalNet).connect();
 const signer = await WalletDaemonSigner.connect({ url: "http://localhost:18103", authToken: "…" });
-const encoder = createWasmEncoder(wasmModule); // your compiled WASM module
 
 const unsignedTx = TransactionBuilder.new(Network.LocalNet)
   .feeTransactionPayFromComponent(await signer.getAddress(), 1000n)
@@ -57,7 +56,7 @@ const unsignedTx = TransactionBuilder.new(Network.LocalNet)
   .callMethod({ componentAddress: recipientAddress, methodName: "deposit" }, [{ Workspace: "bucket" }])
   .buildUnsignedTransaction();
 
-const result = await sendTransaction(provider, signer, encoder, unsignedTx);
+const result = await sendTransaction(provider, signer, unsignedTx);
 ```
 
 ### 3. Local signing (testing / scripting)
@@ -65,11 +64,11 @@ const result = await sendTransaction(provider, signer, encoder, unsignedTx);
 ```ts
 import { SecretKeyWallet } from "@tari-project/ootle-secret-key-wallet";
 
-// Generate a fresh wallet
-const wallet = SecretKeyWallet.random(wasmModule, Network.LocalNet);
+// Generate a fresh wallet with a view-only key (for stealth output scanning)
+const wallet = SecretKeyWallet.randomWithViewKey();
 
-// Or restore from an existing key
-const wallet = SecretKeyWallet.fromSecretKey(secretKeyHex, wasmModule, Network.LocalNet);
+// Or restore from an existing key (Uint8Array)
+const wallet = SecretKeyWallet.fromSecretKey(accountSecretKey);
 ```
 
 ---
@@ -100,13 +99,14 @@ Implemented by `SecretKeyWallet`, `WalletDaemonSigner`, and `EphemeralKeySigner`
 ```
 unsignedTx
   → resolveTransaction(provider, …)   // fill in substate versions
-  → signTransaction(signers, …)        // collect Schnorr signatures
-  → encodeTransaction(encoder, …)      // BOR-encode to envelope
-  → submitTransaction(provider, …)     // submit to network
+  → signTransaction(signers, …)        // generate seal keypair, collect Schnorr signatures, assemble Transaction
+  → submitTransaction(provider, …)     // BOR-encode and submit to network
   → watchTransaction(provider, txId)   // wait for finalization
 ```
 
 Or use the `sendTransaction` / `sendDryRun` convenience helpers which chain all steps.
+
+> **Note:** WASM crypto operations (hashing, signing, encoding) are handled internally by `signTransaction` and `sendTransaction`. You do not need to manage a WASM module or encoder — `@tari-project/ootle-wasm` is a dependency of the core package.
 
 ---
 
@@ -123,7 +123,6 @@ import {
   literalArg,
   resolveTransaction,
   signTransaction,
-  encodeTransaction,
   submitTransaction,
   watchTransaction,
   sendTransaction,
@@ -187,16 +186,15 @@ Key methods:
 ```ts
 // Individual steps
 const resolved = await resolveTransaction(provider, unsignedTx);
-const signed = await signTransaction([signer], resolved);
-const envelope = encodeTransaction(encoder, signed);
-const txId = await submitTransaction(provider, envelope);
+const signed = await signTransaction([signer], resolved);     // returns a full Transaction (signed + sealed)
+const txId = await submitTransaction(provider, signed);        // BOR-encodes internally via ootle-wasm
 const receipt = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
 
 // All-in-one
-const receipt = await sendTransaction(provider, signer, encoder, unsignedTx);
+const receipt = await sendTransaction(provider, signer, unsignedTx);
 
 // Dry-run (simulates without committing)
-const result = await sendDryRun(provider, signer, encoder, unsignedTx);
+const result = await sendDryRun(provider, signer, unsignedTx);
 
 // Inspect the outcome
 const outcome = classifyOutcome(receipt.result);
@@ -351,7 +349,7 @@ const inputs = await resolveWantInputs(provider.getClient(), wants);
 
 ### `@tari-project/ootle-secret-key-wallet`
 
-Local signer that holds secret key material in JavaScript memory and uses the WASM module for all cryptographic operations.
+Local signer that holds secret key material in JavaScript memory and uses `@tari-project/ootle-wasm` for all cryptographic operations.
 
 > **Warning:** The secret key lives unencrypted in memory. For production use, prefer `WalletDaemonSigner` so the key never touches JavaScript.
 
@@ -364,20 +362,20 @@ import { SecretKeyWallet, EphemeralKeySigner } from "@tari-project/ootle-secret-
 Implements `Signer`. Holds an account secret key and an optional view-only key (required for stealth output scanning).
 
 ```ts
-// Generate a new random wallet
-const wallet = SecretKeyWallet.random(wasm, Network.LocalNet);
+// Generate a new random wallet with a view-only key (for stealth support)
+const wallet = SecretKeyWallet.randomWithViewKey();
 
-// Generate with a separate view-only key (for stealth support)
-const wallet = SecretKeyWallet.randomWithViewKey(wasm, Network.LocalNet);
+// Restore from a stored secret key (Uint8Array)
+const wallet = SecretKeyWallet.fromSecretKey(accountSecretKey);
 
-// Restore from a stored secret key
-const wallet = SecretKeyWallet.fromSecretKey(secretKeyHex, wasm, Network.LocalNet);
+// Restore with both account key and view-only key
+const wallet = SecretKeyWallet.fromSecretKey(accountSecretKey, viewOnlySecretKey);
 
-// Restore from both keys (e.g. from a keystore)
-const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Network.LocalNet);
+// Restore from both secret and public keys (e.g. from a keystore)
+const wallet = SecretKeyWallet.fromKeypair(accountSecretKey, publicKey);
 
 // With view-only key for stealth
-const wallet = SecretKeyWallet.fromKeypair(secretKeyHex, publicKeyHex, wasm, Network.LocalNet, viewOnlySecretHex);
+const wallet = SecretKeyWallet.fromKeypair(accountSecretKey, publicKey, viewOnlySecretKey);
 
 // Sign a transaction
 const signatures = await wallet.signTransaction(unsignedTx);
@@ -391,7 +389,7 @@ const viewKey = wallet.getViewOnlySecret();
 Generates a one-time throwaway keypair. Used in privacy-preserving transactions where no link to the sender's identity should exist. The key is discarded when the object is garbage-collected.
 
 ```ts
-const signer = EphemeralKeySigner.generate(wasm);
+const signer = EphemeralKeySigner.generate();
 const signed = await signTransaction([signer], unsignedTx);
 ```
 
@@ -430,30 +428,6 @@ To start the wallet daemon:
 
 ---
 
-### `@tari-project/ootle-wasm`
-
-Provides the `OotleWasm` interface that the WASM binary must implement, and a factory for creating a `TransactionEncoder` from an initialized module.
-
-```ts
-import { createWasmEncoder } from "@tari-project/ootle-wasm";
-import type { OotleWasm } from "@tari-project/ootle-wasm";
-
-// Initialize your compiled WASM binary (framework-specific)
-const wasmModule: OotleWasm = await initWasm();
-const encoder = createWasmEncoder(wasmModule);
-```
-
-The `OotleWasm` interface:
-
-| Method                                      | Description                                            |
-| ------------------------------------------- | ------------------------------------------------------ |
-| `generateKeypair()`                         | Generate a random `{ secret_key, public_key }` keypair |
-| `derivePublicKey(secretKeyHex)`             | Derive the public key from a secret key                |
-| `publicKeyToAddress(publicKeyHex, network)` | Derive a component address                             |
-| `schnorrSign(secretKeyHex, message)`        | Schnorr-sign a message hash                            |
-| `hashUnsignedTransaction(unsignedTxJson)`   | Canonical transaction hash for signing                 |
-| `borEncodeTransaction(transactionJson)`     | BOR-encode a signed transaction to a base64 envelope   |
-
 ---
 
 ## Stealth transfers
@@ -469,7 +443,6 @@ import {
   OotleWallet,
   signTransaction,
   resolveTransaction,
-  encodeTransaction,
   submitTransaction,
 } from "@tari-project/ootle";
 
@@ -490,8 +463,7 @@ const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec);
 // 3. Sign and submit
 const resolved = await resolveTransaction(provider, spec.unsignedTx);
 const signed = await signTransaction([authorizer], resolved);
-const envelope = encodeTransaction(encoder, signed);
-const txId = await submitTransaction(provider, envelope);
+const txId = await submitTransaction(provider, signed);
 ```
 
 **Interfaces for implementing your own stealth providers:**
@@ -542,20 +514,29 @@ pnpm dev
 
 ## Development
 
-This repo uses [pnpm](https://pnpm.io/) workspaces.
+This repo uses [pnpm](https://pnpm.io/) workspaces and [Moon](https://moonrepo.dev) for build orchestration.
 
 ```sh
 # Install dependencies
 pnpm install
 
 # Build all packages
-pnpm -r build
+moon :build
 
 # Build a specific package
 pnpm --filter @tari-project/ootle build
 
+# Test all packages
+moon :test
+
+# Test a single package
+pnpm --filter @tari-project/ootle run test
+
 # Lint all packages
-pnpm -r lint
+pnpm lint
+
+# Check for unused dependencies
+pnpm knip
 ```
 
 ---

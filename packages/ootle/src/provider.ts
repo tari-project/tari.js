@@ -33,7 +33,7 @@ export interface Provider {
 
   /**
    * Submits a BOR+base64-encoded transaction envelope to the network.
-   * Encoding must be performed before calling this method — use `encodeTransaction` or `TransactionEncoder`.
+   * Encoding is performed internally by `submitTransaction` in `transaction.ts` via `borEncodeTransaction`.
    */
   submitTransaction(envelope: TransactionEnvelope): Promise<IndexerSubmitTransactionResponse>;
 

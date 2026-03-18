@@ -40,10 +40,9 @@ This is a pnpm monorepo using [Moon](https://moonrepo.dev) for build orchestrati
 ### Package dependency graph
 
 ```
-@tari-project/ootle-ts-bindings  (Rust FFI — external, not in this repo)
-         ↑
-@tari-project/ootle-wasm          defines OotleWasm interface + TransactionEncoder factory
-         ↑
+@tari-project/ootle-ts-bindings  (Rust FFI types — external npm package)
+@tari-project/ootle-wasm          (WASM crypto functions — external npm package)
+         ↑               ↑
 @tari-project/ootle               core: builder, transaction types, provider/signer interfaces, OotleWallet
     ↑               ↑                  ↑
 ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
@@ -55,10 +54,10 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 
 - **Provider** (`provider.ts`) — read-only chain access (substates, templates, fees). Implemented by `ootle-indexer`.
 - **Signer** (`signer.ts`) — signs transactions, derives public keys. Implemented by the two wallet packages.
-- **TransactionBuilder** (`builder.ts`) — fluent API for constructing Tari transactions. Returns a new builder on each call (immutable pattern).
+- **TransactionBuilder** (`builder.ts`) — fluent API for constructing Tari transactions (mutable `this`-returning pattern).
 - **OotleWallet** (`wallet.ts`) — combines one or more signers with a provider; the primary entry point for end users.
 - **Stealth transfers** (`stealth*.ts`) — privacy-preserving output helpers.
-- **Builtin templates** (`templates/`) — typed helpers for Account and Faucet.
+- **Builtin templates** (`builtin-templates.ts`) — typed helpers for Account and Faucet.
 
 ### Signers
 
@@ -70,15 +69,19 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 
 ### WASM crypto
 
-`ootle-wasm` defines the `OotleWasm` interface (generateKeypair, derivePublicKey, schnorrSign, borEncodeTransaction, hashUnsignedTransaction). The actual WASM binary comes from `@tari-project/ootle-ts-bindings` and is injected at runtime — `ootle-wasm` itself has no runtime dependency on it.
+`@tari-project/ootle-wasm` is an external npm package that provides WASM-backed crypto functions: `generateKeypair`, `publicKeyFromSecretKey`, `schnorrSign`, `hashUnsignedTransaction`, `borEncodeTransaction`. These are called internally by `signTransaction` (in `ootle/src/transaction.ts`) and by the `SecretKeyWallet` / `EphemeralKeySigner` classes. Users do not need to manage a WASM module — the functions are imported directly.
+
+`@tari-project/ootle-ts-bindings` provides Rust FFI type definitions (e.g. `UnsignedTransactionV1`, `TransactionSignature`, `Instruction`) used throughout the SDK for type safety.
 
 ### Transaction flow
 
-1. Build instruction set via `TransactionBuilder`
-2. `ootle-indexer` resolves any `want-input` lazy inputs against the indexer REST API
-3. WASM encodes and hashes the unsigned transaction (BOR serialization)
-4. Signer produces a Schnorr signature
-5. Signed transaction is submitted; `TransactionWatcher` polls/streams for finality
+1. Build instruction set via `TransactionBuilder` → `UnsignedTransactionV1`
+2. `resolveTransaction` fills in substate versions via the provider
+3. `signTransaction` generates a seal keypair, collects Schnorr signatures from all signers, and assembles a full `Transaction`
+4. `submitTransaction` BOR-encodes (via `borEncodeTransaction`) and submits the signed transaction
+5. `watchTransaction` polls/streams for finality via `TransactionWatcher`
+
+`sendTransaction` chains all of steps 2–5 in one call.
 
 ### Examples and docs
 

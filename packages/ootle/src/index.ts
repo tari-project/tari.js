@@ -15,7 +15,6 @@ export {
   sendDryRun,
   classifyOutcome,
 } from "./transaction";
-export type { TransactionEncoder } from "./transaction";
 export type {
   Amount,
   WatchOptions,

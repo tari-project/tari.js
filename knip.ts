@@ -20,7 +20,6 @@ const config: KnipConfig = {
     "packages/ootle-indexer": {},
     "packages/ootle-secret-key-wallet": {},
     "packages/ootle-wallet-daemon-signer": {},
-    "packages/ootle-wasm": {},
     "examples/connect-button": {},
     "examples/indexer-explorer": {},
     "examples/template-inspector": {},
