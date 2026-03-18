@@ -2,14 +2,13 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import type { Signer } from "@tari-project/ootle";
+import { Signer, toHexStr } from "@tari-project/ootle";
 import {
   generateKeypair,
   hashUnsignedTransaction,
   publicKeyFromSecretKey,
   schnorrSign,
 } from "@tari-project/ootle-wasm";
-import type { SchnorrSignatureBytes } from "@tari-project/ootle-ts-bindings/dist/types/SchnorrSignatureBytes";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,
@@ -81,11 +80,14 @@ export class SecretKeyWallet implements Signer {
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
-    const sig = schnorrSign(this.accountSecretHex, hashBytes) as unknown as SchnorrSignatureBytes; // TODO - come back and update this when the bindings types align
+    const sig = schnorrSign(this.accountSecretHex, hashBytes);
     return Promise.resolve([
       {
-        public_key: this.publicKeyHex.toString(),
-        signature: sig,
+        public_key: toHexStr(this.publicKeyHex),
+        signature: {
+          public_nonce: toHexStr(sig.public_nonce),
+          signature: toHexStr(sig.signature),
+        },
       },
     ]);
   }

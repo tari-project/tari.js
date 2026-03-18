@@ -14,6 +14,7 @@ import type { Provider } from "./provider";
 import type { Signer } from "./signer";
 import type { TransactionOutcome, WatchOptions } from "./types";
 import { borEncodeTransaction, generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
+import { toHexStr } from "./helpers/hex";
 
 /**
  * Resolves unversioned inputs in the unsigned transaction by fetching their current
@@ -45,14 +46,14 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
 
   const hash = hashUnsignedTransaction(JSON.stringify(unsignedTx), seal_signer_public_key);
 
-  const { public_nonce, signature } = schnorrSign(secret_key, hash);
+  const s = schnorrSign(secret_key, hash);
 
   // TODO - come back to check check these toString()s after types align
   const seal_signature = {
-    public_key: seal_signer_public_key.toString(),
+    public_key: toHexStr(seal_signer_public_key),
     signature: {
-      public_nonce: public_nonce.toString(),
-      signature: signature.toString(),
+      public_nonce: toHexStr(s.public_nonce),
+      signature: toHexStr(s.signature),
     },
   };
   return {
