@@ -3,38 +3,17 @@
 
 import type {
   UnsignedTransactionV1,
-  Transaction,
   TransactionSignature,
   TransactionEnvelope,
   IndexerGetTransactionResultResponse,
   UnsealedTransactionV1,
   IndexerTransactionFinalizedResult,
+  Transaction,
 } from "@tari-project/ootle-ts-bindings";
 import type { Provider } from "./provider";
 import type { Signer } from "./signer";
 import type { TransactionOutcome, WatchOptions } from "./types";
-import { borEncodeTransaction, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
-
-/**
- * Handles BOR encoding of transactions and hashing for signing.
- * The canonical implementation is provided by `@tari-project/ootle-wasm`.
- */
-export interface Encoder {
-  /** BOR-encodes a signed Transaction and returns a base64 TransactionEnvelope string. */
-  encode(transaction: Transaction): TransactionEnvelope;
-
-  /** Returns the canonical hash bytes of an unsigned transaction for Schnorr signing. */
-  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: Uint8Array): Uint8Array;
-}
-
-export class TransactionEncoder implements Encoder {
-  encode(transaction: Transaction): TransactionEnvelope {
-    return borEncodeTransaction(JSON.stringify(transaction));
-  }
-  hashForSigning(unsignedTx: UnsignedTransactionV1, public_key_hex: Uint8Array): Uint8Array {
-    return hashUnsignedTransaction(JSON.stringify(unsignedTx), public_key_hex);
-  }
-}
+import { borEncodeTransaction, generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
 
 /**
  * Resolves unversioned inputs in the unsigned transaction by fetching their current
@@ -52,6 +31,7 @@ export async function resolveTransaction(
  * Collects signatures from all provided signers and assembles a signed Transaction.
  */
 export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTransactionV1): Promise<Transaction> {
+  const { secret_key, public_key: seal_signer_public_key } = generateKeypair();
   const allSignatures: TransactionSignature[] = [];
   for (const signer of signers) {
     const sigs = await signer.signTransaction(unsignedTx);
@@ -62,26 +42,25 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
     transaction: unsignedTx,
     signatures: allSignatures,
   };
-  const pub_key = await signers[0]?.getPublicKey();
-  const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), pub_key);
 
-  // TODO! Sealing needs to be implemented this is just a temporary fix
-  // pub_key should be secret_key_hex!!
-  const sig = schnorrSign(pub_key, hashBytes);
+  const hash = hashUnsignedTransaction(JSON.stringify(unsignedTx), seal_signer_public_key);
 
+  const { public_nonce, signature } = schnorrSign(secret_key, hash);
+
+  // TODO - come back to check check these toString()s after types align
+  const seal_signature = {
+    public_key: seal_signer_public_key.toString(),
+    signature: {
+      public_nonce: public_nonce.toString(),
+      signature: signature.toString(),
+    },
+  };
   return {
     V1: {
       body,
-      seal_signature: { public_key: pub_key, signature: sig },
+      seal_signature,
     },
   };
-}
-
-/**
- * BOR-encodes a signed transaction into a TransactionEnvelope string using the provided encoder.
- */
-export function encodeTransaction(encoder: TransactionEncoder, transaction: Transaction): TransactionEnvelope {
-  return encoder.encode(transaction);
 }
 
 /**
@@ -170,13 +149,12 @@ export async function watchTransaction(
 export async function sendTransaction(
   provider: Provider,
   signers: Signer | Signer[],
-  encoder: TransactionEncoder,
   unsignedTx: UnsignedTransactionV1,
   watchOpts?: WatchOptions,
 ): Promise<IndexerGetTransactionResultResponse> {
   const resolved = await resolveTransaction(provider, unsignedTx);
-  const signed = await signTransaction(Array.isArray(signers) ? signers : [signers], resolved);
-  const envelope = encodeTransaction(encoder, signed);
+  const signedTransaction = await signTransaction(Array.isArray(signers) ? signers : [signers], resolved);
+  const envelope = borEncodeTransaction(JSON.stringify(signedTransaction));
   const txId = await submitTransaction(provider, envelope);
   return watchTransaction(provider, txId, watchOpts);
 }
@@ -188,9 +166,8 @@ export async function sendTransaction(
 export async function sendDryRun(
   provider: Provider,
   signers: Signer | Signer[],
-  encoder: TransactionEncoder,
   unsignedTx: UnsignedTransactionV1,
   watchOpts?: WatchOptions,
 ): Promise<IndexerGetTransactionResultResponse> {
-  return sendTransaction(provider, signers, encoder, { ...unsignedTx, dry_run: true }, watchOpts);
+  return sendTransaction(provider, signers, { ...unsignedTx, dry_run: true }, watchOpts);
 }

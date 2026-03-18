@@ -1,10 +1,7 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type {
-  TransactionSignature,
-  UnsignedTransactionV1,
-} from "@tari-project/ootle-ts-bindings";
+import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "./signer";
 import type { OotleWallet } from "./wallet";
 import type { StealthTransferSpec } from "./stealth-transfer";
@@ -36,7 +33,7 @@ export class WalletStealthAuthorizer implements Signer {
     return this.wallet.getAddress();
   }
 
-  public async getPublicKey(): Promise<string> {
+  public async getPublicKey(): Promise<Uint8Array> {
     return this.wallet.getPublicKey();
   }
 

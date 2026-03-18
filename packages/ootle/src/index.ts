@@ -9,7 +9,6 @@ export type { TariFunctionDefinition, TariMethodDefinition, NamedArg } from "./b
 export {
   resolveTransaction,
   signTransaction,
-  encodeTransaction,
   submitTransaction,
   watchTransaction,
   sendTransaction,

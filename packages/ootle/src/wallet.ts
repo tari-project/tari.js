@@ -1,10 +1,7 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type {
-  TransactionSignature,
-  UnsignedTransactionV1,
-} from "@tari-project/ootle-ts-bindings";
+import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import type { Signer } from "./signer";
 import type { WalletKeyProvider } from "./key-provider";
 
@@ -44,10 +41,7 @@ export class OotleWallet implements Signer {
    * Registers a key provider for the given component address.
    * The provider must implement `Signer` and `WalletKeyProvider`.
    */
-  public registerKeyProvider(
-    address: string,
-    provider: WalletKeyProvider & Signer,
-  ): this {
+  public registerKeyProvider(address: string, provider: WalletKeyProvider & Signer): this {
     this.keyProviders.set(address, provider);
     return this;
   }
@@ -70,10 +64,10 @@ export class OotleWallet implements Signer {
     if (!this.defaultSignerAddress) {
       throw new Error("No default signer address set. Call setDefaultSigner() first.");
     }
-    return this.defaultSignerAddress;
+    return Promise.resolve(this.defaultSignerAddress);
   }
 
-  public async getPublicKey(): Promise<string> {
+  public async getPublicKey(): Promise<Uint8Array> {
     return this.getSignerOrThrow().getPublicKey();
   }
 
@@ -104,12 +98,8 @@ export class OotleWallet implements Signer {
    * Collects authorizations from all registered key providers.
    * Useful when a transaction requires multiple signers.
    */
-  public async authorizeTransactionAll(
-    unsignedTx: UnsignedTransactionV1,
-  ): Promise<TransactionAuthorization[]> {
-    return Promise.all(
-      [...this.keyProviders.keys()].map((addr) => this.authorizeTransaction(addr, unsignedTx)),
-    );
+  public async authorizeTransactionAll(unsignedTx: UnsignedTransactionV1): Promise<TransactionAuthorization[]> {
+    return Promise.all([...this.keyProviders.keys()].map((addr) => this.authorizeTransaction(addr, unsignedTx)));
   }
 
   /**

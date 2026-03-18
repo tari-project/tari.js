@@ -4,6 +4,7 @@
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
 import { Signer } from "@tari-project/ootle";
 import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
+import type { SchnorrSignatureBytes } from "@tari-project/ootle-ts-bindings/dist/types/SchnorrSignatureBytes";
 
 /**
  * A one-shot signer that generates a fresh throwaway keypair, signs once,
@@ -48,14 +49,11 @@ export class EphemeralKeySigner implements Signer {
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
     const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
-    const sig = schnorrSign(this.secretKeyHex, hashBytes);
+    const sig = schnorrSign(this.secretKeyHex, hashBytes) as unknown as SchnorrSignatureBytes; // TODO - come back and update this when the bindings types align
     return Promise.resolve([
       {
-        public_key: this.publicKeyHex,
-        signature: {
-          public_nonce: sig.public_nonce,
-          signature: sig.signature,
-        },
+        public_key: this.publicKeyHex.toString(),
+        signature: sig,
       },
     ]);
   }

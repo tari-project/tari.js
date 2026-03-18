@@ -5,7 +5,7 @@ import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/
 import type { Signer } from "@tari-project/ootle";
 
 interface AccountInfo {
-  public_key: string;
+  public_key: Uint8Array;
   address: string;
 }
 
@@ -35,7 +35,7 @@ export interface WalletDaemonSignerOptions {
  */
 export class WalletDaemonSigner implements Signer {
   private options: WalletDaemonSignerOptions;
-  private _publicKey: string | null = null;
+  private _publicKey: Uint8Array | null = null;
   private _address: string | null = null;
   private requestId = 0;
 
@@ -63,7 +63,7 @@ export class WalletDaemonSigner implements Signer {
     }
   }
 
-  public async getPublicKey(): Promise<string> {
+  public async getPublicKey(): Promise<Uint8Array> {
     if (!this._publicKey) {
       const { public_key } = await this.fetchAccountInfo();
       return public_key;
@@ -79,7 +79,7 @@ export class WalletDaemonSigner implements Signer {
   }
 
   private async fetchAccountInfo(): Promise<AccountInfo> {
-    const info = await this.jrpcCall<{ public_key: string; address: string }>("accounts.get_default", {});
+    const info = await this.jrpcCall<{ public_key: Uint8Array; address: string }>("accounts.get_default", {});
     if (!info.public_key || !info.address) {
       throw new Error("Wallet daemon response missing public_key or address");
     }
