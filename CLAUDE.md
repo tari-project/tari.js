@@ -9,10 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm install
 
 # Build all packages
-moon :build
+pnpm -r build
 
 # Test all packages
-moon :test
+pnpm -r test
 
 # Test a single package (from repo root)
 pnpm --filter @tari-project/ootle run test
@@ -35,7 +35,7 @@ pnpm docs
 
 ## Architecture
 
-This is a pnpm monorepo using [Moon](https://moonrepo.dev) for build orchestration. The SDK targets the Tari Ootle network (a UTXO + smart contract L2).
+This is a pnpm monorepo. The SDK targets the Tari Ootle network (a UTXO + smart contract L2).
 
 ### Package dependency graph
 
@@ -91,12 +91,11 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 ### Examples and docs
 
 - `examples/` — React 19 + Vite demo apps (connect-button, indexer-explorer, template-inspector)
-- `docusaurus/tari-docs/` — public documentation site
 - `tsdocs/` — generated TypeDoc API reference
 
 ## Toolchain
 
-- Node ≥ 22, pnpm 10, Moon 1.40.5 (versions pinned in `.prototools`)
+- Node ≥ 22, pnpm 10
 - TypeScript strict mode, ES2022 target, ESNext modules, `"moduleResolution": "bundler"`
 - ESLint flat config (`eslint.config.mjs`), Prettier (120-col, double quotes, trailing commas)
 - Vitest for all package tests

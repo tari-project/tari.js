@@ -11,7 +11,6 @@ const config: KnipConfig = {
   },
   ignoreBinaries: ["commitlint", "info"],
   ignoreExportsUsedInFile: true,
-  ignore: ["docusaurus/**/*.ts"],
   workspaces: {
     // Explicit workspace declarations so knip scans TypeScript source rather than
     // unbuilt dist/ files. Entry patterns are auto-detected from pnpm workspace but

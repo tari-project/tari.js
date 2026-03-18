@@ -75,8 +75,7 @@ Have an idea? [Create a feature request](https://github.com/tari-project/tari.js
 3. Share your use cases and examples
 
 ### 📚 **For Documentation**
-1. Improve existing docs in `/docusaurus/tari-docs/docs/`
-2. Add examples and tutorials
+1. Add examples and tutorials
 3. Create video guides and walkthroughs
 
 ## 📅 **Release Timeline**

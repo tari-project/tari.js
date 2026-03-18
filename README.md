@@ -511,20 +511,20 @@ pnpm dev
 
 ## Development
 
-This repo uses [pnpm](https://pnpm.io/) workspaces and [Moon](https://moonrepo.dev) for build orchestration.
+This repo uses [pnpm](https://pnpm.io/) workspaces.
 
 ```sh
 # Install dependencies
 pnpm install
 
 # Build all packages
-moon :build
+pnpm -r build
 
 # Build a specific package
 pnpm --filter @tari-project/ootle build
 
 # Test all packages
-moon :test
+pnpm -r test
 
 # Test a single package
 pnpm --filter @tari-project/ootle run test

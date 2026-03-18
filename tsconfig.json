@@ -21,10 +21,7 @@
     {
       "path": "packages/ootle-wallet-daemon-signer"
     },
-    {
-      "path": "docusaurus/tari-docs"
-    },
-    {
+{
       "path": "examples/connect-button"
     },
     {

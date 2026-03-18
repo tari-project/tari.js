@@ -43,7 +43,8 @@ export function useWalletDaemon(): UseWalletDaemon {
       // WalletDaemonSigner.connect() reaches out to the daemon, fetches the
       // default account's public key and address, and caches them.
       const signer = await WalletDaemonSigner.connect(options);
-      const [address, publicKey] = await Promise.all([signer.getAddress(), signer.getPublicKey()]);
+      const [address, publicKeyBytes] = await Promise.all([signer.getAddress(), signer.getPublicKey()]);
+      const publicKey = Array.from(publicKeyBytes, (b) => b.toString(16).padStart(2, "0")).join("");
       setState({ status: "connected", signer, address, publicKey, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Connection failed";

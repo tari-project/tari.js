@@ -49,9 +49,7 @@ export function useTemplates(): UseTemplates {
     setLoadError(null);
     try {
       const client = IndexerClient.usingFetchTransport(indexerUrl);
-      const response = await client.listTemplates(50);
-      // ListTemplatesResponse shape: { templates: TemplateListItem[] }
-      const raw = response as unknown as { templates?: TemplateListItem[] };
+      const raw = await client.getTransport().sendGet<{ templates?: TemplateListItem[] }>("templates", { limit: "50" });
       setTemplates(raw.templates ?? []);
       setLoadStatus("ready");
     } catch (err) {
@@ -73,7 +71,7 @@ export function useTemplates(): UseTemplates {
       setDefinitionLoading(true);
       try {
         const client = IndexerClient.usingFetchTransport(indexerUrl);
-        const def = await client.getTemplateDefinition(address);
+        const def = await client.templatesGet(address);
         setDefinition(def);
       } catch (err) {
         setDefinitionError(err instanceof Error ? err.message : "Failed to fetch template definition");
