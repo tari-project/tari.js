@@ -1,6 +1,8 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
+import type { FinalizeOutcome } from "@tari-project/ootle-ts-bindings";
+
 export type {
   Amount,
   UnsignedTransactionV1,
@@ -25,7 +27,21 @@ export type {
   Decision,
   ExecuteResult,
   FinalizeResult,
+  FinalizeOutcome,
 } from "@tari-project/ootle-ts-bindings";
+
+/**
+ * The classified result of a finalized transaction.
+ *
+ * - `"Commit"` — all instructions committed successfully.
+ * - `"FeeIntentCommit"` — fee instructions committed but execution was aborted
+ *   (the network accepted the fee intent but rejected the rest).
+ * - `"Reject"` — the entire transaction was rejected.
+ */
+export interface TransactionOutcome {
+  outcome: FinalizeOutcome | "Reject";
+  reason?: string;
+}
 
 export interface WatchOptions {
   /** How often to poll for the transaction result, in milliseconds. Defaults to 500ms. */
@@ -33,19 +49,6 @@ export interface WatchOptions {
   /** Maximum time to wait before throwing a timeout error, in milliseconds. Defaults to 60000ms. */
   timeoutMs?: number;
 }
-
-/**
- * The outcome of a finalized transaction.
- * Mirrors `TransactionOutcome` from the Rust ootle-rs crate.
- *
- * - `Commit` — transaction fully committed (fees + execution).
- * - `OnlyFeeCommit` — fees paid but execution was rejected (partial commit).
- * - `Reject` — entire transaction rejected (no state changes).
- */
-export type TransactionOutcome =
-  | { status: "Commit" }
-  | { status: "OnlyFeeCommit"; reason: string }
-  | { status: "Reject"; reason: string };
 
 /**
  * Implemented by types that can produce a component address string.

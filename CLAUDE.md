@@ -86,10 +86,11 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 1. Build instruction set via `TransactionBuilder` → `UnsignedTransactionV1`
 2. `resolveTransaction` fills in substate versions via the provider
 3. `signTransaction` generates a seal keypair, collects Schnorr signatures from all signers, and assembles a full `Transaction`
-4. `submitTransaction` BOR-encodes (via `borEncodeTransaction`) and submits the signed transaction
-5. `watchTransaction` polls/streams for finality via `TransactionWatcher`
+4. `sealTransaction` BOR-encodes the signed transaction into a `TransactionEnvelope`
+5. `submitTransaction` submits the sealed envelope to the network
+6. `watchTransaction` polls/streams for finality via `TransactionWatcher`
 
-`sendTransaction` chains all of steps 2–5 in one call.
+`sendTransaction` chains all of steps 2–6 in one call.
 
 ### Examples and docs
 

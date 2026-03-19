@@ -13,6 +13,7 @@ import {
   WalletStealthAuthorizer,
   OotleWallet,
   signTransaction,
+  sealTransaction,
   resolveTransaction,
   submitTransaction,
   Network,
@@ -32,10 +33,11 @@ wallet.setDefaultSigner(senderAddress);
 
 const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec);
 
-// 3. Sign and submit
+// 3. Sign, seal, and submit
 const resolved = await resolveTransaction(provider, spec.unsignedTx);
 const signed = await signTransaction([authorizer], resolved);
-const txId = await submitTransaction(provider, signed);
+const envelope = sealTransaction(signed);
+const txId = await submitTransaction(provider, envelope);
 ```
 
 ## StealthTransfer API

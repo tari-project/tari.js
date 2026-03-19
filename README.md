@@ -99,14 +99,15 @@ Implemented by `SecretKeyWallet`, `WalletDaemonSigner`, and `EphemeralKeySigner`
 ```
 unsignedTx
   → resolveTransaction(provider, …)   // fill in substate versions
-  → signTransaction(signers, …)        // generate seal keypair, collect Schnorr signatures, assemble Transaction
-  → submitTransaction(provider, …)     // BOR-encode and submit to network
+  → signTransaction(signers, …)        // generate seal keypair, collect Schnorr signatures
+  → sealTransaction(signed)            // BOR-encode into a TransactionEnvelope
+  → submitTransaction(provider, …)     // submit the envelope to the network
   → watchTransaction(provider, txId)   // wait for finalization
 ```
 
 Or use the `sendTransaction` / `sendDryRun` convenience helpers which chain all steps.
 
-> **Note:** WASM crypto operations (hashing, signing, encoding) are handled internally by `signTransaction` and `sendTransaction`. You do not need to manage a WASM module or encoder — `@tari-project/ootle-wasm` is a dependency of the core package.
+> **Note:** WASM crypto operations (hashing, signing, encoding) are handled internally by `signTransaction`, `sealTransaction`, and `sendTransaction`. You do not need to manage a WASM module or encoder — `@tari-project/ootle-wasm` is a dependency of the core package.
 
 ---
 
@@ -123,6 +124,7 @@ import {
   literalArg,
   resolveTransaction,
   signTransaction,
+  sealTransaction,
   submitTransaction,
   watchTransaction,
   sendTransaction,
@@ -186,8 +188,9 @@ Key methods:
 ```ts
 // Individual steps
 const resolved = await resolveTransaction(provider, unsignedTx);
-const signed = await signTransaction([signer], resolved);     // returns a full Transaction (signed + sealed)
-const txId = await submitTransaction(provider, signed);        // BOR-encodes internally via ootle-wasm
+const signed = await signTransaction([signer], resolved);       // returns a signed Transaction
+const envelope = sealTransaction(signed);                        // BOR-encode into TransactionEnvelope
+const txId = await submitTransaction(provider, envelope);        // submit to network
 const receipt = await watchTransaction(provider, txId, { timeoutMs: 30_000 });
 
 // All-in-one
@@ -198,9 +201,9 @@ const result = await sendDryRun(provider, signer, unsignedTx);
 
 // Inspect the outcome
 const outcome = classifyOutcome(receipt.result);
-// outcome: { status: "Commit" }
-//        | { status: "OnlyFeeCommit"; reason: string }
-//        | { status: "Reject"; reason: string }
+// outcome: { outcome: "Commit" }
+//        | { outcome: "FeeIntentCommit", reason: string }
+//        | { outcome: "Reject", reason: string }
 ```
 
 #### `OotleWallet`
@@ -325,7 +328,7 @@ const receipt = await pending.getReceipt(); // raw indexer response
 watcher.stop();
 ```
 
-`PendingTransaction.watch()` returns a `TransactionOutcome` and does **not** throw on `OnlyFeeCommit` or `Reject` — the caller decides how to handle each outcome.
+`PendingTransaction.watch()` returns a `TransactionOutcome` and does **not** throw on `FeeIntentCommit` or `Reject` — the caller decides how to handle each outcome.
 
 #### `WantInput` and `resolveWantInputs`
 
@@ -439,6 +442,7 @@ import {
   WalletStealthAuthorizer,
   OotleWallet,
   signTransaction,
+  sealTransaction,
   resolveTransaction,
   submitTransaction,
 } from "@tari-project/ootle";
@@ -457,10 +461,11 @@ wallet.setDefaultSigner(senderAddress);
 
 const authorizer = WalletStealthAuthorizer.fromSpec(wallet, spec);
 
-// 3. Sign and submit
+// 3. Sign, seal, and submit
 const resolved = await resolveTransaction(provider, spec.unsignedTx);
 const signed = await signTransaction([authorizer], resolved);
-const txId = await submitTransaction(provider, signed);
+const envelope = sealTransaction(signed);
+const txId = await submitTransaction(provider, envelope);
 ```
 
 **Interfaces for implementing your own stealth providers:**

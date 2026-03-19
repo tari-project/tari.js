@@ -84,4 +84,4 @@ const receipt = await pending.getReceipt();
 watcher.stop();
 ```
 
-`PendingTransaction.watch()` returns a `TransactionOutcome` and does not throw on `OnlyFeeCommit` or `Reject` — the caller decides how to handle each outcome.
+`PendingTransaction.watch()` returns a `TransactionOutcome` and does not throw on `FeeIntentCommit` or `Reject` — the caller decides how to handle each outcome.

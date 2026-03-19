@@ -127,7 +127,7 @@ export class IndexerProvider implements Provider {
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
           if (/not found/i.test(message) || message.includes("404")) {
-            return req;
+            throw new Error(`Failed to find input "${req.substate_id}": ${message}`, { cause: error });
           }
           throw new Error(`Failed to resolve input "${req.substate_id}": ${message}`, { cause: error });
         }

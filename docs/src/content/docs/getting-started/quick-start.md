@@ -55,7 +55,7 @@ const unsignedTx = TransactionBuilder.new(Network.LocalNet)
 const result = await sendTransaction(provider, signer, unsignedTx);
 ```
 
-`sendTransaction` resolves substate versions, signs, submits, and watches for finalization — all in one call.
+`sendTransaction` resolves substate versions, signs, seals (BOR-encodes), submits, and watches for finalization — all in one call.
 
 ## 3. Local signing (testing)
 

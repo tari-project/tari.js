@@ -16,11 +16,6 @@ export interface StealthTransferSpec {
   statement: StealthTransferStatement;
 }
 
-interface RecipientAmountPair {
-  recipient: string;
-  amounts: bigint[];
-}
-
 /**
  * Fluent builder for constructing stealth transfer transactions.
  * Mirrors `StealthTransfer` from the Rust ootle-rs crate.
@@ -44,7 +39,6 @@ export class StealthTransfer {
   private amounts: bigint[] = [];
   private sourceAccount: ComponentAddress | null = null;
   private resourceAddress: ResourceAddress | null = null;
-  private recipientPairs: RecipientAmountPair[] = [];
 
   constructor(network: Network | number, factory: StealthOutputStatementFactory) {
     this.txBuilder = TransactionBuilder.new(network);
@@ -65,9 +59,9 @@ export class StealthTransfer {
    * Multiple calls add multiple outputs; they all share the same recipient.
    */
   public to(recipientPublicKeyHex: string, amount: bigint): this {
-    if (this.recipientPublicKeyHex !== recipientPublicKeyHex) {
-      this.recipientPairs.push({ recipient: recipientPublicKeyHex, amounts: this.amounts });
+    if (this.recipientPublicKeyHex && this.recipientPublicKeyHex !== recipientPublicKeyHex) {
       this.amounts = [];
+      throw new Error("StealthTransfer: recipient has changed. Amounts were cleared, try again.");
     }
     this.recipientPublicKeyHex = recipientPublicKeyHex;
     this.amounts.push(amount);

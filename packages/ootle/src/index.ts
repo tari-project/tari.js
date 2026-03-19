@@ -9,6 +9,7 @@ export type { TariFunctionDefinition, TariMethodDefinition, NamedArg } from "./b
 export {
   resolveTransaction,
   signTransaction,
+  sealTransaction,
   submitTransaction,
   watchTransaction,
   sendTransaction,
@@ -44,6 +45,7 @@ export type {
   Decision,
   ExecuteResult,
   FinalizeResult,
+  FinalizeOutcome,
 } from "./types";
 export { toHexStr } from "./helpers/hex";
 export { parseWorkspaceStringKey } from "./helpers/workspace";

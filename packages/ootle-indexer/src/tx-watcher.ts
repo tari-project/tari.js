@@ -1,8 +1,8 @@
 //   Copyright 2024 The Tari Project
 //   SPDX-License-Identifier: BSD-3-Clause
 
-import type { IndexerGetTransactionResultResponse, IndexerTransactionFinalizedResult } from "@tari-project/ootle-ts-bindings";
-import type { TransactionOutcome } from "@tari-project/ootle";
+import type { IndexerGetTransactionResultResponse } from "@tari-project/ootle-ts-bindings";
+import type { TransactionOutcome, FinalizeOutcome } from "@tari-project/ootle";
 import { classifyOutcome } from "@tari-project/ootle";
 import { openEventStream } from "./event-stream";
 import type { IndexerClient } from "@tari-project/indexer-client";
@@ -96,25 +96,24 @@ export class TransactionWatcher {
 
       this.pending.delete(payload.transaction_id);
 
-      // Map the SSE payload to a TransactionOutcome using the same
-      // classifyOutcome logic used by watchTransaction polling.
-      // The SSE payload doesn't carry the full FinalizeResult — only the fields
-      // classifyOutcome needs (final_decision, fee_decision, abort_details).
-      const sseResult = {
-        Finalized: {
-          final_decision: payload.final_decision,
-          fee_decision: payload.fee_decision ?? "Commit",
-          abort_details: payload.abort_details ?? undefined,
-        },
-      } as unknown as IndexerTransactionFinalizedResult;
+      // Classify the SSE payload directly into a TransactionOutcome.
+      // The SSE payload carries final_decision and abort_details but not the full
+      // execution_result, so we map the decision variants ourselves rather than
+      // delegating to classifyOutcome (which expects the full Finalized structure).
+      const decision = payload.final_decision;
+      let outcome: TransactionOutcome;
 
-      const outcome = classifyOutcome(sseResult);
-
-      if (outcome) {
-        waiter.resolve(outcome);
+      if (decision === "Commit") {
+        outcome = { outcome: "Commit" as FinalizeOutcome };
+      } else if (typeof decision === "object" && "Abort" in decision) {
+        const reason = payload.abort_details ?? JSON.stringify(decision.Abort);
+        outcome = { outcome: "Reject", reason };
       } else {
-        waiter.reject(new Error(`Unexpected SSE payload for tx ${payload.transaction_id}`));
+        waiter.reject(new Error(`Unexpected SSE decision for tx ${payload.transaction_id}: ${JSON.stringify(decision)}`));
+        continue;
       }
+
+      waiter.resolve(outcome);
     }
   }
 }
@@ -149,7 +148,7 @@ export class PendingTransaction {
    * Waits for the transaction to finalise via SSE, falling back to polling
    * if the SSE event doesn't arrive within `timeoutMs`.
    *
-   * Returns the `TransactionOutcome` — does NOT throw on `OnlyFeeCommit` or
+   * Returns the `TransactionOutcome` — does NOT throw on `FeeIntentCommit` or
    * `Reject`; the caller decides how to handle each outcome.
    */
   public async watch(): Promise<TransactionOutcome> {
@@ -158,7 +157,6 @@ export class PendingTransaction {
     const timeoutPromise = new Promise<null>((resolve) => {
       setTimeout(() => resolve(null), this.timeoutMs);
     });
-
     const result = await Promise.race([ssePromise, timeoutPromise]);
 
     if (result !== null) {

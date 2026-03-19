@@ -7,12 +7,13 @@ import type {
   TransactionEnvelope,
   IndexerGetTransactionResultResponse,
   UnsealedTransactionV1,
+  FinalizeOutcome,
   IndexerTransactionFinalizedResult,
   Transaction,
 } from "@tari-project/ootle-ts-bindings";
 import type { Provider } from "./provider";
 import type { Signer } from "./signer";
-import type { TransactionOutcome, WatchOptions } from "./types";
+import type { WatchOptions } from "./types";
 import { borEncodeTransaction, generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
 import { toHexStr } from "./helpers/hex";
 
@@ -65,6 +66,13 @@ export async function signTransaction(signers: Signer[], unsignedTx: UnsignedTra
 }
 
 /**
+ * BOR encodes a signed transaction into a TransactionEnvelope.
+ */
+export function sealTransaction(signedTransaction: Transaction): TransactionEnvelope {
+  return borEncodeTransaction(JSON.stringify(signedTransaction));
+}
+
+/**
  * Submits an encoded transaction envelope and returns the transaction ID.
  */
 export async function submitTransaction(provider: Provider, envelope: TransactionEnvelope): Promise<string> {
@@ -72,16 +80,9 @@ export async function submitTransaction(provider: Provider, envelope: Transactio
   return response.transaction_id;
 }
 
-/**
- * Classifies a finalized transaction result into a `TransactionOutcome`.
- *
- * - `Commit` — all instructions committed.
- * - `OnlyFeeCommit` — fee instructions committed but execution was aborted.
- * - `Reject` — the entire transaction was rejected.
- *
- * Returns `null` if the result is still pending.
- */
-export function classifyOutcome(result: IndexerTransactionFinalizedResult): TransactionOutcome | null {
+export function classifyOutcome(
+  result: IndexerTransactionFinalizedResult,
+): { outcome: FinalizeOutcome | "Reject"; reason?: string } | null {
   if (result === "Pending") return null;
   if (!("Finalized" in result)) return null;
 
@@ -89,17 +90,17 @@ export function classifyOutcome(result: IndexerTransactionFinalizedResult): Tran
   const decision = finalized.final_decision;
 
   if (decision === "Commit") {
-    return { status: "Commit" };
+    return { outcome: decision };
   }
 
   if (typeof decision === "object" && "Abort" in decision) {
     const reason = finalized.abort_details ?? JSON.stringify(decision.Abort);
     // OnlyFeeCommit: fees were paid (fee_decision === "Commit") but execution aborted.
-    const feeDecision = (finalized as Record<string, unknown>).fee_decision;
-    if (feeDecision === "Commit") {
-      return { status: "OnlyFeeCommit", reason };
+    const result = finalized.execution_result?.finalize?.result;
+    if (typeof result === "object" && "AcceptFeeRejectRest" in result) {
+      return { outcome: "FeeIntentCommit", reason };
     }
-    return { status: "Reject", reason };
+    return { outcome: "Reject", reason };
   }
 
   throw new Error(`Unexpected final_decision variant: ${JSON.stringify(decision)}`);
@@ -108,7 +109,7 @@ export function classifyOutcome(result: IndexerTransactionFinalizedResult): Tran
 /**
  * Polls the provider until a transaction reaches a finalized state, then returns the result.
  *
- * Throws for `Reject` outcomes. `OnlyFeeCommit` (fees paid, execution aborted) also
+ * Throws for `Reject` outcomes. `FeeIntentCommit` (fees paid, execution aborted) also
  * throws with a distinct message so callers can distinguish it from a full rejection.
  * Use `classifyOutcome` on the raw result for non-throwing outcome inspection.
  */
@@ -126,12 +127,13 @@ export async function watchTransaction(
     const result: IndexerTransactionFinalizedResult = response.result;
 
     if (result !== "Pending" && "Finalized" in result) {
-      const outcome = classifyOutcome(result);
-      if (outcome?.status === "Reject") {
-        throw new Error(`Transaction ${txId} was rejected: ${outcome.reason}`);
+      const classifiedOutcome = classifyOutcome(result);
+      const { outcome, reason } = classifiedOutcome ?? { outcome: "Reject" };
+      if (outcome === "Reject") {
+        throw new Error(`Transaction ${txId} was rejected: ${reason}`);
       }
-      if (outcome?.status === "OnlyFeeCommit") {
-        throw new Error(`Transaction ${txId} only committed fees (execution aborted): ${outcome.reason}`);
+      if (outcome === "FeeIntentCommit") {
+        throw new Error(`Transaction ${txId} only committed fees (execution aborted): ${reason}`);
       }
       return response;
     }
@@ -155,7 +157,7 @@ export async function sendTransaction(
 ): Promise<IndexerGetTransactionResultResponse> {
   const resolved = await resolveTransaction(provider, unsignedTx);
   const signedTransaction = await signTransaction(Array.isArray(signers) ? signers : [signers], resolved);
-  const envelope = borEncodeTransaction(JSON.stringify(signedTransaction));
+  const envelope = sealTransaction(signedTransaction);
   const txId = await submitTransaction(provider, envelope);
   return watchTransaction(provider, txId, watchOpts);
 }
