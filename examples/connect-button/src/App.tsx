@@ -3,7 +3,7 @@ import { useWalletDaemon } from "./hooks/useWalletDaemon";
 import "./App.css";
 
 // The wallet daemon JRPC endpoint. Start with: ./tari_ootle_walletd --network esme
-const DEFAULT_URL = "http://127.0.0.1:9000/json_rpc";
+const DEFAULT_URL = "http://127.0.0.1:5100/json_rpc";
 
 /** Shorten a hex string to start…end form, preserving enough to identify it. */
 function truncate(str: string, head = 10, tail = 8): string {

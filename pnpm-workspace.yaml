@@ -20,6 +20,9 @@ catalog:
   typedoc-plugin-markdown: ^4.10.0
   typescript: ^5.9.3
   typescript-eslint: ^8.57.0
+  vite: ^8.0.1
+  vite-plugin-top-level-await: ^1.6.0
+  vite-plugin-wasm: ^3.6.0
   vitest: ^4.1.0
 
 onlyBuiltDependencies:

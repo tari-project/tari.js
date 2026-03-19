@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && vite build",
     "test": "vitest run"
   },
   "dependencies": {
