@@ -63,7 +63,7 @@ export class SecretKeyWallet implements Signer {
   }
 
   public async getAddress(): Promise<string> {
-    return Promise.resolve(this.publicKeyHex.toString());
+    return Promise.resolve(toHexStr(this.publicKeyHex));
   }
 
   public async getPublicKey(): Promise<Uint8Array> {
