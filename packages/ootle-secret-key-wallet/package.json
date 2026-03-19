@@ -11,17 +11,22 @@
     }
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json && vite build",
+    "build": "tsc -b && vite build",
     "test": "vitest run"
   },
   "dependencies": {
-    "@tari-project/ootle": "workspace:*",
+    "@tari-project/ootle": "workspace:",
     "@tari-project/ootle-ts-bindings": "catalog:",
     "@tari-project/ootle-wasm": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@microsoft/api-extractor": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "unplugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-top-level-await": "catalog:",
+    "vite-plugin-wasm": "catalog:"
   }
 }

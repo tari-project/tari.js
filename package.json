@@ -1,5 +1,5 @@
 {
-  "name": "@tari-project/ootle-monorepo",
+  "name": "@tari-project/ootle.ts",
   "version": "0.14.6",
   "description": "TypeScript SDK for building on the Tari Ootle network",
   "homepage": "https://github.com/tari-project/tari.js#readme",
@@ -31,9 +31,7 @@
     "typedoc": "catalog:",
     "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
-    "vite-plugin-top-level-await": "catalog:",
-    "vite-plugin-wasm": "catalog:"
+    "typescript-eslint": "catalog:"
   },
   "scripts": {
     "docs": "pnpm --filter ootle-docs build",

@@ -7,6 +7,7 @@ packages:
 
 catalog:
   "@eslint/js": ^10.0.1
+  "@microsoft/api-extractor": ^7.57.7
   "@tari-project/indexer-client": ^1.2.1
   "@tari-project/ootle-ts-bindings": ^1.29.3
   "@tari-project/ootle-wasm": ^0.2.0
@@ -20,6 +21,7 @@ catalog:
   typedoc-plugin-markdown: ^4.10.0
   typescript: ^5.9.3
   typescript-eslint: ^8.57.0
+  unplugin-dts: ^1.0.0-beta.6
   vite: ^8.0.1
   vite-plugin-top-level-await: ^1.6.0
   vite-plugin-wasm: ^3.6.0

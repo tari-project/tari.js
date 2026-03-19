@@ -5,7 +5,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig(
   eslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.recommended,
   tseslint.configs.strict,
   globalIgnores(["**/dist/"]),
   {
