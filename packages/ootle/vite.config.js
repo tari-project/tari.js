@@ -15,8 +15,9 @@ export default {
   ],
   build: {
     lib: {
-      entry: "src/index.ts",
       name: "@tari-project/ootle",
+      entry: "src/index.ts",
+      fileName: "index",
       formats: ["es"],
     },
     rolldownOptions: {
