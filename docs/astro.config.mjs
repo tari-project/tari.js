@@ -11,7 +11,7 @@ export default defineConfig({
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/tari-project/tari.js" },
         { icon: "discord", label: "Discord", href: "https://discord.gg/tari" },
-        { icon: "x.com", label: "X", href: "https://x.com/taboracle" },
+        { icon: "x.com", label: "X", href: "https://x.com/tari" },
       ],
       editLink: {
         baseUrl: "https://github.com/tari-project/tari.js/edit/main/docs/",
