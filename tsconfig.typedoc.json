@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "declaration": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "packages/ootle/src/**/*",
+    "packages/ootle-indexer/src/**/*",
+    "packages/ootle-secret-key-wallet/src/**/*",
+    "packages/ootle-wallet-daemon-signer/src/**/*"
+  ]
+}

@@ -26,8 +26,11 @@ pnpm lint
 # Check for unused dependencies
 pnpm knip
 
-# Generate API docs
+# Build documentation site (Starlight + TypeDoc API reference)
 pnpm docs
+
+# Run docs dev server
+pnpm docs:dev
 
 # Clean everything
 ./scripts/clean_everything.sh
@@ -91,7 +94,7 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 ### Examples and docs
 
 - `examples/` — React 19 + Vite demo apps (connect-button, indexer-explorer, template-inspector)
-- `tsdocs/` — generated TypeDoc API reference
+- `docs/` — Starlight documentation site with auto-generated TypeDoc API reference
 
 ## Toolchain
 

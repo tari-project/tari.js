@@ -24,7 +24,7 @@ export default defineConfig({
             "../packages/ootle-secret-key-wallet/src/index.ts",
             "../packages/ootle-wallet-daemon-signer/src/index.ts",
           ],
-          tsconfig: "../tsconfig.json",
+          tsconfig: "../tsconfig.typedoc.json",
           output: "api",
           sidebar: {
             label: "API Reference",

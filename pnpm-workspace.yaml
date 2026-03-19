@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - apps/*
+  - docs
   - examples/*
   - "!**/test/**"
 
@@ -25,3 +26,4 @@ onlyBuiltDependencies:
   - core-js
   - core-js-pure
   - esbuild
+  - sharp

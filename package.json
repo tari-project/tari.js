@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
     "knip": "catalog:",
@@ -33,7 +34,8 @@
     "typescript-eslint": "catalog:"
   },
   "scripts": {
-    "docs": "typedoc",
+    "docs": "pnpm --filter ootle-docs build",
+    "docs:dev": "pnpm --filter ootle-docs dev",
     "lint": "pnpm -r lint",
     "knip": "knip"
   },

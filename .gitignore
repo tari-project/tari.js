@@ -26,6 +26,10 @@ yarn-error.log*
 # Claude Code
 .claude/
 
+# Docs (Starlight/Astro)
+docs/.astro/
+docs/src/content/docs/api/
+
 # Editor directories and files
 .idea/
 .vscode
