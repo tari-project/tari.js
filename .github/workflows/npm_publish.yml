@@ -26,22 +26,18 @@ jobs:
       - run: pnpm -r build
       - name: Publish all modules to NPM
         run: |
-          #set -euo pipefail
+          set -euo pipefail
 
-          echo "== Local package.json =="
-          node -e "const p=require('./package.json'); console.log({name:p.name, version:p.version})"
+          # Use the core SDK package as the version sentinel.
+          # All workspace packages share the same version (enforced by check_versions.sh).
+          SENTINEL="@tari-project/ootle"
+          LOCAL_VERSION=$(node -p "require('./packages/ootle/package.json').version")
 
-          LOCAL_VERSION=$(node -p "require('./package.json').version")
-          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          echo "Sentinel package: $SENTINEL"
+          echo "Local version:    $LOCAL_VERSION"
 
-          echo "Local version: $LOCAL_VERSION"
-          echo "Package name:  $PACKAGE_NAME"
-
-          echo "== Registry check =="
-          echo "Running: pnpm info $PACKAGE_NAME version"
-
-          REMOTE_VERSION=$(pnpm info "$PACKAGE_NAME" version 2>/dev/null || echo "NOT_FOUND")
-          echo "Remote version: $REMOTE_VERSION"
+          REMOTE_VERSION=$(pnpm info "$SENTINEL" version 2>/dev/null || echo "NOT_FOUND")
+          echo "Remote version:   $REMOTE_VERSION"
 
           if [ "$REMOTE_VERSION" = "$LOCAL_VERSION" ]; then
             echo "Version $LOCAL_VERSION already published, skipping."

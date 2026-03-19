@@ -67,7 +67,7 @@ Have an idea? [Create a feature request](https://github.com/tari-project/tari.js
 ### 🛠️ **For Developers**
 1. Browse open issues: [Good First Issues](https://github.com/tari-project/tari.js/labels/good%20first%20issue)
 2. Join our [Discord](https://discord.gg/tari) for real-time discussions
-3. Check the [Contributing Guide](https://tari-project.github.io/tari.js/contributing)
+3. Check the [Contributing Guide](https://github.com/tari-project/tari.js#contributing)
 
 ### 💭 **For Ideas & Feedback**
 1. [Start a discussion](https://github.com/tari-project/tari.js/discussions) with your ideas

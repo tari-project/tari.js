@@ -511,30 +511,140 @@ pnpm dev
 
 ## Development
 
-This repo uses [pnpm](https://pnpm.io/) workspaces.
+This repo uses [pnpm](https://pnpm.io/) workspaces. You'll need **Node.js 22+** and **pnpm 10+**.
+
+### Setup
 
 ```sh
-# Install dependencies
+# Clone and install
+git clone https://github.com/tari-project/tari.js.git
+cd tari.js
 pnpm install
+```
 
-# Build all packages
+### Build
+
+```sh
+# Build all SDK packages
 pnpm -r build
 
 # Build a specific package
 pnpm --filter @tari-project/ootle build
+```
 
-# Test all packages
+### Test
+
+```sh
+# Run all package tests
 pnpm -r test
 
-# Test a single package
+# Run a single package's tests
 pnpm --filter @tari-project/ootle run test
 
-# Lint all packages
+# Watch mode (from a package directory)
+cd packages/ootle && pnpm vitest
+```
+
+### Lint and format
+
+```sh
+# ESLint + Prettier across all packages
 pnpm lint
 
-# Check for unused dependencies
+# Check for unused exports and dependencies
 pnpm knip
 ```
+
+### Documentation
+
+The documentation site uses [Starlight](https://starlight.astro.build/) (Astro) with auto-generated API reference via [TypeDoc](https://typedoc.org/).
+
+```sh
+# Build the docs site (outputs to docs/dist/)
+pnpm docs
+
+# Run the docs dev server with hot reload
+pnpm docs:dev
+```
+
+The API reference is generated from the TypeScript source of all four SDK packages using a dedicated [`tsconfig.typedoc.json`](tsconfig.typedoc.json). Hand-written guides live in [`docs/src/content/docs/`](docs/src/content/docs/).
+
+### Run an example
+
+```sh
+cd examples/connect-button   # or indexer-explorer, template-inspector
+pnpm install
+pnpm dev
+```
+
+See each example's own README for prerequisites (e.g. running a wallet daemon).
+
+### Clean everything
+
+```sh
+./scripts/clean_everything.sh
+```
+
+---
+
+## Repository structure
+
+```
+tari.js/
+├── packages/
+│   ├── ootle/                        Core SDK (builder, types, transaction flow)
+│   ├── ootle-indexer/                Indexer REST provider
+│   ├── ootle-secret-key-wallet/      Local in-memory signer (testing)
+│   └── ootle-wallet-daemon-signer/   Remote wallet daemon signer
+├── examples/
+│   ├── connect-button/               Wallet connection demo
+│   ├── indexer-explorer/             Read-only substate browser
+│   └── template-inspector/           Template ABI viewer
+├── docs/                             Starlight documentation site
+├── scripts/                          CI and utility scripts
+└── .github/workflows/                CI, docs deploy, npm publish
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Here's how to get involved.
+
+### Workflow
+
+1. Fork the repo and create a branch from `main`
+2. `pnpm install && pnpm -r build` — make sure the baseline builds
+3. Make your changes
+4. `pnpm lint` — fix any lint errors
+5. `pnpm -r test` — ensure all tests pass
+6. `pnpm knip` — check for unused exports or dependencies
+7. Open a pull request against `main`
+
+### CI checks
+
+Every PR runs these GitHub Actions automatically:
+
+| Workflow | What it does |
+|---|---|
+| **CI** | Builds all packages + runs tests |
+| **Lint** | Runs ESLint + Prettier |
+| **Docs test** | Verifies the documentation site builds |
+| **PR title** | Enforces [Conventional Commits](https://www.conventionalcommits.org/) format |
+| **Signed commits** | Verifies commits are signed |
+
+### Conventions
+
+- **TypeScript strict mode** — all packages use `"strict": true`
+- **ESLint flat config** — shared root config extended by each package
+- **Prettier** — 120-char lines, double quotes, trailing commas
+- **Commit messages** — follow [Conventional Commits](https://www.conventionalcommits.org/) (enforced by CI)
+- **No default exports** — use named exports everywhere
+
+### Deployment
+
+- **npm**: packages are auto-published to npm on push to `main` when their version number changes
+- **Docs**: the documentation site auto-deploys to GitHub Pages on push to `main`
 
 ---
 

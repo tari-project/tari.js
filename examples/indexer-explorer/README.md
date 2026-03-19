@@ -31,7 +31,7 @@ Think of the indexer like a blockchain explorer (e.g. Etherscan) — read-only, 
 
 ### Install Node.js
 
-You need **Node.js 18 or newer**. Check if you have it:
+You need **Node.js 22 or newer**. Check if you have it:
 
 ```bash
 node --version
@@ -131,5 +131,6 @@ indexer-explorer/
 
 - [Ootle documentation](https://ootle.tari.com)
 - [Indexer API reference](https://ootle.tari.com/indexer/indexer-api.html)
-- [`@tari-project/ootle`](../../packages/ootle/) — the package this example uses
-- [`@tari-project/ootle-indexer`](../../packages/ootle-indexer/)
+- [ootle.ts SDK reference](https://tari-project.github.io/tari.js)
+- [`@tari-project/ootle`](../../packages/ootle/) — core SDK package
+- [`@tari-project/ootle-indexer`](../../packages/ootle-indexer/) — indexer provider package

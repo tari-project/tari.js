@@ -28,7 +28,7 @@ This example covers the first step: connecting your web app to the wallet daemon
 
 ### Install Node.js
 
-You need **Node.js 18 or newer**. Check if you have it:
+You need **Node.js 22 or newer**. Check if you have it:
 
 ```bash
 node --version
@@ -155,4 +155,5 @@ connect-button/
 - [Ootle documentation](https://ootle.tari.com)
 - [Wallet setup guide](https://ootle.tari.com/guides/setup-a-wallet/)
 - [CLI reference](https://ootle.tari.com/guides/cli/)
+- [ootle.ts SDK reference](https://tari-project.github.io/tari.js)
 - [`@tari-project/ootle-wallet-daemon-signer`](../../packages/ootle-wallet-daemon-signer/) — the package this example uses

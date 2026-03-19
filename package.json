@@ -1,7 +1,7 @@
 {
-  "name": "@tari-project/tarijs",
+  "name": "@tari-project/ootle-monorepo",
   "version": "0.14.6",
-  "description": "",
+  "description": "TypeScript SDK for building on the Tari Ootle network",
   "homepage": "https://github.com/tari-project/tari.js#readme",
   "bugs": {
     "url": "https://github.com/tari-project/tari.js/issues"

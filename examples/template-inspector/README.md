@@ -27,7 +27,7 @@ Think of it like reading the documentation for a smart contract — directly fro
 
 ### Install Node.js
 
-You need **Node.js 18 or newer**. Check if you have it:
+You need **Node.js 22 or newer**. Check if you have it:
 
 ```bash
 node --version
@@ -125,7 +125,8 @@ template-inspector/
 
 ## Learn more
 
+- [Ootle documentation](https://ootle.tari.com)
 - [Ootle template overview](https://ootle.tari.com/guides/template-overview/)
-- [Indexer API reference](https://ootle.tari.com/indexer/indexer-api.html)
 - [CLI reference](https://ootle.tari.com/guides/cli/)
+- [ootle.ts SDK reference](https://tari-project.github.io/tari.js)
 - [`@tari-project/ootle-indexer`](../../packages/ootle-indexer/) — the package this example uses
