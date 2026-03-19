@@ -632,7 +632,7 @@ Every PR runs these GitHub Actions automatically:
 
 | Workflow | What it does |
 |---|---|
-| **CI** | Builds all packages + runs tests |
+| **CI** | Builds all packages |
 | **Lint** | Runs ESLint + Prettier |
 | **Docs test** | Verifies the documentation site builds |
 | **PR title** | Enforces [Conventional Commits](https://www.conventionalcommits.org/) format |

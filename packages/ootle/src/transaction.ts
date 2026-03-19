@@ -96,8 +96,8 @@ export function classifyOutcome(
   if (typeof decision === "object" && "Abort" in decision) {
     const reason = finalized.abort_details ?? JSON.stringify(decision.Abort);
     // OnlyFeeCommit: fees were paid (fee_decision === "Commit") but execution aborted.
-    const result = finalized.execution_result?.finalize?.result;
-    if (typeof result === "object" && "AcceptFeeRejectRest" in result) {
+    const execResult = finalized.execution_result?.finalize?.result;
+    if (typeof execResult === "object" && "AcceptFeeRejectRest" in execResult) {
       return { outcome: "FeeIntentCommit", reason };
     }
     return { outcome: "Reject", reason };

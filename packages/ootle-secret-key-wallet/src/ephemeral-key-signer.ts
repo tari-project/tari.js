@@ -14,7 +14,7 @@ import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-pro
  *
  * @example
  * ```ts
- * const signer = EphemeralKeySigner.generate(wasm);
+ * const signer = EphemeralKeySigner.generate();
  * const signed = await signTransaction([signer], unsignedTx);
  * ```
  */
@@ -39,7 +39,7 @@ export class EphemeralKeySigner implements Signer {
   public async getAddress(): Promise<string> {
     // Ephemeral signers have no persistent address — return the public key as-is.
     // TODO - fix this when keys -> address is ready
-    return Promise.resolve(this.publicKeyHex.toString());
+    return Promise.resolve(toHexStr(this.publicKeyHex));
   }
 
   public async getPublicKey(): Promise<Uint8Array> {

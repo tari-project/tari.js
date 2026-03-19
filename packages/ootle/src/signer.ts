@@ -11,9 +11,9 @@ export interface Signer {
   /** Returns the component address derived from this signer's public key. */
   getAddress(): Promise<string>;
 
-  /** Returns the hex-encoded public key for this signer. */
+  /** Returns the raw public key bytes for this signer. */
   getPublicKey(): Promise<Uint8Array>;
 
-  /** Signs the given unsigned transaction and returns the signed, and encoded TransactionEnvelope. */
+  /** Signs the given unsigned transaction and returns the collected signatures. */
   signTransaction(transaction: UnsignedTransactionV1): Promise<TransactionSignature[]>;
 }

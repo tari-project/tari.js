@@ -47,7 +47,7 @@ export type {
   FinalizeResult,
   FinalizeOutcome,
 } from "./types";
-export { toHexStr } from "./helpers/hex";
+export { toHexStr, fromHexStr } from "./helpers/hex";
 export { parseWorkspaceStringKey } from "./helpers/workspace";
 export type { ParsedWorkspaceKey } from "./helpers/workspace";
 export { defaultIndexerUrl } from "./helpers/network";

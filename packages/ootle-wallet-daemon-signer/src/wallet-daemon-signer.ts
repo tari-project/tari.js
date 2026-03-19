@@ -2,7 +2,7 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import type { Signer } from "@tari-project/ootle";
+import { type Signer, fromHexStr } from "@tari-project/ootle";
 import { WalletDaemonClient } from "@tari-project/wallet_jrpc_client";
 
 export interface WalletDaemonSignerOptions {
@@ -77,7 +77,7 @@ export class WalletDaemonSigner implements Signer {
     if (!response.account?.owner_public_key || !response.address) {
       throw new Error("Wallet daemon response missing public_key or address");
     }
-    this._publicKey = new Uint8Array(Buffer.from(response.account.owner_public_key, "hex"));
+    this._publicKey = fromHexStr(response.account.owner_public_key);
     this._address = response.address;
   }
 }

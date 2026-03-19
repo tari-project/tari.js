@@ -63,7 +63,7 @@ ootle-indexer   ootle-secret-key-wallet   ootle-wallet-daemon-signer
 - **Provider** (`provider.ts`) — read-only chain access (substates, templates, fees). Implemented by `ootle-indexer`.
 - **Signer** (`signer.ts`) — signs transactions, derives public keys. Implemented by the two wallet packages.
 - **TransactionBuilder** (`builder.ts`) — fluent API for constructing Tari transactions (mutable `this`-returning pattern).
-- **OotleWallet** (`wallet.ts`) — combines one or more signers with a provider; the primary entry point for end users.
+- **OotleWallet** (`wallet.ts`) — multi-signer wallet that manages multiple key providers (one per address); coordinates signing across several components.
 - **Stealth transfers** (`stealth*.ts`) — privacy-preserving output helpers.
 - **Builtin templates** (`builtin-templates.ts`) — typed helpers for Account and Faucet.
 
