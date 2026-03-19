@@ -45,7 +45,7 @@ export class WalletDaemonSigner implements Signer {
   /** Connect to the daemon and cache the public key / address. */
   public static async connect(options: WalletDaemonSignerOptions): Promise<WalletDaemonSigner> {
     const signer = WalletDaemonSigner.new(options);
-    await signer.fetchAccountInfo();
+    await signer?.fetchAccountInfo();
     return signer;
   }
 
@@ -72,7 +72,10 @@ export class WalletDaemonSigner implements Signer {
     return response.signatures;
   }
 
-  private async fetchAccountInfo(): Promise<void> {
+  public async fetchAccountInfo(): Promise<void> {
+    if (!this.client) {
+      throw new Error("Wallet daemon client not initialized");
+    }
     const response = await this.client.accountsGetDefault({});
     if (!response.account?.owner_public_key || !response.address) {
       throw new Error("Wallet daemon response missing public_key or address");

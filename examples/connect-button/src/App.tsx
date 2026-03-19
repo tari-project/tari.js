@@ -99,7 +99,6 @@ export function App() {
 
           <label className="field-label" htmlFor="token">
             Auth Token
-            <span className="field-hint">optional</span>
           </label>
           <input
             id="token"
@@ -118,7 +117,11 @@ export function App() {
           </div>
         )}
 
-        <button className="btn-primary" onClick={() => void handleConnect()} disabled={status === "connecting" || !url}>
+        <button
+          className="btn-primary"
+          onClick={() => void handleConnect()}
+          disabled={status === "connecting" || !url || !authToken}
+        >
           {status === "connecting" ? (
             <>
               <Spinner /> Connecting…

@@ -38,6 +38,7 @@ export function useWalletDaemon(): UseWalletDaemon {
   const [state, setState] = useState<WalletState>(INITIAL);
 
   const connect = useCallback(async (options: WalletDaemonSignerOptions) => {
+    console.debug("options", options);
     setState((s) => ({ ...s, status: "connecting", error: null }));
     try {
       // WalletDaemonSigner.connect() reaches out to the daemon, fetches the
@@ -47,6 +48,7 @@ export function useWalletDaemon(): UseWalletDaemon {
       const publicKey = Array.from(publicKeyBytes, (b) => b.toString(16).padStart(2, "0")).join("");
       setState({ status: "connected", signer, address, publicKey, error: null });
     } catch (err) {
+      console.debug(`err =`, err);
       const message = err instanceof Error ? err.message : "Connection failed";
       setState({ ...INITIAL, error: message });
     }
