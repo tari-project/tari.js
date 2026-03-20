@@ -7,8 +7,10 @@ import "./App.css";
 // Public Esmeralda testnet indexer — no local setup required.
 // Swap for http://localhost:18300 (with Network.LocalNet) when using a local indexer.
 const DEFAULT_NETWORK = Network.Esmeralda;
+console.debug(`DEFAULT_NETWORK`, DEFAULT_NETWORK);
+console.debug(`hi`);
 const DEFAULT_URL = defaultIndexerUrl(DEFAULT_NETWORK);
-
+console.debug(`DEFAULT_URL =`, DEFAULT_URL);
 const NETWORKS: { label: string; value: Network }[] = [
   { label: "Esmeralda testnet (public)", value: Network.Esmeralda },
   { label: "LocalNet", value: Network.LocalNet },
