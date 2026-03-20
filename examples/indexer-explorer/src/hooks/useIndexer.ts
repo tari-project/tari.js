@@ -32,7 +32,6 @@ export function useIndexer() {
     setError(null);
     try {
       const p = await ProviderBuilder.new().withNetwork(network).withUrl(url.trim()).connect();
-      console.debug(`p =`, p);
       setProvider(p);
       setStatus("connected");
     } catch (err) {
