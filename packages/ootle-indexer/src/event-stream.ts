@@ -27,7 +27,7 @@ export function parseSseChunk(buffer: string): { events: IndexerSseEvent[]; rema
     if (!block.trim()) continue;
 
     let type = "message";
-    let dataLines: string[] = [];
+    const dataLines: string[] = [];
 
     for (const line of block.split(/\n|\r\n/)) {
       if (line.startsWith("event:")) {
@@ -64,10 +64,7 @@ export function parseSseChunk(buffer: string): { events: IndexerSseEvent[]; rema
  *
  * Mirrors the `EventStream` / `into_stream()` pattern from the Rust ootle-rs crate.
  */
-export async function* openEventStream(
-  url: string,
-  signal: AbortSignal,
-): AsyncGenerator<IndexerSseEvent> {
+export async function* openEventStream(url: string, signal: AbortSignal): AsyncGenerator<IndexerSseEvent> {
   const RETRY_DELAY_MS = 5_000;
 
   while (!signal.aborted) {
@@ -114,7 +111,14 @@ export async function* openEventStream(
       console.warn("[ootle-indexer] SSE stream error, retrying in 5 s:", (err as Error).message);
       await new Promise<void>((resolve) => {
         const t = setTimeout(resolve, RETRY_DELAY_MS);
-        signal.addEventListener("abort", () => { clearTimeout(t); resolve(); }, { once: true });
+        signal.addEventListener(
+          "abort",
+          () => {
+            clearTimeout(t);
+            resolve();
+          },
+          { once: true },
+        );
       });
     } finally {
       signal.removeEventListener("abort", onAbort);

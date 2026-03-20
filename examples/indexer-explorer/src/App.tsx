@@ -18,7 +18,7 @@ const NETWORKS: { label: string; value: Network }[] = [
 ];
 
 export function App() {
-  const { status, error, connect, disconnect, getSubstate, listSubstates } = useIndexer();
+  const { status, error, connect, disconnect, getSubstate, getClient } = useIndexer();
 
   // Connection form state
   const [url, setUrl] = useState(DEFAULT_URL);
@@ -34,25 +34,6 @@ export function App() {
   const [substates, setSubstates] = useState<SubstateEntry[]>([]);
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
-
-  const loadSubstates = useCallback(async () => {
-    setListLoading(true);
-    setListError(null);
-    try {
-      const response = await listSubstates({ limit: 20 });
-      setSubstates(response.substates);
-    } catch (err) {
-      setListError(err instanceof Error ? err.message : "Failed to list substates");
-    } finally {
-      setListLoading(false);
-    }
-  }, [listSubstates]);
-
-  // Auto-load recent substates when connected
-  useEffect(() => {
-    if (status !== "connected") return;
-    void loadSubstates();
-  }, [loadSubstates, status]);
 
   const handleConnect = () => {
     void connect(url, network);
@@ -72,6 +53,10 @@ export function App() {
       setLookupLoading(false);
     }
   };
+
+  useEffect(() => {
+    getClient();
+  }, [getClient]);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {

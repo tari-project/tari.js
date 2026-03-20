@@ -26,8 +26,8 @@ export interface IndexerProviderOptions {
 }
 
 export class IndexerProvider implements Provider {
-  private client: IndexerClient;
-  private _network: Network;
+  private readonly client: IndexerClient;
+  private readonly _network: Network;
   private readonly _url: string;
   private _watcher: TransactionWatcher | null = null;
   readonly defaultTransactionTimeoutMs: number;

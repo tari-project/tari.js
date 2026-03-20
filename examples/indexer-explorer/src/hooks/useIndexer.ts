@@ -65,5 +65,11 @@ export function useIndexer() {
     [provider],
   );
 
-  return { status, provider, error, connect, disconnect, getSubstate, listSubstates };
+  const getClient = useCallback(async () => {
+    const c = provider?.getClient();
+    const networkInfo = await c?.networkInfo();
+    console.debug(networkInfo);
+  }, [provider]);
+
+  return { status, provider, error, connect, disconnect, getSubstate, listSubstates, getClient };
 }
