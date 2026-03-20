@@ -10,9 +10,10 @@ import type {
   SubstateRequirement,
   SubstateId,
   GetTemplateDefinitionResponse,
+  ListRecentTransactionsRequest,
+  ListRecentTransactionsResponse,
 } from "@tari-project/ootle-ts-bindings";
 import type { Network } from "./network";
-import type { ListSubstatesRequest, ListSubstatesResponse } from "./types";
 
 /**
  * A Provider reads chain state and submits transactions. It has no signing capability.
@@ -46,6 +47,6 @@ export interface Provider {
    */
   resolveInputs(inputs: SubstateRequirement[]): Promise<SubstateRequirement[]>;
 
-  /** Lists substates with optional template/type filters. */
-  listSubstates(params: ListSubstatesRequest): Promise<ListSubstatesResponse>;
+  /** Lists recent transactions. */
+  listRecentTransactions(params: ListRecentTransactionsRequest): Promise<ListRecentTransactionsResponse>;
 }

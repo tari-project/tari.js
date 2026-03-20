@@ -15,7 +15,7 @@ import type { Provider } from "./provider";
 import type { Signer } from "./signer";
 import type { WatchOptions } from "./types";
 import { borEncodeTransaction, generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
-import { toHexStr } from "./helpers/hex";
+import { toHexStr } from "./helpers";
 
 /**
  * Resolves unversioned inputs in the unsigned transaction by fetching their current

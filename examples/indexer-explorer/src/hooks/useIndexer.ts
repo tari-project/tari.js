@@ -4,14 +4,6 @@ import { Network } from "@tari-project/ootle";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
 
-export interface SubstateEntry {
-  substate_id: string;
-  module_name: string | null;
-  version: number;
-  template_address: string | null;
-  timestamp: string;
-}
-
 /**
  * Manages a read-only connection to an Ootle indexer.
  *
@@ -64,5 +56,11 @@ export function useIndexer() {
     return { ...networkInfo, ...connections };
   }, [client]);
 
-  return { status, provider, error, connect, disconnect, getSubstate, getIndexerInfo };
+  const getRecentTransactions = useCallback(
+    async () =>
+      (await provider?.listRecentTransactions({ limit: 10, last_id: null })?.then((r) => r.transactions)) ?? [],
+    [provider],
+  );
+
+  return { status, provider, error, connect, disconnect, getSubstate, getIndexerInfo, getRecentTransactions };
 }

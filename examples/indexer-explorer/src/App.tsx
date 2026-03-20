@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Network, defaultIndexerUrl } from "@tari-project/ootle";
+import type { TransactionEntry } from "@tari-project/ootle-indexer";
 import { useIndexer } from "./hooks/useIndexer";
-import type { SubstateEntry } from "./hooks/useIndexer";
 import "./App.css";
+import React from "react";
 
 // Public Esmeralda testnet indexer — no local setup required.
 // Swap for http://localhost:18300 (with Network.LocalNet) when using a local indexer.
@@ -18,7 +19,7 @@ const NETWORKS: { label: string; value: Network }[] = [
 ];
 
 export function App() {
-  const { status, error, connect, disconnect, getSubstate, getIndexerInfo } = useIndexer();
+  const { status, error, connect, disconnect, getSubstate, getRecentTransactions } = useIndexer();
 
   // Connection form state
   const [url, setUrl] = useState(DEFAULT_URL);
@@ -30,7 +31,7 @@ export function App() {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
 
-  const [info, setInfo] = useState<Record<string, unknown>>({});
+  const [txList, setTxList] = useState<TransactionEntry[]>([]);
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -54,18 +55,20 @@ export function App() {
   };
 
   useEffect(() => {
-    if (status !== "connected") return;
+    if (status !== "connected" || txList?.length > 0) return;
     setListLoading(true);
-    getIndexerInfo()
-      .then((r) => {
-        setInfo(r);
+    getRecentTransactions().then(
+      (txs) => {
+        setTxList(txs);
         setListLoading(false);
-      })
-      .catch((e) => {
-        setListError(e instanceof Error ? e.message : "Failed to fetch info");
+      },
+      (err) => {
+        console.error(err);
+        setListError(err instanceof Error ? err.message : "Failed to fetch recent transactions");
         setListLoading(false);
-      });
-  }, [getIndexerInfo, status]);
+      },
+    );
+  }, [getRecentTransactions, status, txList?.length]);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
@@ -188,25 +191,20 @@ export function App() {
           {lookupResult !== null && <pre className="json-view">{JSON.stringify(lookupResult, null, 2)}</pre>}
         </section>
 
-        {/* Recent substates */}
+        {/* Recent transactions */}
         <section className="panel">
           <div className="panel-header">
-            <h2 className="panel-title">Indexer Info</h2>
+            <h2 className="panel-title">Recent Transactions</h2>
             <button className="btn-ghost small" disabled={listLoading}>
               {listLoading ? <Spinner /> : "Refresh"}
             </button>
           </div>
 
-          {Object.entries(info)?.length > 0
-            ? Object.entries(info).map(([k, v]) => (
-                // TEMP
-                <div key={k}>
-                  <p>
-                    <b>{k}</b>: <span>{v?.toString()}</span>
-                  </p>
-                </div>
-              ))
-            : null}
+          {txList?.map((tx) => (
+            <React.Fragment key={tx.transaction_id}>
+              <TransactionRow transaction={tx} />
+            </React.Fragment>
+          ))}
 
           {listError && (
             <div className="error-banner" role="alert">
@@ -221,27 +219,16 @@ export function App() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SubstateRow({ substate, onSelect }: { substate: SubstateEntry; onSelect: (id: string) => void }) {
-  const typeTag = substateType(substate.substate_id);
+function TransactionRow({ transaction }: { transaction: TransactionEntry }) {
   return (
-    <div className="substate-row">
-      <div className="substate-row-left">
-        <span className={`type-badge type-${typeTag}`}>{typeTag}</span>
-        <span
-          className="substate-id mono"
-          title={substate.substate_id}
-          onClick={() => onSelect(substate.substate_id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === "Enter" && onSelect(substate.substate_id)}
-        >
-          {truncate(substate.substate_id, 12, 10)}
+    <div className="tx-row">
+      <div className="tx-row-left">
+        <span className="tx-id mono" title={transaction.transaction_id}>
+          {truncate(transaction.transaction_id, 12, 10)}
         </span>
-        {substate.module_name && <span className="module-name">{substate.module_name}</span>}
       </div>
-      <div className="substate-row-right">
-        <span className="version-badge">v{substate.version}</span>
-        <span className="timestamp">{formatTime(substate.timestamp)}</span>
+      <div className="tx-row-right">
+        <span className="timestamp">{formatTime(transaction.created_at)}</span>
       </div>
     </div>
   );
@@ -266,11 +253,6 @@ function TariLogo({ size = 40 }: { size?: number }) {
 function truncate(str: string, head = 10, tail = 8): string {
   if (str.length <= head + tail + 3) return str;
   return `${str.slice(0, head)}…${str.slice(-tail)}`;
-}
-
-function substateType(id: string): string {
-  const prefix = id.split("_")[0] ?? "unknown";
-  return prefix.toLowerCase();
 }
 
 function formatTime(ts: string): string {
