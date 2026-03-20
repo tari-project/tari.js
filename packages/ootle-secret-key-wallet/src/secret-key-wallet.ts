@@ -2,9 +2,10 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import { Signer, toHexStr } from "@tari-project/ootle";
+import { Network, Signer, toHexStr } from "@tari-project/ootle";
 import {
   generateKeypair,
+  generateOotleAddress,
   hashUnsignedTransaction,
   publicKeyFromSecretKey,
   schnorrSign,
@@ -23,11 +24,18 @@ export class SecretKeyWallet implements Signer {
   private readonly accountSecretHex: Uint8Array;
   private readonly viewOnlySecretHex: Uint8Array | null;
   private readonly publicKeyHex: Uint8Array;
+  public network: Network;
 
-  private constructor(accountSecretHex: Uint8Array, viewOnlySecretHex: Uint8Array | null, publicKeyHex: Uint8Array) {
+  private constructor(
+    accountSecretHex: Uint8Array,
+    publicKeyHex: Uint8Array,
+    network: Network,
+    viewOnlySecretHex: Uint8Array | null,
+  ) {
     this.accountSecretHex = accountSecretHex;
     this.viewOnlySecretHex = viewOnlySecretHex;
     this.publicKeyHex = publicKeyHex;
+    this.network = network;
   }
 
   /**
@@ -35,19 +43,23 @@ export class SecretKeyWallet implements Signer {
    * The view-only key is used for stealth/confidential output scanning.
    * Mirrors `OotleSecretKey { account_secret, view_only_secret }` from ootle-rs.
    */
-  public static randomWithViewKey(): SecretKeyWallet {
+  public static randomWithViewKey(network: Network): SecretKeyWallet {
     const accountKeypair = generateKeypair();
     const viewKeypair = generateKeypair();
-    return new SecretKeyWallet(accountKeypair.secret_key, viewKeypair.secret_key, accountKeypair.public_key);
+    return new SecretKeyWallet(accountKeypair.secret_key, viewKeypair.secret_key, network, accountKeypair.public_key);
   }
 
   /**
    * Creates a wallet from an existing hex-encoded account secret key.
    * The public key is derived via `wasm.derivePublicKey`.
    */
-  public static fromSecretKey(accountSecretHex: Uint8Array, viewOnlySecretHex?: Uint8Array): SecretKeyWallet {
+  public static fromSecretKey(
+    accountSecretHex: Uint8Array,
+    network: Network,
+    viewOnlySecretHex?: Uint8Array,
+  ): SecretKeyWallet {
     const publicKeyHex = publicKeyFromSecretKey(accountSecretHex);
-    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
+    return new SecretKeyWallet(accountSecretHex, publicKeyHex, network, viewOnlySecretHex ?? null);
   }
 
   /**
@@ -57,13 +69,19 @@ export class SecretKeyWallet implements Signer {
   public static fromKeypair(
     accountSecretHex: Uint8Array,
     publicKeyHex: Uint8Array,
+    network: Network,
     viewOnlySecretHex?: Uint8Array,
   ): SecretKeyWallet {
-    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
+    return new SecretKeyWallet(accountSecretHex, publicKeyHex, network, viewOnlySecretHex ?? null);
   }
 
   public async getAddress(): Promise<string> {
-    return Promise.resolve(toHexStr(this.publicKeyHex));
+    const view_pub_key = this.viewOnlySecretHex
+      ? publicKeyFromSecretKey(this.viewOnlySecretHex)
+      : generateKeypair().public_key;
+
+    const address = generateOotleAddress(this.publicKeyHex, view_pub_key, this.network);
+    return Promise.resolve(address);
   }
 
   public async getPublicKey(): Promise<Uint8Array> {

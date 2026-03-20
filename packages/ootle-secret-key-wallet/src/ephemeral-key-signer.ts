@@ -2,8 +2,8 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import { Signer, toHexStr } from "@tari-project/ootle";
-import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
+import { Network, Signer, toHexStr } from "@tari-project/ootle";
+import { generateKeypair, generateOotleAddress, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
 
 /**
  * A one-shot signer that generates a fresh throwaway keypair, signs once,
@@ -21,25 +21,27 @@ import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-pro
 export class EphemeralKeySigner implements Signer {
   private readonly secretKeyHex: Uint8Array;
   private readonly publicKeyHex: Uint8Array;
+  public network: Network;
 
-  private constructor(secretKeyHex: Uint8Array, publicKeyHex: Uint8Array) {
+  private constructor(secretKeyHex: Uint8Array, publicKeyHex: Uint8Array, network: Network) {
     this.secretKeyHex = secretKeyHex;
     this.publicKeyHex = publicKeyHex;
+    this.network = network;
   }
 
   /**
    * Generates a fresh ephemeral keypair. The secret key exists only for the
    * lifetime of this object and is never persisted.
    */
-  public static generate(): EphemeralKeySigner {
+  public static generate(network = Network.Esmeralda): EphemeralKeySigner {
     const keypair = generateKeypair();
-    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key);
+    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key, network);
   }
 
   public async getAddress(): Promise<string> {
-    // Ephemeral signers have no persistent address — return the public key as-is.
-    // TODO - fix this when keys -> address is ready
-    return Promise.resolve(toHexStr(this.publicKeyHex));
+    const newKeyPair = generateKeypair();
+    const address = generateOotleAddress(this.publicKeyHex, newKeyPair.public_key, this.network);
+    return Promise.resolve(address);
   }
 
   public async getPublicKey(): Promise<Uint8Array> {
