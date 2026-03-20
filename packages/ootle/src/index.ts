@@ -19,8 +19,6 @@ export {
 export type {
   Amount,
   WatchOptions,
-  ListSubstatesRequest,
-  ListSubstatesResponse,
   TransactionOutcome,
   ToAccountAddress,
   UnsignedTransactionV1,

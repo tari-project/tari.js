@@ -14,7 +14,7 @@ export function defaultIndexerUrl(network: Network): string {
     case Network.LocalNet:
       return "http://localhost:12500";
     case Network.Esmeralda:
-      return "http://217.182.93.35:50124";
+      return "https://ootle-indexer-a.tari.com";
     case Network.MainNet:
       throw new Error("No default indexer URL configured for MainNet");
     case Network.StageNet:

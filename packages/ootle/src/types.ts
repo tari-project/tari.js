@@ -57,20 +57,3 @@ export interface WatchOptions {
 export interface ToAccountAddress {
   toAccountAddress(): string;
 }
-
-export interface ListSubstatesRequest {
-  filterByTemplate?: string | null;
-  filterByType?: string | null;
-  limit?: number | null;
-  offset?: number | null;
-}
-
-export interface ListSubstatesResponse {
-  substates: Array<{
-    substate_id: string;
-    module_name: string | null;
-    version: number;
-    template_address: string | null;
-    timestamp: string;
-  }>;
-}

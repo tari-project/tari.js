@@ -1,16 +1,8 @@
 import { useState, useCallback } from "react";
-import { ProviderBuilder, IndexerProvider } from "@tari-project/ootle-indexer";
+import { ProviderBuilder, IndexerProvider, IndexerClient } from "@tari-project/ootle-indexer";
 import { Network } from "@tari-project/ootle";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
-
-export interface SubstateEntry {
-  substate_id: string;
-  module_name: string | null;
-  version: number;
-  template_address: string | null;
-  timestamp: string;
-}
 
 /**
  * Manages a read-only connection to an Ootle indexer.
@@ -25,6 +17,7 @@ export interface SubstateEntry {
 export function useIndexer() {
   const [status, setStatus] = useState<ConnectionStatus>("disconnected");
   const [provider, setProvider] = useState<IndexerProvider | null>(null);
+  const [client, setClient] = useState<IndexerClient | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const connect = useCallback(async (url: string, network: Network) => {
@@ -33,6 +26,8 @@ export function useIndexer() {
     try {
       const p = await ProviderBuilder.new().withNetwork(network).withUrl(url.trim()).connect();
       setProvider(p);
+      const c = p?.getClient();
+      setClient(c);
       setStatus("connected");
     } catch (err) {
       setStatus("disconnected");
@@ -53,17 +48,15 @@ export function useIndexer() {
     },
     [provider],
   );
+  //
+  // const getIndexerInfo = useCallback(async () => {
+  // }, []);
 
-  const listSubstates = useCallback(
-    async (opts: { filterByType?: string; limit?: number } = {}) => {
-      if (!provider) throw new Error("Not connected");
-      return provider.listSubstates({
-        filterByType: opts.filterByType,
-        limit: opts.limit ?? 20,
-      });
-    },
+  const getRecentTransactions = useCallback(
+    async () =>
+      (await provider?.listRecentTransactions({ limit: 5, last_id: null })?.then((r) => r.transactions)) ?? [],
     [provider],
   );
 
-  return { status, provider, error, connect, disconnect, getSubstate, listSubstates };
+  return { status, provider, error, connect, disconnect, getSubstate, getRecentTransactions };
 }

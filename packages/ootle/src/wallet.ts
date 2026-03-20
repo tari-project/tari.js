@@ -2,8 +2,8 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import type { Signer } from "./signer";
 import type { WalletKeyProvider } from "./key-provider";
+import type { Signer } from "./signer";
 
 /**
  * The result of authorizing a transaction: a set of signatures from one signer.

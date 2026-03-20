@@ -7,12 +7,13 @@ import type {
   IndexerGetSubstateResponse,
   IndexerGetTransactionResultResponse,
   IndexerSubmitTransactionResponse,
+  ListRecentTransactionsRequest,
+  ListRecentTransactionsResponse,
   SubstateId,
   SubstateRequirement,
   TransactionEnvelope,
-  ListSubstateItem,
 } from "@tari-project/ootle-ts-bindings";
-import type { ListSubstatesRequest, ListSubstatesResponse, Provider } from "@tari-project/ootle";
+import type { Provider } from "@tari-project/ootle";
 import { Network } from "@tari-project/ootle";
 import { IndexerClient } from "@tari-project/indexer-client";
 import { PendingTransaction, TransactionWatcher } from "./tx-watcher";
@@ -26,8 +27,8 @@ export interface IndexerProviderOptions {
 }
 
 export class IndexerProvider implements Provider {
-  private client: IndexerClient;
-  private _network: Network;
+  private readonly client: IndexerClient;
+  private readonly _network: Network;
   private readonly _url: string;
   private _watcher: TransactionWatcher | null = null;
   readonly defaultTransactionTimeoutMs: number;
@@ -135,25 +136,7 @@ export class IndexerProvider implements Provider {
     );
   }
 
-  public async listSubstates(params: ListSubstatesRequest): Promise<ListSubstatesResponse> {
-    // The external IndexerClient does not expose a listSubstates method.
-    // Use the transport directly to hit GET /substates with query filters.
-    const query: Record<string, unknown> = {};
-    if (params.filterByTemplate != null) query["filter_by_template"] = params.filterByTemplate;
-    if (params.filterByType != null) query["filter_by_type"] = params.filterByType;
-    if (params.limit != null) query["limit"] = params.limit;
-    if (params.offset != null) query["offset"] = params.offset;
-
-    const result = await this.client.getTransport().sendGet<{ substates: ListSubstateItem[] }>("substates", query);
-
-    return {
-      substates: result.substates.map((s) => ({
-        substate_id: s.substate_id,
-        module_name: s.module_name,
-        version: s.version,
-        template_address: s.template_address,
-        timestamp: s.timestamp,
-      })),
-    };
+  public async listRecentTransactions(params: ListRecentTransactionsRequest): Promise<ListRecentTransactionsResponse> {
+    return await this.client.listRecentTransactions(params);
   }
 }

@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Network, defaultIndexerUrl } from "@tari-project/ootle";
+import type { TransactionEntry } from "@tari-project/ootle-indexer";
 import { useIndexer } from "./hooks/useIndexer";
-import type { SubstateEntry } from "./hooks/useIndexer";
 import "./App.css";
+import React from "react";
 
 // Public Esmeralda testnet indexer — no local setup required.
 // Swap for http://localhost:18300 (with Network.LocalNet) when using a local indexer.
@@ -18,7 +19,7 @@ const NETWORKS: { label: string; value: Network }[] = [
 ];
 
 export function App() {
-  const { status, error, connect, disconnect, getSubstate, listSubstates } = useIndexer();
+  const { status, error, connect, disconnect, getSubstate, getRecentTransactions } = useIndexer();
 
   // Connection form state
   const [url, setUrl] = useState(DEFAULT_URL);
@@ -30,29 +31,9 @@ export function App() {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
 
-  // Recent substates state
-  const [substates, setSubstates] = useState<SubstateEntry[]>([]);
+  const [txList, setTxList] = useState<TransactionEntry[]>([]);
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
-
-  const loadSubstates = useCallback(async () => {
-    setListLoading(true);
-    setListError(null);
-    try {
-      const response = await listSubstates({ limit: 20 });
-      setSubstates(response.substates);
-    } catch (err) {
-      setListError(err instanceof Error ? err.message : "Failed to list substates");
-    } finally {
-      setListLoading(false);
-    }
-  }, [listSubstates]);
-
-  // Auto-load recent substates when connected
-  useEffect(() => {
-    if (status !== "connected") return;
-    void loadSubstates();
-  }, [loadSubstates, status]);
 
   const handleConnect = () => {
     void connect(url, network);
@@ -72,6 +53,22 @@ export function App() {
       setLookupLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status !== "connected" || txList?.length > 0) return;
+    setListLoading(true);
+    getRecentTransactions().then(
+      (txs) => {
+        setTxList(txs);
+        setListLoading(false);
+      },
+      (err) => {
+        console.error(err);
+        setListError(err instanceof Error ? err.message : "Failed to fetch recent transactions");
+        setListLoading(false);
+      },
+    );
+  }, [getRecentTransactions, status, txList?.length]);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
@@ -194,28 +191,24 @@ export function App() {
           {lookupResult !== null && <pre className="json-view">{JSON.stringify(lookupResult, null, 2)}</pre>}
         </section>
 
-        {/* Recent substates */}
+        {/* Recent transactions */}
         <section className="panel">
           <div className="panel-header">
-            <h2 className="panel-title">Recent Substates</h2>
-            <button className="btn-ghost small" onClick={() => void loadSubstates()} disabled={listLoading}>
+            <h2 className="panel-title">Recent Transactions</h2>
+            <button className="btn-ghost small" disabled={listLoading}>
               {listLoading ? <Spinner /> : "Refresh"}
             </button>
           </div>
 
+          {txList?.map((tx) => (
+            <React.Fragment key={tx.transaction_id}>
+              <TransactionRow transaction={tx} onSelect={setLookupId} />
+            </React.Fragment>
+          ))}
+
           {listError && (
             <div className="error-banner" role="alert">
               {listError}
-            </div>
-          )}
-
-          {substates.length === 0 && !listLoading && !listError && <p className="empty-state">No substates found.</p>}
-
-          {substates.length > 0 && (
-            <div className="substate-list">
-              {substates.map((s) => (
-                <SubstateRow key={s.substate_id} substate={s} onSelect={(id) => setLookupId(id)} />
-              ))}
             </div>
           )}
         </section>
@@ -226,29 +219,36 @@ export function App() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SubstateRow({ substate, onSelect }: { substate: SubstateEntry; onSelect: (id: string) => void }) {
-  const typeTag = substateType(substate.substate_id);
+function TransactionRow({ transaction, onSelect }: { transaction: TransactionEntry; onSelect: (id: string) => void }) {
+  const substates = transaction.transaction.V1.body.transaction.inputs;
   return (
-    <div className="substate-row">
-      <div className="substate-row-left">
-        <span className={`type-badge type-${typeTag}`}>{typeTag}</span>
-        <span
-          className="substate-id mono"
-          title={substate.substate_id}
-          onClick={() => onSelect(substate.substate_id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === "Enter" && onSelect(substate.substate_id)}
-        >
-          {truncate(substate.substate_id, 12, 10)}
-        </span>
-        {substate.module_name && <span className="module-name">{substate.module_name}</span>}
+    <>
+      <div className="substate-row">
+        <div className="substate-left">
+          <span className="substate-id mono" title={transaction.transaction_id}>
+            Transaction ID: {truncate(transaction.transaction_id, 12, 10)}
+          </span>
+        </div>
+        <div className="substate-right">
+          <span className="timestamp">{formatTime(transaction.created_at)}</span>
+        </div>
       </div>
-      <div className="substate-row-right">
-        <span className="version-badge">v{substate.version}</span>
-        <span className="timestamp">{formatTime(substate.timestamp)}</span>
+      <p>
+        <b>Substates from the Transaction Inputs</b>
+      </p>
+      <div className="substate-list">
+        {substates?.length > 0
+          ? substates.map((s) => {
+              return (
+                <span key={s.substate_id} className="mono substate-id" onClick={() => onSelect(s.substate_id)}>
+                  <b>substate_id:</b> {s.substate_id}
+                </span>
+              );
+            })
+          : null}
       </div>
-    </div>
+      <hr />
+    </>
   );
 }
 
@@ -271,11 +271,6 @@ function TariLogo({ size = 40 }: { size?: number }) {
 function truncate(str: string, head = 10, tail = 8): string {
   if (str.length <= head + tail + 3) return str;
   return `${str.slice(0, head)}…${str.slice(-tail)}`;
-}
-
-function substateType(id: string): string {
-  const prefix = id.split("_")[0] ?? "unknown";
-  return prefix.toLowerCase();
 }
 
 function formatTime(ts: string): string {

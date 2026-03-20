@@ -2,15 +2,13 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import { Signer, toHexStr } from "@tari-project/ootle";
-import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
+import { generateKeypair, generateOotleAddress, hashUnsignedTransaction, schnorrSign } from "@tari-project/ootle-wasm";
+import { Network, Signer, toHexStr } from "@tari-project/ootle";
 
 /**
  * A one-shot signer that generates a fresh throwaway keypair, signs once,
  * and exposes no way to reuse the key. Used for privacy-preserving transactions
- * where the sender wants no link between the transaction and their identity.
- *
- * Mirrors `EphemeralKeySigner` from the Rust ootle-rs crate.
+ * where the sender wants no link between the transaction and their identity.*
  *
  * @example
  * ```ts
@@ -21,25 +19,26 @@ import { generateKeypair, hashUnsignedTransaction, schnorrSign } from "@tari-pro
 export class EphemeralKeySigner implements Signer {
   private readonly secretKeyHex: Uint8Array;
   private readonly publicKeyHex: Uint8Array;
+  public address: string;
 
-  private constructor(secretKeyHex: Uint8Array, publicKeyHex: Uint8Array) {
+  private constructor(secretKeyHex: Uint8Array, publicKeyHex: Uint8Array, network: Network) {
     this.secretKeyHex = secretKeyHex;
     this.publicKeyHex = publicKeyHex;
+    const randomKeypair = generateKeypair();
+    this.address = generateOotleAddress(publicKeyHex, randomKeypair.public_key, network);
   }
 
   /**
    * Generates a fresh ephemeral keypair. The secret key exists only for the
    * lifetime of this object and is never persisted.
    */
-  public static generate(): EphemeralKeySigner {
+  public static generate(network = Network.Esmeralda): EphemeralKeySigner {
     const keypair = generateKeypair();
-    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key);
+    return new EphemeralKeySigner(keypair.secret_key, keypair.public_key, network);
   }
 
   public async getAddress(): Promise<string> {
-    // Ephemeral signers have no persistent address — return the public key as-is.
-    // TODO - fix this when keys -> address is ready
-    return Promise.resolve(toHexStr(this.publicKeyHex));
+    return Promise.resolve(this.address);
   }
 
   public async getPublicKey(): Promise<Uint8Array> {
