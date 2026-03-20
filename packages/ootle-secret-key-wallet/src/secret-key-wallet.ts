@@ -2,32 +2,43 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import { Signer, toHexStr } from "@tari-project/ootle";
 import {
   generateKeypair,
+  generateOotleAddress,
+  generateOotleSecretKey,
   hashUnsignedTransaction,
+  ootlePublicKeyFromSecretKey,
   publicKeyFromSecretKey,
   schnorrSign,
 } from "@tari-project/ootle-wasm";
+import { Network, Signer, toHexStr } from "@tari-project/ootle";
 
 /**
  * A local signer that holds a secret key (and optional view-only key) in memory,
  * using the WASM module for transaction hashing and Schnorr signing.
- *
- * Mirrors `OotleSecretKey` / `PrivateKeyProvider` from the Rust ootle-rs crate.
- *
+ **
  * For production use, prefer `WalletDaemonSigner` so the secret key never lives
  * in JavaScript memory.
  */
 export class SecretKeyWallet implements Signer {
-  private readonly accountSecretHex: Uint8Array;
+  private readonly ownerSecretKey: Uint8Array;
+  private readonly ownerPublicKey: Uint8Array;
   private readonly viewOnlySecretHex: Uint8Array | null;
-  private readonly publicKeyHex: Uint8Array;
+  private readonly viewOnlyPublicKey: Uint8Array | null;
+  public network: Network;
 
-  private constructor(accountSecretHex: Uint8Array, viewOnlySecretHex: Uint8Array | null, publicKeyHex: Uint8Array) {
-    this.accountSecretHex = accountSecretHex;
-    this.viewOnlySecretHex = viewOnlySecretHex;
-    this.publicKeyHex = publicKeyHex;
+  private constructor(
+    ownerSecretKey: Uint8Array,
+    ownerPublicKey: Uint8Array,
+    network: Network,
+    viewOnlySecretHex?: Uint8Array | null,
+    viewOnlyPublicKey?: Uint8Array | null,
+  ) {
+    this.ownerSecretKey = ownerSecretKey;
+    this.ownerPublicKey = ownerPublicKey;
+    this.viewOnlySecretHex = viewOnlySecretHex ?? null;
+    this.viewOnlyPublicKey = viewOnlyPublicKey ?? null;
+    this.network = network;
   }
 
   /**
@@ -35,19 +46,23 @@ export class SecretKeyWallet implements Signer {
    * The view-only key is used for stealth/confidential output scanning.
    * Mirrors `OotleSecretKey { account_secret, view_only_secret }` from ootle-rs.
    */
-  public static randomWithViewKey(): SecretKeyWallet {
-    const accountKeypair = generateKeypair();
-    const viewKeypair = generateKeypair();
-    return new SecretKeyWallet(accountKeypair.secret_key, viewKeypair.secret_key, accountKeypair.public_key);
+  public static randomWithViewKey(network: Network): SecretKeyWallet {
+    const { owner_key, view_key } = generateOotleSecretKey();
+    const publicKeys = ootlePublicKeyFromSecretKey(owner_key, view_key);
+    return new SecretKeyWallet(owner_key, view_key, network, publicKeys.owner_key, publicKeys.view_key);
   }
 
   /**
    * Creates a wallet from an existing hex-encoded account secret key.
    * The public key is derived via `wasm.derivePublicKey`.
    */
-  public static fromSecretKey(accountSecretHex: Uint8Array, viewOnlySecretHex?: Uint8Array): SecretKeyWallet {
-    const publicKeyHex = publicKeyFromSecretKey(accountSecretHex);
-    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
+  public static fromSecretKey(
+    ownerSecretKey: Uint8Array,
+    network: Network,
+    viewOnlySecretHex?: Uint8Array,
+  ): SecretKeyWallet {
+    const ownerPublicKey = publicKeyFromSecretKey(ownerSecretKey);
+    return new SecretKeyWallet(ownerSecretKey, ownerPublicKey, network, viewOnlySecretHex ?? null);
   }
 
   /**
@@ -55,19 +70,24 @@ export class SecretKeyWallet implements Signer {
    * Use this overload if you already have both keys (e.g. from key storage).
    */
   public static fromKeypair(
-    accountSecretHex: Uint8Array,
-    publicKeyHex: Uint8Array,
+    ownerSecretKey: Uint8Array,
+    ownerPublicKey: Uint8Array,
+    network: Network,
     viewOnlySecretHex?: Uint8Array,
   ): SecretKeyWallet {
-    return new SecretKeyWallet(accountSecretHex, viewOnlySecretHex ?? null, publicKeyHex);
+    return new SecretKeyWallet(ownerSecretKey, ownerPublicKey, network, viewOnlySecretHex ?? null);
   }
 
   public async getAddress(): Promise<string> {
-    return Promise.resolve(toHexStr(this.publicKeyHex));
+    if (!this.viewOnlyPublicKey) {
+      throw new Error("View-only key not set. Call SecretKeyWallet.randomWithViewKey() first.");
+    }
+    const address = generateOotleAddress(this.ownerPublicKey, this.viewOnlyPublicKey, this.network);
+    return Promise.resolve(address);
   }
 
   public async getPublicKey(): Promise<Uint8Array> {
-    return Promise.resolve(this.publicKeyHex);
+    return Promise.resolve(this.ownerPublicKey);
   }
 
   /**
@@ -79,11 +99,11 @@ export class SecretKeyWallet implements Signer {
   }
 
   public async signTransaction(unsignedTx: UnsignedTransactionV1): Promise<TransactionSignature[]> {
-    const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.publicKeyHex);
-    const sig = schnorrSign(this.accountSecretHex, hashBytes);
+    const hashBytes = hashUnsignedTransaction(JSON.stringify(unsignedTx), this.ownerPublicKey);
+    const sig = schnorrSign(this.ownerSecretKey, hashBytes);
     return Promise.resolve([
       {
-        public_key: toHexStr(this.publicKeyHex),
+        public_key: toHexStr(this.ownerPublicKey),
         signature: {
           public_nonce: toHexStr(sig.public_nonce),
           signature: toHexStr(sig.signature),

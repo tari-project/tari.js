@@ -2,8 +2,8 @@
 //   SPDX-License-Identifier: BSD-3-Clause
 
 import type { TransactionSignature, UnsignedTransactionV1 } from "@tari-project/ootle-ts-bindings";
-import { type Signer, fromHexStr } from "@tari-project/ootle";
 import { WalletDaemonClient } from "@tari-project/wallet_jrpc_client";
+import { type Signer, fromHexStr } from "@tari-project/ootle";
 
 export interface WalletDaemonSignerOptions {
   /** Base URL of the wallet daemon HTTP endpoint, e.g. "http://localhost:18103" */
@@ -24,7 +24,7 @@ export interface WalletDaemonSignerOptions {
  * environment usage where the wallet daemon is reachable.
  */
 export class WalletDaemonSigner implements Signer {
-  private client: WalletDaemonClient;
+  private readonly client: WalletDaemonClient;
   private _publicKey: Uint8Array | null = null;
   private _address: string | null = null;
 
