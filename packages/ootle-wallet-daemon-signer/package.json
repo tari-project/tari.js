@@ -1,0 +1,36 @@
+{
+  "name": "@tari-project/ootle-wallet-daemon-signer",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tari-project/ootle": "workspace:",
+    "@tari-project/ootle-ts-bindings": "catalog:",
+    "@tari-project/wallet_jrpc_client": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@microsoft/api-extractor": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-top-level-await": "catalog:",
+    "vite-plugin-wasm": "catalog:"
+  }
+}

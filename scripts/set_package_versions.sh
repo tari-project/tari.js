@@ -21,11 +21,6 @@ find . -depth -maxdepth 2 -name 'package.json' | while read -r package_json; do
 done
 popd > /dev/null
 
-pushd "${gitroot}/docusaurus/tari-docs" > /dev/null
-jq --arg version "$VERSION" '.version = $version' package.json > package.json.tmp && mv package.json.tmp package.json
-echo "Updated docusaurus package.json version to $VERSION"
-popd > /dev/null
-
 pushd "${gitroot}" > /dev/null
 # Update the version in the root package.json
 jq --arg version "$VERSION" '.version = $version' package.json > package.json.tmp && mv package.json.tmp package.json

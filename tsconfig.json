@@ -3,55 +3,32 @@
     "declaration": true,
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "composite": true
   },
   "references": [
     {
-      "path": "docusaurus/tari-docs"
+      "path": "packages/ootle"
     },
     {
-      "path": "packages/builders"
+      "path": "packages/ootle-indexer"
     },
     {
-      "path": "packages/indexer_provider"
+      "path": "packages/ootle-secret-key-wallet"
     },
     {
-      "path": "packages/metamask_signer"
+      "path": "packages/ootle-wallet-daemon-signer"
+    },
+{
+      "path": "examples/connect-button"
     },
     {
-      "path": "packages/permissions"
+      "path": "examples/indexer-explorer"
     },
     {
-      "path": "packages/react-mui-connect-button"
-    },
-    {
-      "path": "packages/permissions"
-    },
-    {
-      "path": "packages/tari_provider"
-    },
-    {
-      "path": "packages/tari_signer"
-    },
-    {
-      "path": "packages/tari_universe"
-    },
-    {
-      "path": "packages/tarijs"
-    },
-    {
-      "path": "packages/tarijs_types"
-    },
-    {
-      "path": "packages/tarijs_types"
-    },
-    {
-      "path": "packages/wallet_daemon"
-    },
-    {
-      "path": "packages/walletconnect"
+      "path": "examples/template-inspector"
     }
   ]
 }

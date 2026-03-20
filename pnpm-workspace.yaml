@@ -1,23 +1,34 @@
 packages:
   - packages/*
   - apps/*
-  - docusaurus/*
+  - docs
   - examples/*
   - "!**/test/**"
 
 catalog:
-  typescript: ^5.0.4
-  vitest: ^3.0.4
-  vite: ^6.1.0
-  "@types/node": ^22.13.1
-  "@tari-project/typescript-bindings": ">=1.17.2"
-  "@tari-project/wallet_jrpc_client": ^1.9.2
-  "@metamask/providers": ^18.2.0
-  "@walletconnect/universal-provider": 2.21.3 
-  "@reown/appkit": "1.7.15"
+  "@eslint/js": ^10.0.1
+  "@microsoft/api-extractor": ^7.57.7
+  "@tari-project/indexer-client": ^1.2.1
+  "@tari-project/ootle-ts-bindings": ^1.29.3
+  "@tari-project/ootle-wasm": ^0.2.0
+  "@tari-project/wallet_jrpc_client": ^1.13.1
+  "@types/node": ^25.5.0
+  eslint: ^10.0.3
+  eslint-config-prettier: ^10.1.8
+  knip: ^6.0.0
+  prettier: ^3.8.1
+  typedoc: ^0.28.17
+  typedoc-plugin-markdown: ^4.10.0
+  typescript: ^5.9.3
+  typescript-eslint: ^8.57.0
+  unplugin-dts: ^1.0.0-beta.6
+  vite: ^8.0.1
+  vite-plugin-top-level-await: ^1.6.0
+  vite-plugin-wasm: ^3.6.0
+  vitest: ^4.1.0
 
 onlyBuiltDependencies:
-  - "@moonrepo/cli"
   - core-js
   - core-js-pure
   - esbuild
+  - sharp

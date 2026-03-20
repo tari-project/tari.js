@@ -1,0 +1,21 @@
+name: Test docs build
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - run: pnpm install
+      - name: Build SDK packages (required for TypeDoc)
+        run: pnpm -r --filter="./packages/*" build
+      - name: Build docs
+        run: pnpm --filter ootle-docs build

@@ -1,0 +1,36 @@
+{
+  "name": "@tari-project/ootle-secret-key-wallet",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tari-project/ootle": "workspace:",
+    "@tari-project/ootle-ts-bindings": "catalog:",
+    "@tari-project/ootle-wasm": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@microsoft/api-extractor": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-dts": "catalog:",
+    "vitest": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-top-level-await": "catalog:",
+    "vite-plugin-wasm": "catalog:"
+  }
+}
