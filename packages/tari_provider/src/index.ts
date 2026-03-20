@@ -1,1 +1,0 @@
-export { TariProvider } from "./TariProvider";
