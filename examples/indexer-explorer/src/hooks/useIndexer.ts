@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ProviderBuilder, IndexerProvider } from "@tari-project/ootle-indexer";
+import { ProviderBuilder, IndexerProvider, IndexerClient } from "@tari-project/ootle-indexer";
 import { Network } from "@tari-project/ootle";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected";
@@ -25,6 +25,7 @@ export interface SubstateEntry {
 export function useIndexer() {
   const [status, setStatus] = useState<ConnectionStatus>("disconnected");
   const [provider, setProvider] = useState<IndexerProvider | null>(null);
+  const [client, setClient] = useState<IndexerClient | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const connect = useCallback(async (url: string, network: Network) => {
@@ -33,6 +34,8 @@ export function useIndexer() {
     try {
       const p = await ProviderBuilder.new().withNetwork(network).withUrl(url.trim()).connect();
       setProvider(p);
+      const c = p?.getClient();
+      setClient(c);
       setStatus("connected");
     } catch (err) {
       setStatus("disconnected");
@@ -54,22 +57,12 @@ export function useIndexer() {
     [provider],
   );
 
-  const listSubstates = useCallback(
-    async (opts: { filterByType?: string; limit?: number } = {}) => {
-      if (!provider) throw new Error("Not connected");
-      return provider.listSubstates({
-        filterByType: opts.filterByType,
-        limit: opts.limit ?? 20,
-      });
-    },
-    [provider],
-  );
+  const getIndexerInfo = useCallback(async () => {
+    const networkInfo = await client?.networkInfo();
+    const connections = await client?.getConnections();
 
-  const getClient = useCallback(async () => {
-    const c = provider?.getClient();
-    const networkInfo = await c?.networkInfo();
-    console.debug(networkInfo);
-  }, [provider]);
+    return { ...networkInfo, ...connections };
+  }, [client]);
 
-  return { status, provider, error, connect, disconnect, getSubstate, listSubstates, getClient };
+  return { status, provider, error, connect, disconnect, getSubstate, getIndexerInfo };
 }

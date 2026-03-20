@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Network, defaultIndexerUrl } from "@tari-project/ootle";
 import { useIndexer } from "./hooks/useIndexer";
 import type { SubstateEntry } from "./hooks/useIndexer";
@@ -18,7 +18,7 @@ const NETWORKS: { label: string; value: Network }[] = [
 ];
 
 export function App() {
-  const { status, error, connect, disconnect, getSubstate, getClient } = useIndexer();
+  const { status, error, connect, disconnect, getSubstate, getIndexerInfo } = useIndexer();
 
   // Connection form state
   const [url, setUrl] = useState(DEFAULT_URL);
@@ -30,8 +30,7 @@ export function App() {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
 
-  // Recent substates state
-  const [substates, setSubstates] = useState<SubstateEntry[]>([]);
+  const [info, setInfo] = useState<Record<string, unknown>>({});
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -55,8 +54,18 @@ export function App() {
   };
 
   useEffect(() => {
-    getClient();
-  }, [getClient]);
+    if (status !== "connected") return;
+    setListLoading(true);
+    getIndexerInfo()
+      .then((r) => {
+        setInfo(r);
+        setListLoading(false);
+      })
+      .catch((e) => {
+        setListError(e instanceof Error ? e.message : "Failed to fetch info");
+        setListLoading(false);
+      });
+  }, [getIndexerInfo, status]);
 
   // ── Connect screen ──────────────────────────────────────────────────────────
   if (status !== "connected") {
@@ -182,25 +191,26 @@ export function App() {
         {/* Recent substates */}
         <section className="panel">
           <div className="panel-header">
-            <h2 className="panel-title">Recent Substates</h2>
-            <button className="btn-ghost small" onClick={() => void loadSubstates()} disabled={listLoading}>
+            <h2 className="panel-title">Indexer Info</h2>
+            <button className="btn-ghost small" disabled={listLoading}>
               {listLoading ? <Spinner /> : "Refresh"}
             </button>
           </div>
 
+          {Object.entries(info)?.length > 0
+            ? Object.entries(info).map(([k, v]) => (
+                // TEMP
+                <div key={k}>
+                  <p>
+                    <b>{k}</b>: <span>{v?.toString()}</span>
+                  </p>
+                </div>
+              ))
+            : null}
+
           {listError && (
             <div className="error-banner" role="alert">
               {listError}
-            </div>
-          )}
-
-          {substates.length === 0 && !listLoading && !listError && <p className="empty-state">No substates found.</p>}
-
-          {substates.length > 0 && (
-            <div className="substate-list">
-              {substates.map((s) => (
-                <SubstateRow key={s.substate_id} substate={s} onSelect={(id) => setLookupId(id)} />
-              ))}
             </div>
           )}
         </section>
