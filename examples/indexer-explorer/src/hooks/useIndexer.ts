@@ -48,19 +48,15 @@ export function useIndexer() {
     },
     [provider],
   );
-
-  const getIndexerInfo = useCallback(async () => {
-    const networkInfo = await client?.networkInfo();
-    const connections = await client?.getConnections();
-
-    return { ...networkInfo, ...connections };
-  }, [client]);
+  //
+  // const getIndexerInfo = useCallback(async () => {
+  // }, []);
 
   const getRecentTransactions = useCallback(
     async () =>
-      (await provider?.listRecentTransactions({ limit: 10, last_id: null })?.then((r) => r.transactions)) ?? [],
+      (await provider?.listRecentTransactions({ limit: 5, last_id: null })?.then((r) => r.transactions)) ?? [],
     [provider],
   );
 
-  return { status, provider, error, connect, disconnect, getSubstate, getIndexerInfo, getRecentTransactions };
+  return { status, provider, error, connect, disconnect, getSubstate, getRecentTransactions };
 }

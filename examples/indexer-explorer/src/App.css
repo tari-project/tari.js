@@ -239,10 +239,11 @@
 .substate-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 6px;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
+  padding: 4px;
 }
 
 .substate-row {
@@ -362,7 +363,9 @@
   border-radius: 10px;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.15s, opacity 0.15s;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -389,7 +392,9 @@
   font-family: inherit;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background 0.15s, opacity 0.15s;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -413,7 +418,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .btn-ghost:hover:not(:disabled) {

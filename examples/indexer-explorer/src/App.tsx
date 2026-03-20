@@ -202,7 +202,7 @@ export function App() {
 
           {txList?.map((tx) => (
             <React.Fragment key={tx.transaction_id}>
-              <TransactionRow transaction={tx} />
+              <TransactionRow transaction={tx} onSelect={setLookupId} />
             </React.Fragment>
           ))}
 
@@ -219,18 +219,36 @@ export function App() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function TransactionRow({ transaction }: { transaction: TransactionEntry }) {
+function TransactionRow({ transaction, onSelect }: { transaction: TransactionEntry; onSelect: (id: string) => void }) {
+  const substates = transaction.transaction.V1.body.transaction.inputs;
   return (
-    <div className="tx-row">
-      <div className="tx-row-left">
-        <span className="tx-id mono" title={transaction.transaction_id}>
-          {truncate(transaction.transaction_id, 12, 10)}
-        </span>
+    <>
+      <div className="substate-row">
+        <div className="substate-left">
+          <span className="substate-id mono" title={transaction.transaction_id}>
+            Transaction ID: {truncate(transaction.transaction_id, 12, 10)}
+          </span>
+        </div>
+        <div className="substate-right">
+          <span className="timestamp">{formatTime(transaction.created_at)}</span>
+        </div>
       </div>
-      <div className="tx-row-right">
-        <span className="timestamp">{formatTime(transaction.created_at)}</span>
+      <p>
+        <b>Substates from the Transaction Inputs</b>
+      </p>
+      <div className="substate-list">
+        {substates?.length > 0
+          ? substates.map((s) => {
+              return (
+                <span key={s.substate_id} className="mono substate-id" onClick={() => onSelect(s.substate_id)}>
+                  <b>substate_id:</b> {s.substate_id}
+                </span>
+              );
+            })
+          : null}
       </div>
-    </div>
+      <hr />
+    </>
   );
 }
 
